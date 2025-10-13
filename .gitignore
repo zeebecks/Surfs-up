@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.log
+
+# Virtualenv
+.venv/
+venv/
+env/
+
+# Local DB / caches
+surf.db
+
+# OS cruft
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+# Env vars
+.env

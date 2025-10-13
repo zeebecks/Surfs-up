@@ -1,0 +1,5 @@
+id,name,lat,lng,shoreline_orientation,fetch_hints,min_wind_kts,max_wind_kts,notes
+north-pier-two-rivers,"Two Rivers — North Pier",44.1567,-87.5687,90,"[""E"",""SE"",""S""]",15,32,"Handles S–E winds. Southerlies build more for northbound fetch; piers can clean it a bit."
+manitowoc-south-pier,"Manitowoc — South Pier",44.0896,-87.6509,90,"[""E"",""SE""]",14,28,"SE blows in nicely; east can be chunky."
+sheboygan-north-point,"Sheboygan — North Point",43.7594,-87.6920,90,"[""E"",""NE"",""SE""]",12,28,"Classic. Takes a variety of easterlies; NE fetch lights it up."
+port-washington,"Port Washington",43.3879,-87.8715,95,"[""E"",""NE""]",15,30,"NE favors longer fetch; possible wind shadow on due south."
