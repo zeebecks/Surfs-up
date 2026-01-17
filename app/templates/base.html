@@ -1,15 +1,43 @@
 <!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lake Surf</title>
+<title>Lake Michigan Surf</title>
+<link rel="icon" type="image/png" href="/static/favicon.png">
 <link rel="stylesheet" href="/static/styles.css">
 <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 </head><body>
-<header class="header">
-  <h1>🏄 Lake Michigan Surf</h1>
+<header class="header banner">
+  <div class="banner-image" id="banner-image"></div>
+  <div class="banner-overlay">
+    <div class="header-inner">
+  <!-- <img class="site-logo" src="/static/favicon.png" alt="Site logo"> -->
+  <h1 class="site-title">🏄 Lake Michigan Surf</h1>
   <nav><a href="/">Spots</a><a href="/crew">Crew</a></nav>
+</div>
+  </div>
 </header>
 <main class="container">{% block content %}{% endblock %}</main>
-<footer class="footer"><small>Prototype • FastAPI + HTMX + Leaflet</small></footer>
+<footer class="footer"><small>Prototype • Powered by "Two Rivers Delivers LLC" </small></footer>
+<script>
+const bannerImages = [
+  "/static/banner-1.jpeg",
+  "/static/banner-2.png",
+  "/static/banner-3.jpg",
+  "/static/banner-4.jpg",
+];
+let bannerIndex = 0;
+const bannerEl = document.getElementById("banner-image");
+if (bannerEl) {
+  bannerEl.style.backgroundImage = `url('${bannerImages[0]}')`;
+  setInterval(() => {
+    bannerEl.classList.add("is-fading");
+    setTimeout(() => {
+      bannerIndex = (bannerIndex + 1) % bannerImages.length;
+      bannerEl.style.backgroundImage = `url('${bannerImages[bannerIndex]}')`;
+      bannerEl.classList.remove("is-fading");
+    }, 300);
+  }, 30000);
+}
+</script>
 </body></html>

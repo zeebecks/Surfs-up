@@ -1,9 +1,67 @@
 {% extends "base.html" %}{% block content %}
+<div class="forecast-header">
+  <h2 class="section-title">Weather Forecast</h2>
 <div class="toggle">
   <a class="chip {{ 'active' if h == 0 else '' }}" href="/?h=0">Now</a>
   <a class="chip {{ 'active' if h == 3 else '' }}" href="/?h=3">+3h</a>
   <a class="chip {{ 'active' if h == 6 else '' }}" href="/?h=6">+6h</a>
 </div>
+</div>
+
+<div class="section-divider"></div>
+
+<section class="map-section">
+  <div class="map-header">
+    <h3 class="map-title"> Map</h3>
+    </div>
+    <div class="map-toggle toggle">
+      <button type="button" class="chip active" data-map="surf">Surf Score Map</button>
+      <button type="button" class="chip" data-map="windy">Windy Map</button>
+    </div>
+  
+
+  <div class="map-wrap map-stack">
+    <div id="map" class="map map-layer"></div>
+    <div class="windy-embed map-layer is-hidden">
+      <iframe
+        src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=in&metricTemp=°F&metricWind=kt&zoom=8&overlay=wind&product=ecmwf&level=surface&lat=43.791&lon=-87.578&message=true"
+        loading="lazy"
+        frameborder="0"
+        title="Windy Map"
+      ></iframe>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const map = L.map('map').setView([44.0, -87.7], 8);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18, attribution: '&copy; OpenStreetMap contributors'}).addTo(map);
+  const items = {{ items_js | tojson }};
+  items.forEach(it => {
+    const color = it.bucket === 'epic' ? 'green' : it.bucket === 'good' ? 'blue' : it.bucket === 'ok' ? 'orange' : 'red';
+    L.circleMarker([it.spot.lat, it.spot.lng], { radius: 8, color }).addTo(map)
+      .bindPopup(`<b>${it.spot.name}</b><br/>${it.reason}<br/><i>${it.bucket}</i>`);
+  });
+
+  const toggleButtons = document.querySelectorAll(".map-toggle .chip");
+  const windyLayer = document.querySelector(".windy-embed");
+  const surfLayer = document.getElementById("map");
+
+  toggleButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      toggleButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const showWindy = btn.dataset.map === "windy";
+      windyLayer.classList.toggle("is-hidden", !showWindy);
+      surfLayer.classList.toggle("is-hidden", showWindy);
+      if (!showWindy) {
+        map.invalidateSize();
+      }
+    });
+  });
+});
+</script>
 
 <section class="spots">
 {% for item in items %}
@@ -13,6 +71,92 @@
     <p class="meta">Score: <span class="pill {{ item.bucket }}">{{ item.bucket }}</span> ({{ '%.0f' % item.score }})</p>
     <p class="reason">{{ item.reason }}</p>
     <details><summary>Notes</summary><p>{{ item.spot.notes }}</p></details>
+    {% if item.spot.camera_url %}
+      {% set url = item.spot.camera_url %}
+      {% if "youtube.com" in url or "youtu.be" in url %}
+        {% if "youtu.be/" in url %}
+          {% set video_id = url.split("youtu.be/")[1].split("?")[0] %}
+        {% elif "v=" in url %}
+          {% set video_id = url.split("v=")[1].split("&")[0] %}
+        {% else %}
+          {% set video_id = "" %}
+        {% endif %}
+        {% if video_id %}
+          <div class="camera-embed camera-embed--iframe">
+            <iframe
+              src="https://www.youtube.com/embed/{{ video_id }}"
+              title="Live camera"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <p class="camera-link">
+            <a href="{{ url }}" target="_blank" rel="noopener">Open on YouTube</a>
+          </p>
+        {% else %}
+          <p class="camera-link">
+            <a href="{{ url }}" target="_blank" rel="noopener">Live camera</a>
+          </p>
+        {% endif %}
+      {% else %}
+        <p class="camera-link">
+          <a href="{{ url }}" target="_blank" rel="noopener">Live camera</a>
+        </p>
+      {% endif %}
+    {% endif %}
+
+    {% if item.spot.id == "north-pier-two-rivers" %}
+      <a class="camera-link-wrap" href="http://harborcam.two-rivers.org/camera/index.html#/video" target="_blank" rel="noopener">
+        <div class="camera-embed camera-embed--img">
+          <img
+            src="http://harborcam.two-rivers.org/mjpg/video.mjpg?camera=1&resolution=1920x1080"
+            alt="Two Rivers Harbor Cam"
+            loading="lazy"
+          />
+        </div>
+      </a>
+    {% endif %}
+
+    {% if item.spot.id == "port-washington" %}
+      <a class="camera-link-wrap" href="http://24.106.61.2:8081/camera/index.html#/video" target="_blank" rel="noopener">
+        <div class="camera-embed camera-embed--img">
+          <img
+            src="http://24.106.61.2:8081/mjpg/video.mjpg?audiocodec=aac&audiosamplerate=16000&audiobitrate=32000&camera=1&videoframeskipmode=empty&videozprofile=classic&resolution=1920x1080&audiodeviceid=0&audioinputid=0&timestamp=7&cachebust=5"
+            alt="Port Washington Harbor Cam"
+            loading="lazy"
+          />
+        </div>
+      </a>
+    {% endif %}
+
+  </div>
+
+
+  <div class="spot-middle">
+    {% if item.spot.id == "sheboygan-elbow" %}
+      <div class="windfinder-embed">
+        <script src="https://www.windfinder.com/widget/forecast/js/sheboygan?unit_wave=ft&unit_rain=in&unit_temperature=f&unit_wind=kts&unit_pressure=hPa&days=1&show_day=0"></script>
+        <noscript>
+          <a rel="nofollow" href="https://www.windfinder.com/forecast/sheboygan?utm_source=forecast&utm_medium=web&utm_campaign=homepageweather&utm_content=noscript-forecast">Wind forecast for Sheboygan Breakwater Lighthouse</a>
+          provided by
+          <a rel="nofollow" href="https://www.windfinder.com?utm_source=forecast&utm_medium=web&utm_campaign=homepageweather&utm_content=noscript-logo">windfinder.com</a>
+        </noscript>
+      </div>
+    {% endif %}
+
+    {% if item.spot.id == "north-pier-two-rivers" %}
+      <div class="windfinder-embed">
+        <script src="https://www.windfinder.com/widget/forecast/js/two_rivers_coast_guard?unit_wave=ft&unit_rain=in&unit_temperature=f&unit_wind=kts&unit_pressure=hPa&days=1&show_day=0"></script>
+        <noscript>
+          <a rel="nofollow" href="https://www.windfinder.com/forecast/two_rivers_coast_guard?utm_source=forecast&utm_medium=web&utm_campaign=homepageweather&utm_content=noscript-forecast">Wind forecast for Two Rivers Coast Guard</a>
+          provided by
+          <a rel="nofollow" href="https://www.windfinder.com?utm_source=forecast&utm_medium=web&utm_campaign=homepageweather&utm_content=noscript-logo">windfinder.com</a>
+        </noscript>
+      </div>
+
+    {% endif %}
+
   </div>
   <div class="spot-actions">
     <form method="post" action="/checkins" class="checkin-form">
@@ -29,17 +173,4 @@
 {% endfor %}
 </section>
 
-<section class="map-wrap"><div id="map" class="map"></div></section>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const map = L.map('map').setView([44.0, -87.7], 8);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18, attribution: '&copy; OpenStreetMap contributors'}).addTo(map);
-  const items = {{ items_js | tojson }};
-  items.forEach(it => {
-    const color = it.bucket === 'epic' ? 'green' : it.bucket === 'good' ? 'blue' : it.bucket === 'ok' ? 'orange' : 'red';
-    L.circleMarker([it.spot.lat, it.spot.lng], { radius: 8, color }).addTo(map)
-      .bindPopup(`<b>${it.spot.name}</b><br/>${it.reason}<br/><i>${it.bucket}</i>`);
-  });
-});
-</script>
 {% endblock %}

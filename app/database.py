@@ -18,7 +18,9 @@ def init_db():
           fetch_hints TEXT NOT NULL,
           min_wind_kts INTEGER NOT NULL,
           max_wind_kts INTEGER NOT NULL,
-          notes TEXT
+          notes TEXT,
+          camera_url TEXT,
+          quality_offset REAL
         );"""))
         conn.execute(text("""
         CREATE TABLE IF NOT EXISTS checkins (

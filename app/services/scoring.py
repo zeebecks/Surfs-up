@@ -24,6 +24,7 @@ def score_spot(spot, wind_dir: float, wind_kts: float, gust_kts: float, wave_hei
     if wave_height_m is not None:
         wave_bonus = max(0, min(20, (wave_height_m - 0.5) * 25))
     final = 0.40*best_alignment + 0.35*speed + 0.15*wind_quality + 0.10*stability + wave_bonus
+    final = final + getattr(spot, "quality_offset", 0)
     final = max(0, min(100, final))
     b = "bad" if final < 40 else "ok" if final < 60 else "good" if final < 80 else "epic"
     reason = f"{int(round(wind_kts))} kts @ {int(round(wind_dir))}°, gust {int(round(gust_kts))} — align {int(best_alignment)}/100"
