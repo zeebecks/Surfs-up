@@ -50,7 +50,7 @@ body {
   position: absolute;
   inset: 0;
   background-size: cover;
-  background-position: center;
+  background-position: 40% 40%;
   transition: opacity 0.3s ease;
 }
 
@@ -320,6 +320,18 @@ body {
   font-weight: 600;
   border: none;
 }
+
+.checkin-delete-btn {
+  display: inline-block;
+  margin-top: 8px;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 8px 12px;
+  text-decoration: none;
+}
+
 
 .spot-notes {
   margin: 10px 0 14px;

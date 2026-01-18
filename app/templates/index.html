@@ -41,7 +41,12 @@ document.addEventListener("DOMContentLoaded", function() {
   items.forEach(it => {
     const color = it.bucket === 'epic' ? 'green' : it.bucket === 'good' ? 'blue' : it.bucket === 'ok' ? 'orange' : 'red';
     L.circleMarker([it.spot.lat, it.spot.lng], { radius: 8, color }).addTo(map)
-      .bindPopup(`<b>${it.spot.name}</b><br/>${it.reason}<br/><i>${it.bucket}</i>`);
+.bindPopup(
+  `<b>${it.spot.name}</b><br/>${it.reason}<br/><i>${it.bucket}</i>` +
+  `<br/><strong>Notes:</strong> ${it.spot.notes || "No notes yet."}` +
+  `<br/><em class="popup-meta">Edited by ${it.spot.notes_edited_by || "unknown"} at ${it.spot.notes_edited_at || "unknown"}</em>`
+);
+
   });
 
   const toggleButtons = document.querySelectorAll(".map-toggle .chip");
@@ -60,6 +65,42 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
   });
+
+const params = new URLSearchParams(window.location.search);
+const checkinId = params.get("checkin_id");
+const token = params.get("token");
+const spotId = params.get("spot_id");
+
+if (params.get("deleted")) {
+  localStorage.removeItem("last_checkin");
+}
+
+
+if (checkinId && token && spotId) {
+  localStorage.setItem(
+    "last_checkin",
+    JSON.stringify({ checkinId, token, spotId })
+  );
+}
+
+const stored = localStorage.getItem("last_checkin");
+const active = (checkinId && token && spotId)
+  ? { checkinId, token, spotId }
+  : (stored ? JSON.parse(stored) : null);
+
+if (active) {
+  const card = document.querySelector(`.spot-card[data-spot-id="${active.spotId}"]`);
+  if (card) {
+    const form = card.querySelector(".checkin-form");
+    const del = card.querySelector(".checkin-delete-btn");
+    if (form && del) {
+      form.classList.add("is-hidden");
+      del.href = `/checkins/delete?id=${encodeURIComponent(active.checkinId)}&token=${encodeURIComponent(active.token)}`;
+      del.classList.remove("is-hidden");
+    }
+  }
+}
+
 
   document.querySelectorAll(".spot-notes").forEach(block => {
   const editBtn = block.querySelector(".spot-notes-edit-btn");
@@ -98,14 +139,14 @@ document.querySelectorAll(".spot-notes").forEach(block => {
 
 <section class="spots">
 {% for item in items %}
-<article class="spot-card">
+<article class="spot-card" data-spot-id="{{ item.spot.id }}">
   <div class="spot-main">
     <h2>{{ item.spot.name }}</h2>
     <p class="meta">Score: <span class="pill {{ item.bucket }}">{{ item.bucket }}</span> ({{ '%.0f' % item.score }})</p>
     <p class="reason">{{ item.reason }}</p>
 <details class="spot-notes">
   <summary>
-    <span class="spot-notes-title">Spot Notes for the day</span>
+    <span class="spot-notes-title">Spot Notes of the day</span>
   </summary>
 
   <div class="spot-notes-body">
@@ -225,6 +266,7 @@ document.querySelectorAll(".spot-notes").forEach(block => {
       <label>Visibility</label><select name="visibility"><option value="friends">Friends</option><option value="public">Public</option></select>
       <button type="submit">I'm going here today</button>
     </form>
+    <a class="checkin-delete-btn is-hidden" href="#">Delete my check‑in</a>
   </div>
 </article>
 {% endfor %}

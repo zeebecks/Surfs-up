@@ -8,6 +8,7 @@ from ..services.spot_repo import get_all_spots
 from ..services.forecast import get_forecast_for
 from ..services.scoring import score_spot
 from ..services.util import get_session
+import secrets
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -37,17 +38,36 @@ def home(request: Request):
 def create_checkin(user_id: str = Form(...), spot_id: str = Form(...),
                    arrive_start: str = Form(...), arrive_end: str = Form(...),
                    note: str = Form(""), visibility: str = Form("friends")):
+    delete_token = secrets.token_urlsafe(16)
     with get_session() as db:
-        db.execute(text("""
-            INSERT INTO checkins (user_id, spot_id, arrive_start, arrive_end, note, visibility)
-            VALUES (:user_id, :spot_id, :arrive_start, :arrive_end, :note, :visibility)
+        res = db.execute(text("""
+            INSERT INTO checkins (user_id, spot_id, arrive_start, arrive_end, note, visibility, delete_token)
+            VALUES (:user_id, :spot_id, :arrive_start, :arrive_end, :note, :visibility, :delete_token)
         """), {
             "user_id": user_id, "spot_id": spot_id,
             "arrive_start": arrive_start, "arrive_end": arrive_end,
-            "note": note, "visibility": visibility
+            "note": note, "visibility": visibility,
+            "delete_token": delete_token
         })
+        checkin_id = res.lastrowid
         db.commit()
-    return RedirectResponse(url="/", status_code=303)
+    return RedirectResponse(
+        url=f"/?spot_id={spot_id}&checkin_id={checkin_id}&token={delete_token}",
+        status_code=303
+    )
+
+
+@router.get("/checkins/delete")
+def delete_checkin(id: int, token: str):
+    with get_session() as db:
+        db.execute(text("""
+            DELETE FROM checkins
+            WHERE id = :id AND delete_token = :token
+        """), {"id": id, "token": token})
+        db.commit()
+    return RedirectResponse(url="/?deleted=1", status_code=303)
+
+
 
 @router.post("/spot-notes")
 def update_spot_notes(spot_id: str = Form(...),

@@ -33,5 +33,6 @@ def init_db():
           arrive_end TEXT,
           note TEXT,
           visibility TEXT DEFAULT 'friends',
+          delete_token TEXT,
           created_at TEXT DEFAULT CURRENT_TIMESTAMP
         );"""))
