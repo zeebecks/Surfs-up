@@ -321,6 +321,103 @@ body {
   border: none;
 }
 
+.spot-notes {
+  margin: 10px 0 14px;
+  border: 1px solid #1f2937;
+  border-radius: 10px;
+  background: #0b1220;
+  padding: 8px 10px;
+}
+
+.spot-notes summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.spot-notes summary::-webkit-details-marker {
+  display: none;
+}
+
+.spot-notes summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 8px;
+  transition: transform 0.2s ease;
+}
+
+.spot-notes[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.spot-notes-title {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.spot-notes-hint {
+  margin-left: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.spot-notes-body {
+  margin-top: 8px;
+}
+
+.spot-notes-display {
+  margin: 0 0 8px;
+}
+
+.spot-notes-meta {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.spot-notes-edit-btn {
+  background: var(--accent);
+  color: #001018;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.spot-notes-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.spot-notes-form input,
+.spot-notes-form textarea,
+.spot-notes-form button {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #374151;
+  background: #0f172a;
+  color: var(--text);
+}
+
+.spot-notes-form button {
+  background: var(--accent);
+  color: #001018;
+  font-weight: 600;
+  border: none;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.spot-notes-cancel-btn {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid #374151;
+}
+
+
 .pill {
   padding: 2px 8px;
   border-radius: 999px;

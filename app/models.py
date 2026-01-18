@@ -11,5 +11,7 @@ class Spot:
     min_wind_kts: int
     max_wind_kts: int
     notes: str = ""
+    notes_edited_by: str = ""
+    notes_edited_at: str = ""
     camera_url: str = ""
     quality_offset: float = 0.0

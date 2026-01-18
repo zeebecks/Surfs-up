@@ -25,6 +25,8 @@ def seed_spots_if_empty():
                     "minw": int(row["min_wind_kts"]),
                     "maxw": int(row["max_wind_kts"]),
                     "notes": row["notes"],
+                    "notes_edited_by": "",
+                    "notes_edited_at": "",
                     "camera_url": row.get("camera_url", ""),
                     "quality_offset": float(row.get("quality_offset") or 0)
                 })
@@ -40,6 +42,8 @@ def get_all_spots():
                 fetch_hints=json.loads(r["fetch_hints"]),
                 min_wind_kts=r["min_wind_kts"], max_wind_kts=r["max_wind_kts"],
                 notes=r["notes"] or "",
+                notes_edited_by=r["notes_edited_by"] or "",
+                notes_edited_at=r["notes_edited_at"] or "",
                 camera_url=r["camera_url"] or "",
                 quality_offset=r["quality_offset"] or 0
             ))

@@ -49,6 +49,28 @@ def create_checkin(user_id: str = Form(...), spot_id: str = Form(...),
         db.commit()
     return RedirectResponse(url="/", status_code=303)
 
+@router.post("/spot-notes")
+def update_spot_notes(spot_id: str = Form(...),
+                      notes: str = Form(""),
+                      editor_name: str = Form(...)):
+    edited_at = datetime.now().strftime("%Y-%m-%d %H:%M")
+    with get_session() as db:
+        db.execute(text("""
+            UPDATE spots
+            SET notes = :notes,
+                notes_edited_by = :edited_by,
+                notes_edited_at = :edited_at
+            WHERE id = :spot_id
+        """), {
+            "spot_id": spot_id,
+            "notes": notes,
+            "edited_by": editor_name,
+            "edited_at": edited_at
+        })
+        db.commit()
+    return RedirectResponse(url="/", status_code=303)
+
+
 @router.get("/crew", response_class=HTMLResponse)
 def crew(request: Request):
     with get_session() as db:

@@ -19,6 +19,8 @@ def init_db():
           min_wind_kts INTEGER NOT NULL,
           max_wind_kts INTEGER NOT NULL,
           notes TEXT,
+          notes_edited_by TEXT,
+          notes_edited_at TEXT
           camera_url TEXT,
           quality_offset REAL
         );"""))

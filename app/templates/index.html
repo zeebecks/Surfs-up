@@ -60,6 +60,39 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
   });
+
+  document.querySelectorAll(".spot-notes").forEach(block => {
+  const editBtn = block.querySelector(".spot-notes-edit-btn");
+  const form = block.querySelector(".spot-notes-form");
+  const display = block.querySelector(".spot-notes-display");
+
+  editBtn.addEventListener("click", () => {
+    form.classList.toggle("is-hidden");
+    display.classList.toggle("is-hidden");
+    editBtn.classList.toggle("is-hidden");
+  });
+});
+
+document.querySelectorAll(".spot-notes").forEach(block => {
+  const editBtn = block.querySelector(".spot-notes-edit-btn");
+  const form = block.querySelector(".spot-notes-form");
+  const display = block.querySelector(".spot-notes-display");
+  const cancelBtn = block.querySelector(".spot-notes-cancel-btn");
+
+  editBtn.addEventListener("click", () => {
+    form.classList.remove("is-hidden");
+    display.classList.add("is-hidden");
+    editBtn.classList.add("is-hidden");
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    form.classList.add("is-hidden");
+    display.classList.remove("is-hidden");
+    editBtn.classList.remove("is-hidden");
+  });
+});
+
+
 });
 </script>
 
@@ -70,7 +103,31 @@ document.addEventListener("DOMContentLoaded", function() {
     <h2>{{ item.spot.name }}</h2>
     <p class="meta">Score: <span class="pill {{ item.bucket }}">{{ item.bucket }}</span> ({{ '%.0f' % item.score }})</p>
     <p class="reason">{{ item.reason }}</p>
-    <details><summary>Notes</summary><p>{{ item.spot.notes }}</p></details>
+<details class="spot-notes">
+  <summary>
+    <span class="spot-notes-title">Spot Notes for the day</span>
+  </summary>
+
+  <div class="spot-notes-body">
+    <p class="spot-notes-display">{{ item.spot.notes or "No notes yet." }}</p>
+    {% if item.spot.notes_edited_by %}
+      <p class="spot-notes-meta">Notes edited by {{ item.spot.notes_edited_by }} at {{ item.spot.notes_edited_at }}</p>
+    {% endif %}
+
+    <button type="button" class="spot-notes-edit-btn">Edit Notes of the day</button>
+
+    <form method="post" action="/spot-notes" class="spot-notes-form is-hidden">
+      <input type="hidden" name="spot_id" value="{{ item.spot.id }}">
+      <label>Your name</label>
+      <input type="text" name="editor_name" placeholder="your handle" required>
+      <label>Notes</label>
+      <textarea name="notes" rows="6" placeholder="Offshore wind today, actually looking really good and clean.">{{ item.spot.notes }}</textarea>
+      <button type="submit">Save notes of the day</button>
+      <button type="button" class="spot-notes-cancel-btn">Cancel</button>
+    </form>
+  </div>
+</details>
+
     {% if item.spot.camera_url %}
       {% set url = item.spot.camera_url %}
       {% if "youtube.com" in url or "youtu.be" in url %}
@@ -162,11 +219,11 @@ document.addEventListener("DOMContentLoaded", function() {
     <form method="post" action="/checkins" class="checkin-form">
       <input type="hidden" name="spot_id" value="{{ item.spot.id }}">
       <label>User</label><input type="text" name="user_id" placeholder="your handle" required>
-      <label>Arrive start</label><input type="datetime-local" name="arrive_start" required>
-      <label>Arrive end</label><input type="datetime-local" name="arrive_end" required>
+      <label>Arrive start time</label><input type="time" name="arrive_start" required>
+      <label>Leave time</label><input type="time" name="arrive_end" required>
       <label>Note</label><input type="text" name="note" placeholder="board, car space, etc.">
       <label>Visibility</label><select name="visibility"><option value="friends">Friends</option><option value="public">Public</option></select>
-      <button type="submit">I'm going here</button>
+      <button type="submit">I'm going here today</button>
     </form>
   </div>
 </article>
