@@ -8,4 +8,5 @@ Run:
 Notes:
 - Index page has **Now / +3h / +6h** toggles (query param `h`).
 - Forecast uses **NWS hourly** with a fallback mock if network fails.
-- Edit spots in `app/data/spots.csv`. Delete `surf.db` to reseed.
+- Users may edit spot notes, these will constantly replace each other, user must add their name, and date/time will be tracked of edits
+- Users may check-in on a spot, which adds their name and details to the crew page.  Doing so gives them a delete option to remove that check-in on the Spots page.  The delete token persists in user's local storage.
