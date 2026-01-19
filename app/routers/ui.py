@@ -9,6 +9,8 @@ from ..services.forecast import get_forecast_for
 from ..services.scoring import score_spot
 from ..services.util import get_session
 import secrets
+import httpx
+from fastapi.responses import StreamingResponse
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -101,3 +103,20 @@ def crew(request: Request):
         """))
         checkins = [dict(r) for r in rows.mappings().all()]
     return templates.TemplateResponse("crew.html", {"request": request, "checkins": checkins})
+
+
+@router.get("/camera/two-rivers")
+def two_rivers_camera():
+    url = "http://harborcam.two-rivers.org/mjpg/video.mjpg?camera=1&resolution=1920x1080"
+
+    def iter_stream():
+        with httpx.stream("GET", url, timeout=None) as r:
+            r.raise_for_status()
+            for chunk in r.iter_bytes():
+                yield chunk
+
+    with httpx.stream("GET", url, timeout=None) as r:
+        r.raise_for_status()
+        content_type = r.headers.get("content-type", "multipart/x-mixed-replace")
+    return StreamingResponse(iter_stream(), media_type=content_type)
+
