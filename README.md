@@ -1,12 +1,21 @@
-# Lake Michigan Surf MVP — with NWS wind + time toggles
-Run:
-1) `python -m venv .venv && source .venv/bin/activate`  (Windows: `.venv\Scripts\activate`)
+# Lake Michigan Surf MVP
+Simple surf-forecast and crew check-in MVP for Lake Michigan spots.
+
+## Features
+- NWS hourly wind forecast with a local fallback when the network is unavailable.
+- Time toggles for now, +3h, and +6h (query param `h`).
+- Spot notes with name and timestamp (latest edit wins).
+- Crew check-ins with client-side delete token stored in local storage.
+- SQLite persistence with seed data from `app/data/spots.csv`.
+
+## Getting started
+1) `python -m venv .venv && source .venv/bin/activate` (Windows: `.venv\Scripts\activate`)
 2) `pip install -r requirements.txt`
-3) (Optional) set a contact email for NWS: `export NWS_USER_AGENT="LakeSurf/0.1 (you@example.com)"`
+3) Optional: set a contact email for NWS
+   - `export NWS_USER_AGENT="LakeSurf/0.1 (you@example.com)"`
 4) `python server.py` and open http://localhost:8000
 
-Notes:
-- Index page has **Now / +3h / +6h** toggles (query param `h`).
-- Forecast uses **NWS hourly** with a fallback mock if network fails.
-- Users may edit spot notes, these will constantly replace each other, user must add their name, and date/time will be tracked of edits
-- Users may check-in on a spot, which adds their name and details to the crew page.  Doing so gives them a delete option to remove that check-in on the Spots page.  The delete token persists in user's local storage.
+## Notes
+- Forecast data uses the NWS hourly endpoint and gracefully falls back if the request fails.
+- Check-in deletion is only available on the same device because the token is stored in local storage.
+- The SQLite database is created on first run and seeded from `app/data/spots.csv`.
