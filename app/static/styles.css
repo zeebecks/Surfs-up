@@ -524,3 +524,31 @@ button.chip {
   border-top: 1px solid #1f2937;
   margin-top: 24px;
 }
+
+.app-footer {
+  margin-top: 32px;
+  padding: 16px 20px 28px;
+  border-top: 1px solid #1f2937;
+  color: #9aa1a9;
+  font-size: 1rem;
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-line {
+  margin: 6px 0;
+}
+
+.app-footer a {
+  color: #a5adb6;
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  color: #c3c9d1;
+  text-decoration: underline;
+}

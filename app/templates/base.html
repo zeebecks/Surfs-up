@@ -12,13 +12,28 @@
   <div class="banner-overlay">
     <div class="header-inner">
   <!-- <img class="site-logo" src="/static/favicon.png" alt="Site logo"> -->
-  <h1 class="site-title">Lake Michigan Surf</h1>
+  <h1 class="site-title">Surf's UP - Lake Michigan</h1>
   <nav><a href="/">Spots</a><a href="/crew">Crew</a></nav>
 </div>
   </div>
 </header>
 <main class="container">{% block content %}{% endblock %}</main>
-<footer class="footer"><small>Prototype • Powered by "Two Rivers Delivers LLC" </small></footer>
+<!-- <footer class="footer"><small>Prototype • Powered by "Two Rivers Delivers LLC" </small></footer> -->
+ <footer class="app-footer">
+  <div class="footer-inner">
+    <p class="footer-line">
+      © 2026 Surf’s UP – Lake Michigan
+    </p>
+    <p class="footer-line">
+      Wind data: 
+      <a href="https://www.noaa.gov" target="_blank" rel="noopener noreferrer">NOAA</a> · 
+      Forecast models: 
+      <a href="https://www.weather.gov" target="_blank" rel="noopener noreferrer">NWS</a> · 
+      <a href="https://github.com/zeebecks" target="_blank" rel="noopener noreferrer">Source</a> · 
+      <a href="https://www.linkedin.com/in/zacharybecka/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    </p>
+  </div>
+</footer>
 <script>
 const bannerImages = [
   "/static/banner-1.jpeg",
