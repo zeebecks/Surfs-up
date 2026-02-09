@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18, attribution: '&copy; OpenStreetMap contributors'}).addTo(map);
   const items = {{ items_js | tojson }};
   items.forEach(it => {
-    const color = it.bucket === 'epic' ? 'green' : it.bucket === 'good' ? 'blue' : it.bucket === 'ok' ? 'orange' : 'red';
+    const color = it.bucket === 'epic' ? '#7c3aed' : it.bucket === 'good' ? 'green' : it.bucket === 'ok' ? 'orange' : 'red';
     L.circleMarker([it.spot.lat, it.spot.lng], { radius: 8, color }).addTo(map)
 .bindPopup(
   `<b>${it.spot.name}</b><br/>${it.reason}<br/><i>${it.bucket}</i>` +
