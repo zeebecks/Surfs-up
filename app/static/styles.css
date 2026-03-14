@@ -75,12 +75,14 @@ body {
   left: 50%;
   transform: translateX(-50%);
   bottom: 120px;
-  /* vertical placement within banner */
   font-size: clamp(2.2rem, 5vw, 3.5rem);
   font-weight: 800;
   letter-spacing: .02em;
   text-align: center;
-  white-space: nowrap;
+  width: min(100% - 32px, 20ch);
+  margin: 0;
+  line-height: .95;
+  text-wrap: balance;
 }
 
 .header-inner {
@@ -139,6 +141,28 @@ body {
   background: rgba(56,189,248,.25);
   color: #fff;
   border-color: rgba(56,189,248,.6);
+}
+
+@media (max-width: 640px) {
+  .banner {
+    height: 240px;
+  }
+
+  .site-title {
+    bottom: 108px;
+    width: min(100% - 24px, 12ch);
+    font-size: clamp(2rem, 9vw, 2.75rem);
+  }
+
+  .header nav {
+    top: 18px;
+    right: 18px;
+    gap: 10px;
+  }
+
+  .header nav a {
+    padding: 8px 14px;
+  }
 }
 
 .forecast-header {
@@ -456,6 +480,28 @@ body {
 
 .reason {
   color: var(--muted);
+}
+
+.wind-direction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  margin-right: 0.45rem;
+  border: 1px solid #374151;
+  border-radius: 999px;
+  background: #0b1220;
+  color: #7dd3fc;
+  vertical-align: middle;
+}
+
+.wind-direction__icon {
+  width: 1rem;
+  height: 1rem;
+  display: block;
+  fill: currentColor;
+  transform-origin: 50% 50%;
 }
 
 .map-wrap {

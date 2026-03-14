@@ -143,7 +143,19 @@ document.querySelectorAll(".spot-notes").forEach(block => {
   <div class="spot-main">
     <h2>{{ item.spot.name }}</h2>
     <p class="meta">Score: <span class="pill {{ item.bucket }}">{{ item.bucket }}</span> ({{ '%.0f' % item.score }})</p>
-    <p class="reason">{{ item.reason }}</p>
+    <p class="reason">
+      <span class="wind-direction" title="Wind direction {{ item.wind_dir_deg }} degrees">
+        <svg
+          class="wind-direction__icon"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          style="transform: rotate({{ item.wind_dir_deg + 180 }}deg);"
+        >
+          <path d="M12 4 L18 11 H14 V20 H10 V11 H6 Z" />
+        </svg>
+      </span>
+      <span>{{ item.reason }}</span>
+    </p>
 <details class="spot-notes">
   <summary>
     <span class="spot-notes-title">Spot Notes of the day</span>
@@ -220,7 +232,7 @@ document.querySelectorAll(".spot-notes").forEach(block => {
       <a class="camera-link-wrap" href="http://24.106.61.2:8081/camera/index.html#/video" target="_blank" rel="noopener">
         <div class="camera-embed camera-embed--img">
           <img
-            src="http://24.106.61.2:8081/mjpg/video.mjpg?audiocodec=aac&audiosamplerate=16000&audiobitrate=32000&camera=1&videoframeskipmode=empty&videozprofile=classic&resolution=1920x1080&audiodeviceid=0&audioinputid=0&timestamp=7&cachebust=5"
+            src="/camera/port-washington"
             alt="Port Washington Harbor Cam"
             loading="lazy"
           />

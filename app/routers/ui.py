@@ -30,9 +30,9 @@ def home(request: Request):
     for s in spots:
         fc = get_forecast_for(s.lat, s.lng, at=at)
         score, bucket, reason = score_spot(s, fc.wind_dir_deg, fc.wind_kts, fc.gust_kts, fc.wave_height_m)
-        reason = f"{reason} · {fc.source.upper()}"
-        items.append({ "spot": s, "score": score, "bucket": bucket, "reason": reason })
-        items_js.append({ "spot": asdict(s), "score": score, "bucket": bucket, "reason": reason })
+        reason = f"{reason}"
+        items.append({ "spot": s, "score": score, "bucket": bucket, "reason": reason, "wind_dir_deg": fc.wind_dir_deg })
+        items_js.append({ "spot": asdict(s), "score": score, "bucket": bucket, "reason": reason, "wind_dir_deg": fc.wind_dir_deg })
     items.sort(key=lambda x: x["score"], reverse=True)
     return templates.TemplateResponse("index.html", {"request": request, "items": items, "items_js": items_js, "h": h})
 
@@ -120,3 +120,18 @@ def two_rivers_camera():
         content_type = r.headers.get("content-type", "multipart/x-mixed-replace")
     return StreamingResponse(iter_stream(), media_type=content_type)
 
+
+@router.get("/camera/port-washington")
+def port_washington_camera():
+    url = "http://24.106.61.2:8081/mjpg/video.mjpg?audiocodec=aac&audiosamplerate=16000&audiobitrate=32000&camera=1&videoframeskipmode=empty&videozprofile=classic&resolution=1920x1080&audiodeviceid=0&audioinputid=0&timestamp=7&cachebust=5"
+
+    def iter_stream():
+        with httpx.stream("GET", url, timeout=None) as r:
+            r.raise_for_status()
+            for chunk in r.iter_bytes():
+                yield chunk
+
+    with httpx.stream("GET", url, timeout=None) as r:
+        r.raise_for_status()
+        content_type = r.headers.get("content-type", "multipart/x-mixed-replace")
+    return StreamingResponse(iter_stream(), media_type=content_type)
