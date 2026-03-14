@@ -411,6 +411,12 @@ body {
   font-size: 12px;
 }
 
+.spot-notes-error {
+  margin: 0 0 10px;
+  color: #fca5a5;
+  font-size: 13px;
+}
+
 .spot-notes-edit-btn {
   background: var(--accent);
   color: #001018;

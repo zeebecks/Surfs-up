@@ -3,6 +3,8 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from dataclasses import asdict
 from datetime import datetime, timezone, timedelta
+import hmac
+import os
 from sqlalchemy import text
 from ..services.spot_repo import get_all_spots
 from ..services.forecast import get_forecast_for
@@ -23,6 +25,7 @@ def home(request: Request):
         h = 0
     if h not in (0,3,6):
         h = 0
+    notes_error_spot = request.query_params.get("notes_error_spot", "")
     at = datetime.now(timezone.utc) + timedelta(hours=h)
 
     spots = get_all_spots()
@@ -34,7 +37,13 @@ def home(request: Request):
         items.append({ "spot": s, "score": score, "bucket": bucket, "reason": reason, "wind_dir_deg": fc.wind_dir_deg })
         items_js.append({ "spot": asdict(s), "score": score, "bucket": bucket, "reason": reason, "wind_dir_deg": fc.wind_dir_deg })
     items.sort(key=lambda x: x["score"], reverse=True)
-    return templates.TemplateResponse("index.html", {"request": request, "items": items, "items_js": items_js, "h": h})
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "items": items,
+        "items_js": items_js,
+        "h": h,
+        "notes_error_spot": notes_error_spot,
+    })
 
 @router.post("/checkins")
 def create_checkin(user_id: str = Form(...), spot_id: str = Form(...),
@@ -74,7 +83,11 @@ def delete_checkin(id: int, token: str):
 @router.post("/spot-notes")
 def update_spot_notes(spot_id: str = Form(...),
                       notes: str = Form(""),
-                      editor_name: str = Form(...)):
+                      editor_name: str = Form(...),
+                      password: str = Form(...)):
+    expected_password = os.getenv("NOTES_ADMIN_PASSWORD", "")
+    if not expected_password or not hmac.compare_digest(password, expected_password):
+        return RedirectResponse(url=f"/?notes_error_spot={spot_id}", status_code=303)
     edited_at = datetime.now().strftime("%Y-%m-%d %H:%M")
     with get_session() as db:
         db.execute(text("""

@@ -70,9 +70,17 @@ const params = new URLSearchParams(window.location.search);
 const checkinId = params.get("checkin_id");
 const token = params.get("token");
 const spotId = params.get("spot_id");
+const notesErrorSpot = params.get("notes_error_spot");
 
 if (params.get("deleted")) {
   localStorage.removeItem("last_checkin");
+}
+
+if (notesErrorSpot) {
+  params.delete("notes_error_spot");
+  const nextQuery = params.toString();
+  const nextUrl = nextQuery ? `${window.location.pathname}?${nextQuery}` : window.location.pathname;
+  window.history.replaceState({}, "", nextUrl);
 }
 
 
@@ -162,19 +170,25 @@ document.querySelectorAll(".spot-notes").forEach(block => {
   </summary>
 
   <div class="spot-notes-body">
-    <p class="spot-notes-display">{{ item.spot.notes or "No notes yet." }}</p>
+    <p class="spot-notes-display {{ 'is-hidden' if notes_error_spot == item.spot.id else '' }}">{{ item.spot.notes or "No notes yet." }}</p>
     {% if item.spot.notes_edited_by %}
       <p class="spot-notes-meta">Notes edited by {{ item.spot.notes_edited_by }} at {{ item.spot.notes_edited_at }}</p>
     {% endif %}
 
-    <button type="button" class="spot-notes-edit-btn">Edit Notes of the day</button>
+    {% if notes_error_spot == item.spot.id %}
+      <p class="spot-notes-error">Wrong notes password. The update was not saved.</p>
+    {% endif %}
 
-    <form method="post" action="/spot-notes" class="spot-notes-form is-hidden">
+    <button type="button" class="spot-notes-edit-btn {{ 'is-hidden' if notes_error_spot == item.spot.id else '' }}">Edit Notes of the day</button>
+
+    <form method="post" action="/spot-notes" class="spot-notes-form {{ '' if notes_error_spot == item.spot.id else 'is-hidden' }}">
       <input type="hidden" name="spot_id" value="{{ item.spot.id }}">
       <label>Your name</label>
       <input type="text" name="editor_name" placeholder="your handle" required>
       <label>Notes</label>
       <textarea name="notes" rows="6" placeholder="Offshore wind today, actually looking really good and clean.">{{ item.spot.notes }}</textarea>
+      <label>Notes password</label>
+      <input type="password" name="password" placeholder="shared notes password" required>
       <button type="submit">Save notes of the day</button>
       <button type="button" class="spot-notes-cancel-btn">Cancel</button>
     </form>
