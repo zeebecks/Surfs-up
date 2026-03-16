@@ -40,9 +40,22 @@ document.addEventListener("DOMContentLoaded", function() {
   const items = {{ items_js | tojson }};
   items.forEach(it => {
     const color = it.bucket === 'epic' ? '#7c3aed' : it.bucket === 'good' ? 'green' : it.bucket === 'ok' ? 'orange' : 'red';
+    const popupReason = `
+      <span class="popup-wind-direction" title="Wind direction ${it.wind_dir_deg} degrees">
+        <svg
+          class="popup-wind-direction__icon"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          style="transform: rotate(${it.wind_dir_deg + 180}deg);"
+        >
+          <path d="M12 4 L18 11 H14 V20 H10 V11 H6 Z"></path>
+        </svg>
+      </span>
+      <span>${it.reason}</span>
+    `;
     L.circleMarker([it.spot.lat, it.spot.lng], { radius: 8, color }).addTo(map)
 .bindPopup(
-  `<b>${it.spot.name}</b><br/>${it.reason}<br/><i>${it.bucket}</i>` +
+  `<b>${it.spot.name}</b><br/><span class="popup-reason">${popupReason}</span><br/><i>${it.bucket}</i>` +
   `<br/><strong>Notes:</strong> ${it.spot.notes || "No notes yet."}` +
   `<br/><em class="popup-meta">Edited by ${it.spot.notes_edited_by || "unknown"} at ${it.spot.notes_edited_at || "unknown"}</em>`
 );
@@ -150,6 +163,9 @@ document.querySelectorAll(".spot-notes").forEach(block => {
 <article class="spot-card" data-spot-id="{{ item.spot.id }}">
   <div class="spot-main">
     <h2>{{ item.spot.name }}</h2>
+    {% if item.checkin_count %}
+      <a class="spot-crew-count" href="/crew">{{ item.checkin_count }} {{ "person" if item.checkin_count == 1 else "people" }} going here today</a>
+    {% endif %}
     <p class="meta">Score: <span class="pill {{ item.bucket }}">{{ item.bucket }}</span> ({{ '%.0f' % item.score }})</p>
     <p class="reason">
       <span class="wind-direction" title="Wind direction {{ item.wind_dir_deg }} degrees">

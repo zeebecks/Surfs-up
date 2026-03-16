@@ -6,6 +6,7 @@ from datetime import datetime, timezone, timedelta
 import hmac
 import os
 from sqlalchemy import text
+from zoneinfo import ZoneInfo
 from ..services.spot_repo import get_all_spots
 from ..services.forecast import get_forecast_for
 from ..services.scoring import score_spot
@@ -16,6 +17,36 @@ from fastapi.responses import StreamingResponse
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
+APP_TIMEZONE = ZoneInfo(os.getenv("APP_TIMEZONE", "America/Chicago"))
+
+
+def _today_utc_bounds() -> tuple[str, str]:
+    now_local = datetime.now(APP_TIMEZONE)
+    start_local = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_local = start_local + timedelta(days=1)
+    start_utc = start_local.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    end_utc = end_local.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    return start_utc, end_utc
+
+
+def _purge_stale_checkins(db) -> None:
+    start_utc, _ = _today_utc_bounds()
+    db.execute(text("""
+        DELETE FROM checkins
+        WHERE created_at < :start_utc
+    """), {"start_utc": start_utc})
+
+
+def _today_checkin_counts(db) -> dict[str, int]:
+    start_utc, end_utc = _today_utc_bounds()
+    rows = db.execute(text("""
+        SELECT spot_id, COUNT(*) AS total
+        FROM checkins
+        WHERE created_at >= :start_utc
+          AND created_at < :end_utc
+        GROUP BY spot_id
+    """), {"start_utc": start_utc, "end_utc": end_utc})
+    return {row.spot_id: row.total for row in rows}
 
 @router.get("/", response_class=HTMLResponse)
 def home(request: Request):
@@ -28,14 +59,20 @@ def home(request: Request):
     notes_error_spot = request.query_params.get("notes_error_spot", "")
     at = datetime.now(timezone.utc) + timedelta(hours=h)
 
+    with get_session() as db:
+        _purge_stale_checkins(db)
+        checkin_counts = _today_checkin_counts(db)
+        db.commit()
+
     spots = get_all_spots()
     items = []; items_js = []
     for s in spots:
         fc = get_forecast_for(s.lat, s.lng, at=at)
         score, bucket, reason = score_spot(s, fc.wind_dir_deg, fc.wind_kts, fc.gust_kts, fc.wave_height_m)
         reason = f"{reason}"
-        items.append({ "spot": s, "score": score, "bucket": bucket, "reason": reason, "wind_dir_deg": fc.wind_dir_deg })
-        items_js.append({ "spot": asdict(s), "score": score, "bucket": bucket, "reason": reason, "wind_dir_deg": fc.wind_dir_deg })
+        checkin_count = checkin_counts.get(s.id, 0)
+        items.append({ "spot": s, "score": score, "bucket": bucket, "reason": reason, "wind_dir_deg": fc.wind_dir_deg, "checkin_count": checkin_count })
+        items_js.append({ "spot": asdict(s), "score": score, "bucket": bucket, "reason": reason, "wind_dir_deg": fc.wind_dir_deg, "checkin_count": checkin_count })
     items.sort(key=lambda x: x["score"], reverse=True)
     return templates.TemplateResponse("index.html", {
         "request": request,
@@ -51,6 +88,7 @@ def create_checkin(user_id: str = Form(...), spot_id: str = Form(...),
                    note: str = Form(""), visibility: str = Form("friends")):
     delete_token = secrets.token_urlsafe(16)
     with get_session() as db:
+        _purge_stale_checkins(db)
         res = db.execute(text("""
             INSERT INTO checkins (user_id, spot_id, arrive_start, arrive_end, note, visibility, delete_token)
             VALUES (:user_id, :spot_id, :arrive_start, :arrive_end, :note, :visibility, :delete_token)
@@ -109,12 +147,17 @@ def update_spot_notes(spot_id: str = Form(...),
 @router.get("/crew", response_class=HTMLResponse)
 def crew(request: Request):
     with get_session() as db:
+        start_utc, end_utc = _today_utc_bounds()
+        _purge_stale_checkins(db)
         rows = db.execute(text("""
             SELECT c.*, s.name as spot_name FROM checkins c
             JOIN spots s ON s.id = c.spot_id
+            WHERE c.created_at >= :start_utc
+              AND c.created_at < :end_utc
             ORDER BY c.arrive_start ASC
-        """))
+        """), {"start_utc": start_utc, "end_utc": end_utc})
         checkins = [dict(r) for r in rows.mappings().all()]
+        db.commit()
     return templates.TemplateResponse("crew.html", {"request": request, "checkins": checkins})
 
 
