@@ -5,9 +5,6 @@ from ..models import Spot
 SPOTS_CSV = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "spots.csv")
 def seed_spots_if_empty():
     with get_session() as db:
-        count = db.execute(text("SELECT COUNT(1) FROM spots")).scalar()
-        if count and count > 0:
-            return
         with open(SPOTS_CSV, newline='', encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:

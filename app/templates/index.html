@@ -270,6 +270,18 @@ document.querySelectorAll(".spot-notes").forEach(block => {
       </a>
     {% endif %}
 
+    {% if item.spot.id == "kewaunee" %}
+      <a class="camera-link-wrap" href="{{ item.spot.camera_url }}" target="_blank" rel="noopener">
+        <div class="camera-embed camera-embed--img">
+          <img
+            src="/camera/kewaunee"
+            alt="Kewaunee Harbor Cam"
+            loading="lazy"
+          />
+        </div>
+      </a>
+    {% endif %}
+
   </div>
 
 

@@ -14,6 +14,7 @@ from ..services.util import get_session
 import secrets
 import httpx
 from fastapi.responses import StreamingResponse
+from urllib.parse import urlparse
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -180,6 +181,29 @@ def two_rivers_camera():
 @router.get("/camera/port-washington")
 def port_washington_camera():
     url = "http://24.106.61.2:8081/mjpg/video.mjpg?audiocodec=aac&audiosamplerate=16000&audiobitrate=32000&camera=1&videoframeskipmode=empty&videozprofile=classic&resolution=1920x1080&audiodeviceid=0&audioinputid=0&timestamp=7&cachebust=5"
+
+    def iter_stream():
+        with httpx.stream("GET", url, timeout=None) as r:
+            r.raise_for_status()
+            for chunk in r.iter_bytes():
+                yield chunk
+
+    with httpx.stream("GET", url, timeout=None) as r:
+        r.raise_for_status()
+        content_type = r.headers.get("content-type", "multipart/x-mixed-replace")
+    return StreamingResponse(iter_stream(), media_type=content_type)
+
+
+@router.get("/camera/kewaunee")
+def kewaunee_camera():
+    spots = get_all_spots()
+    spot = next((s for s in spots if s.id == "kewaunee"), None)
+    if not spot or not spot.camera_url:
+        return RedirectResponse(url="/", status_code=307)
+
+    parsed = urlparse(spot.camera_url)
+    base_url = f"{parsed.scheme}://{parsed.netloc}"
+    url = f"{base_url}/mjpg/video.mjpg"
 
     def iter_stream():
         with httpx.stream("GET", url, timeout=None) as r:
