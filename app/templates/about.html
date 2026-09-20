@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Sources & scoring · Lake Surf{% endblock %}
+{% block content %}
+<div class="page-heading">
+<p class="eyebrow">BUILT FOR OUR SIDE OF THE LAKE</p>
+<h1>A clearer picture.<br>One source at a time.</h1>
+<p>Lake Surf brings together the resources we use to check the Wisconsin shore. Built by Zach, for the days when there might be something worth chasing.</p>
+</div>
+<div class="about-grid">
+<section class="prose-panel">
+<h2>Start with the wind.</h2>
+<p>For Lake Michigan, wind speed and direction are the first things to watch. The northern and southern offshore buoys give a wider view of what is blowing across the lake. Coastal stations add local context.</p>
+<p>A wind-only station is still useful. Wave height, period, and temperature appear when available, each with its own observation time. Missing does not mean zero.</p>
+<h2>Observed vs. forecast</h2>
+<p>
+<strong>Observations</strong> are measurements from a station at a particular place and time. They stay tied to that time even when you select a future forecast.</p>
+<p>
+<strong>Forecasts</strong> are model or forecast-service estimates. “Now” means the forecast for the current hour, not a beach observation. Windy has its own independent forecast controls.</p>
+<p>Station measurements older than two hours are marked stale. Forecasts retrieved over three hours ago, or whose latest refresh failed, are shown as stale and do not receive a rating. Retrieval time is when this app checked the source, not when the underlying model was run.</p>
+<h2>Local knowledge still matters</h2>
+<p>Offshore wave heights are not breaking-wave heights. Piers, shelter, wind shifts, and local exposure can change what you find at the water. The original spot notes are a starting point; dated field reports help fill in the picture.</p>
+</section>
+<section class="prose-panel sources-panel">
+<p class="eyebrow">THE SOURCE LIST</p>
+<h2>Credit where it’s due.</h2>
+<a href="https://www.weather.gov/documentation/services-web-api" target="_blank" rel="noopener noreferrer">
+<strong>National Weather Service ↗</strong>
+<span>Primary hourly wind forecasts for our six spots.</span>
+</a>
+<a href="https://www.ndbc.noaa.gov/" target="_blank" rel="noopener noreferrer">
+<strong>NOAA NDBC ↗</strong>
+<span>Northern and southern Michigan buoys, Sheboygan and Port Washington coastal stations.</span>
+</a>
+<a href="https://open-meteo.com/en/docs/marine-weather-api" target="_blank" rel="noopener noreferrer">
+<strong>Open-Meteo Marine / DWD ↗</strong>
+<span>Modeled wave height, period, and direction. Nearby spots may use the same model cell.</span>
+</a>
+<a href="https://open-meteo.com/en/docs" target="_blank" rel="noopener noreferrer">
+<strong>Open-Meteo Weather ↗</strong>
+<span>Fallback wind forecasts when NWS is unavailable; identified on the forecast.</span>
+</a>
+<a href="https://www.windy.com/" target="_blank" rel="noopener noreferrer">
+<strong>Windy ↗</strong>
+<span>An independent view of weather across the lake.</span>
+</a>
+<a href="https://www.windfinder.com/" target="_blank" rel="noopener noreferrer">
+<strong>Windfinder ↗</strong>
+<span>Additional forecasts linked from supported spot pages.</span>
+</a>
+<a href="https://seagull.glos.org/" target="_blank" rel="noopener noreferrer">
+<strong>GLOS Seagull ↗</strong>
+<span>Explore additional local observing platforms.</span>
+</a>
+<p class="section-note">Maps © OpenStreetMap contributors. Camera feeds belong to their original operators; source links are provided beside each camera.</p>
+</section>
+</div>
+<section id="scoring" class="scoring-explainer">
+<p class="eyebrow">EXPERIMENTAL / VERSION 2</p>
+<h2>A rating you can question.</h2>
+<p class="lede">Useful estimates should come with an explanation. These ratings are transparent heuristics, still awaiting calibration against real sessions.</p>
+<div class="explain-grid">
+<div>
+<span class="step-number">01</span>
+<h3>Wind setup</h3>
+<p>Compares wind direction with the spot’s configured fetch preferences, scales with wind strength, and accounts for excessive wind and gustiness. Calm wind cannot get a high setup rating. Useful with wind data alone; it describes building potential.</p>
+</div>
+<div>
+<span class="step-number">02</span>
+<h3>Surf estimate</h3>
+<p>Requires wind plus modeled wave height, period, and direction. Combines wave energy, shoreline exposure, period, and onshore/cross-shore/offshore surface conditions. Flat modeled water cannot receive a favorable surf score.</p>
+</div>
+<div>
+<span class="step-number">03</span>
+<h3>Know the limits</h3>
+<p>Confidence is separate from the number. Buoys provide context and are not silently substituted for a beach forecast. Wind history, precise fetch distance, local shelter, and wave arrival timing are not yet modeled.</p>
+</div>
+</div>
+<p class="section-note">Bands: 0–34 poor · 35–59 mixed · 60–79 promising · 80–100 favorable. Sorting by wind setup compares wind scores; sorting by surf estimate compares only available surf estimates. Spots without the relevant rating appear last.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% macro wind_arrow(direction) %}
+{% if direction is not none %}<span class="wind-arrow" style="--direction: {{ direction + 180 }}deg" title="Wind from {{ direction | cardinal }} ({{ direction | round | int }}°); arrow shows travel direction" aria-label="Wind from {{ direction | cardinal }}">↑</span>{% else %}<span class="wind-arrow missing" aria-label="Direction unavailable">—</span>{% endif %}
+{% endmacro %}
+
+{% macro reading(measurement, unit='', factor=1, offset=0, digits=0) %}
+<span class="measurement-value">{{ ('%.*f' | format(digits, measurement.value * factor + offset)) if measurement else '—' }}{% if measurement %}<small>{{ unit }}</small>{% endif %}</span>
+{% if measurement %}<time datetime="{{ measurement.time }}" title="{{ measurement.time | localtime }}" class="reading-age {{ measurement.status }}">{{ measurement.time | age }}{% if measurement.status == 'stale' %} · stale{% endif %}</time>{% else %}<span class="reading-age">Not reported</span>{% endif %}
+{% endmacro %}
+
+{% macro station_card(station, compact=false) %}
+{% set wind = station.measurements.get('wind_kts') %}{% set direction = station.measurements.get('wind_dir_deg') %}
+<article class="station-card {{ 'compact' if compact else '' }}" id="station-{{ station.id }}">
+  <div class="card-eyebrow">
+<span>{{ station.kind }} <span class="mono">/ {{ station.id }}</span>
+</span>
+<span class="status {{ station.status }}">{{ 'Reporting wind' if station.status == 'fresh' else 'Sample data' if station.status == 'demo' else 'Older wind' if station.status == 'stale' else 'No recent wind' }}</span>
+</div>
+  <h3>
+<a href="{{ station.url }}" target="_blank" rel="noopener noreferrer">{{ station.name }} <span class="outward" aria-hidden="true">↗</span>
+</a>
+</h3>
+  <div class="station-wind">
+    <div>
+<span class="metric-label">Observed wind</span>{{ reading(wind, 'kt') }}</div>
+    <div class="station-direction">{{ wind_arrow(direction.value if direction else none) }}<div>
+<strong>{{ direction.value | cardinal if direction else '—' }}</strong>
+<span class="reading-age {{ direction.status if direction else '' }}">{{ direction.time | age if direction else 'Not reported' }}{% if direction and direction.status == 'stale' %} · stale{% endif %}</span>
+</div>
+</div>
+    <div>
+<span class="metric-label">Gust</span>{{ reading(station.measurements.get('gust_kts'), 'kt') }}</div>
+  </div>
+  {% if not compact %}
+  <div class="station-secondary">
+    <div>
+<span class="metric-label">Wave height</span>{{ reading(station.measurements.get('wave_height_m'), 'ft', 3.28084, 0, 1) }}</div>
+    <div>
+<span class="metric-label">Period</span>{{ reading(station.measurements.get('wave_period_s'), 's', 1, 0, 1) }}</div>
+    <div>
+<span class="metric-label">Water</span>{{ reading(station.measurements.get('water_temp_c'), '°F', 1.8, 32) }}</div>
+  </div>
+  {% if station.history %}<div class="trend-wrap">
+<span class="metric-label">Recent wind · knots</span>
+<canvas class="wind-trend" data-station="{{ station.id }}" role="img" aria-label="Recent observed wind speed for {{ station.name }}. Timestamped values available in the readings table below.">
+</canvas>
+</div>
+  <details class="reading-history">
+<summary>View timestamped wind readings</summary>
+<div class="table-scroll">
+<table>
+<caption class="sr-only">Wind observations for {{ station.name }}</caption>
+<thead>
+<tr>
+<th>Observed</th>
+<th>Wind</th>
+<th>From</th>
+<th>Gust</th>
+</tr>
+</thead>
+<tbody>{% for row in station.history[:24] %}<tr>
+<td>{{ row.time | localtime('%a %-I:%M %p') }}</td>
+<td>{{ row.wind_kts | round(1) if row.wind_kts is not none else '—' }} kt</td>
+<td>{{ row.wind_dir_deg | cardinal }}</td>
+<td>{{ row.gust_kts | round(1) if row.gust_kts is not none else '—' }} kt</td>
+</tr>{% endfor %}</tbody>
+</table>
+</div>
+</details>{% endif %}
+  {% endif %}
+  <p class="station-context">{{ station.context }}</p>
+  {% if station.error %}<p class="source-warning">Latest fetch failed. {% if wind %}Showing the last available measurements with their original timestamps.{% else %}Check the station page for its current status.{% endif %}</p>{% endif %}
+</article>
+{% endmacro %}
+
+{% macro time_controls(h, at, path='/') %}
+<div class="time-controls">
+<div class="segmented" aria-label="Forecast time">{% for hour,label in [(0,'Now'),(3,'+3h'),(6,'+6h'),(12,'+12h'),(24,'+24h')] %}<a href="{{ path }}?h={{ hour }}" {% if h == hour %}class="active" aria-current="true"{% endif %}>{{ label }}</a>{% endfor %}</div>
+<span class="time-caption">Forecast for {{ at | localtime('%a %-I %p %Z') }}</span>
+</div>
+{% endmacro %}

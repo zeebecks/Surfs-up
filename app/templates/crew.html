@@ -1,11 +1,59 @@
-{% extends "base.html" %}{% block content %}
-<h2>Today's Crew</h2>
-<p><span style="color: grey;">All check-ins will reset at midnight</span></p>
-<table class="crew">
-<thead><tr><th>Who</th><th>Spot</th><th>Arrive</th><th>Leave</th><th>Note</th><th>Visibility</th></tr></thead>
-<tbody>
-{% for c in checkins %}
-<tr><td>{{ c.user_id }}</td><td>{{ c.spot_name }}</td><td>{{ c.arrive_start }}</td><td>{{ c.arrive_end }}</td><td>{{ c.note }}</td><td>{{ c.visibility }}</td></tr>
-{% endfor %}
-</tbody></table>
+{% extends 'base.html' %}
+{% block title %}The crew · Lake Surf{% endblock %}
+{% block content %}
+<div class="page-heading">
+<p class="eyebrow">BETTER WITH COMPANY</p>
+<h1>See you at the lake.</h1>
+<p>A simple heads-up for whoever’s heading out. All check-ins are public and appear for today only.</p>
+</div>
+<div class="crew-layout">
+<section>
+<div class="section-heading">
+<h2>Today’s crew <span class="count-badge">{{ checkins | length }}</span>
+</h2>
+<span class="subtle-label">{{ now | localtime('%A, %B %-d') }}</span>
+</div>
+{% if checkins %}<div class="crew-list">{% for c in checkins %}<article class="crew-card">
+<div class="crew-avatar" aria-hidden="true">{{ c.user_id[:1] | upper }}</div>
+<div class="crew-info">
+<h3>{{ c.user_id }}</h3>
+<a href="/spots/{{ c.spot_id }}">{{ c.spot_name }} ↗</a>
+<p>{{ c.arrive_start }}–{{ c.arrive_end }} {{ now | localtime('%Z') }}</p>{% if c.note %}<p class="user-note">{{ c.note }}</p>{% endif %}</div>
+<form method="post" action="/checkins/delete" class="delete-checkin" data-checkin-id="{{ c.id }}" hidden>
+<input type="hidden" name="id" value="{{ c.id }}">
+<input type="hidden" name="token">
+<button type="submit" class="text-button">Remove mine</button>
+</form>
+</article>{% endfor %}</div>{% else %}<div class="empty-panel">
+<span aria-hidden="true">≋</span>
+<h3>The shore is quiet. For now.</h3>
+<p>Be the first to let the crew know where you’re going.</p>
+</div>{% endif %}</section>
+<section id="check-in" class="checkin-panel">
+<p class="eyebrow">MAKE A PLAN</p>
+<h2>Where are you headed?</h2>
+<form method="post" action="/checkins" class="stack-form">
+<label for="user-id">Your name</label>
+<input id="user-id" name="user_id" placeholder="Your name or handle" required maxlength="60" autocomplete="nickname">
+<label for="spot-id">Spot</label>
+<select id="spot-id" name="spot_id">{% for spot in spots %}<option value="{{ spot.id }}" {% if request.query_params.get('spot') == spot.id %}selected{% endif %}>{{ spot.name }}</option>{% endfor %}</select>
+<div class="form-row">
+<div>
+<label for="arrival">Arrive</label>
+<input id="arrival" name="arrive_start" type="time" required>
+</div>
+<div>
+<label for="departure">Leave</label>
+<input id="departure" name="arrive_end" type="time" required>
+</div>
+</div>
+<label for="checkin-note">A quick note <span class="muted">(optional)</span>
+</label>
+<input id="checkin-note" name="note" placeholder="Board, car space, coffee stop…" maxlength="280">
+<p class="section-note">Public to everyone using this site. Same-day times in {{ now | localtime('%Z') }}. You can remove your check-in from this browser.</p>
+<button class="primary-button" type="submit">I’m heading out <span aria-hidden="true">↗</span>
+</button>
+</form>
+</section>
+</div>
 {% endblock %}

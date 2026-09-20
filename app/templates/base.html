@@ -1,57 +1,55 @@
-<!doctype html><html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lake Michigan Surf</title>
-<link rel="icon" type="image/png" href="/static/cyber_lake2.png">
-<link rel="stylesheet" href="/static/styles.css">
-<script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-</head><body>
-<header class="header banner">
-  <div class="banner-image" id="banner-image"></div>
-  <div class="banner-overlay">
-    <div class="header-inner">
-  <!-- <img class="site-logo" src="/static/favicon.png" alt="Site logo"> -->
-  <h1 class="site-title">Surf's UP - Lake Michigan</h1>
-  <nav><a href="/">Spots</a><a href="/crew">Crew</a></nav>
-</div>
-  </div>
-</header>
-<main class="container">{% block content %}{% endblock %}</main>
-<!-- <footer class="footer"><small>Prototype • Powered by "Two Rivers Delivers LLC" </small></footer> -->
- <footer class="app-footer">
-  <div class="footer-inner">
-    <p class="footer-line">
-      © 2026 Surf’s UP – Lake Michigan
-    </p>
-    <p class="footer-line">
-      Wind data: 
-      <a href="https://www.noaa.gov" target="_blank" rel="noopener noreferrer">NOAA</a> · 
-      Forecast models: 
-      <a href="https://www.weather.gov" target="_blank" rel="noopener noreferrer">NWS</a> <br>
-      <a href="https://www.linkedin.com/in/zacharybecka/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-    </p>
-  </div>
-</footer>
-<script>
-const bannerImages = [
-  "/static/banner-1.jpeg",
-  "/static/banner-2.png",
-  "/static/banner-3.jpg",
-  "/static/banner-4.jpg",
-];
-let bannerIndex = 0;
-const bannerEl = document.getElementById("banner-image");
-if (bannerEl) {
-  bannerEl.style.backgroundImage = `url('${bannerImages[0]}')`;
-  setInterval(() => {
-    bannerEl.classList.add("is-fading");
-    setTimeout(() => {
-      bannerIndex = (bannerIndex + 1) % bannerImages.length;
-      bannerEl.style.backgroundImage = `url('${bannerImages[bannerIndex]}')`;
-      bannerEl.classList.remove("is-fading");
-    }, 300);
-  }, 30000);
-}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101e25">
+  <meta name="description" content="A local's window onto Lake Michigan. Wisconsin surf spots, wind forecasts, offshore buoy observations, and live cameras in one place.">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>{% block title %}Lake Surf · Read the lake{% endblock %}</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer>
 </script>
-</body></html>
+  {% block head %}{% endblock %}
+</head>
+<body data-ready="{{ 'true' if weather_ready else 'false' }}" data-demo="{{ 'true' if demo else 'false' }}">
+  <a class="skip-link" href="#main">Skip to conditions</a>
+  {% if demo %}<div class="demo-banner">DEMO MODE · Sample conditions for exploring the app. These are not live readings.</div>{% endif %}
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Lake Surf home">
+<span class="brand-mark" aria-hidden="true">≋</span>
+<span>LAKE<span class="brand-light">SURF</span>
+<small>LAKE MICHIGAN</small>
+</span>
+</a>
+      <nav aria-label="Main navigation">
+        {% for path,label,key in [('/', 'Spots', 'spots'),('/buoys', 'Buoys & wind', 'buoys'),('/crew', 'Crew', 'crew'),('/about', 'About', 'about')] %}
+        <a href="{{ path }}" {% if active == key %}class="active" aria-current="page"{% endif %}>{{ label }}</a>
+        {% endfor %}
+      </nav>
+      <span class="header-location">WISCONSIN SHORE <span aria-hidden="true">↗</span>
+</span>
+    </div>
+  </header>
+  <main id="main" class="container">
+    {% if not weather_ready %}<div class="notice" role="status" id="loading-notice">Connecting to the lake. Forecasts and observations are loading in the background.</div>{% endif %}
+    <div class="notice update-notice" id="update-notice" hidden role="status">New conditions are ready. <button type="button" id="reload-conditions">Update this view ↻</button>
+</div>
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <div>
+<a class="footer-brand" href="/">LAKE SURF</a>
+<p>Freshwater. Fresh perspective.</p>
+</div>
+    <div class="footer-links">
+<a href="/about">Sources & scoring</a>
+<a href="https://www.weather.gov/mkx/" target="_blank" rel="noopener noreferrer">NWS ↗</a>
+<a href="https://www.linkedin.com/in/zacharybecka/" target="_blank" rel="noopener noreferrer">Made by Zach ↗</a>
+</div>
+    <p class="footer-note">Wind in knots · waves in feet · times in {{ now | localtime('%Z') }}<br>Built for the Wisconsin side of Lake Michigan.</p>
+  </footer>
+</body>
+</html>
