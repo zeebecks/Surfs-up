@@ -1,0 +1,42 @@
+{% extends 'base.html' %}{% from 'components.html' import station_card %}
+{% block title %}Buoys & wind · SurfsUP{% endblock %}
+{% block head %}<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer>
+</script>
+<script src="/static/map.js" defer>
+</script>{% endblock %}
+{% block content %}
+<div class="page-heading">
+<p class="eyebrow">READINGS FROM THE WATER</p>
+<h1>Buoys & wind</h1>
+<p>Conditions across Lake Michigan, from the open water to the shoreline.</p>
+</div>
+<div class="buoy-intro">
+<div>
+<span class="status fresh">OBSERVATIONS</span>
+<h2>Wind, waves & temperature</h2>
+<p>Measured wind speed and direction, plus wave heights and water temperatures where available. Check each reading’s timestamp. A dash means missing data, never calm conditions.</p>
+<a class="text-link" href="https://seagull.glos.org/" target="_blank" rel="noopener noreferrer">Explore more local sensors on GLOS Seagull ↗</a>
+</div>
+<div id="lake-map" class="buoy-map">
+<p class="map-fallback">Station locations are linked in the cards below.</p>
+</div>
+</div>
+<div class="section-heading">
+<div>
+<p class="eyebrow">ACROSS LAKE MICHIGAN</p>
+<h2>Offshore Buoys</h2>
+</div>
+<span class="subtle-label">NOAA NDBC · refreshed about every 10 min</span>
+</div>
+<div class="station-grid">{% for station in stations if station.scope == 'basin' %}{{ station_card(station) }}{% endfor %}</div>
+<div class="section-heading spaced">
+<div>
+<p class="eyebrow">CLOSER TO THE BREAK</p>
+<h2>Shore stations</h2>
+</div>
+</div>
+<div class="station-grid">{% for station in stations if station.scope == 'local' %}{{ station_card(station) }}{% endfor %}</div>
+<p class="section-note">Station readings describe their own location and exposure. Offshore wind can help indicate regional fetch; it does not predict an arrival time or guarantee surf at a beach. Data older than two hours is marked stale.</p>
+<script id="station-data" type="application/json">{{ station_data | tojson }}</script>
+{% endblock %}

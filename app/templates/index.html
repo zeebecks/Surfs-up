@@ -1,329 +1,149 @@
-{% extends "base.html" %}{% block content %}
-<div class="forecast-header">
-  <h2 class="section-title">Weather Forecast</h2>
-<div class="toggle">
-  <a class="chip {{ 'active' if h == 0 else '' }}" href="/?h=0">Now</a>
-  <a class="chip {{ 'active' if h == 3 else '' }}" href="/?h=3">+3h</a>
-  <a class="chip {{ 'active' if h == 6 else '' }}" href="/?h=6">+6h</a>
-</div>
-</div>
-
-<div class="section-divider"></div>
-
-<section class="map-section">
-  <div class="map-header">
-    <h3 class="map-title"> Map</h3>
-    </div>
-    <div class="map-toggle toggle">
-      <button type="button" class="chip active" data-map="surf">Surf Score Map</button>
-      <button type="button" class="chip" data-map="windy">Windy Map</button>
-    </div>
-  
-
-  <div class="map-wrap map-stack">
-    <div id="map" class="map map-layer"></div>
-    <div class="windy-embed map-layer is-hidden">
-      <iframe
-        src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=in&metricTemp=°F&metricWind=kt&zoom=8&overlay=wind&product=ecmwf&level=surface&lat=43.791&lon=-87.578&message=true"
-        loading="lazy"
-        frameborder="0"
-        title="Windy Map"
-      ></iframe>
-    </div>
-  </div>
-</section>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const map = L.map('map').setView([44.0, -87.7], 8);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18, attribution: '&copy; OpenStreetMap contributors'}).addTo(map);
-  const items = {{ items_js | tojson }};
-  items.forEach(it => {
-    const color = it.bucket === 'epic' ? '#7c3aed' : it.bucket === 'good' ? 'green' : it.bucket === 'ok' ? 'orange' : 'red';
-    const popupReason = `
-      <span class="popup-wind-direction" title="Wind direction ${it.wind_dir_deg} degrees">
-        <svg
-          class="popup-wind-direction__icon"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          style="transform: rotate(${it.wind_dir_deg + 180}deg);"
-        >
-          <path d="M12 4 L18 11 H14 V20 H10 V11 H6 Z"></path>
-        </svg>
-      </span>
-      <span>${it.reason}</span>
-    `;
-    L.circleMarker([it.spot.lat, it.spot.lng], { radius: 8, color }).addTo(map)
-.bindPopup(
-  `<b>${it.spot.name}</b><br/><span class="popup-reason">${popupReason}</span><br/><i>${it.bucket}</i>` +
-  `<br/><strong>Notes:</strong> ${it.spot.notes || "No notes yet."}` +
-  `<br/><em class="popup-meta">Edited by ${it.spot.notes_edited_by || "unknown"} at ${it.spot.notes_edited_at || "unknown"}</em>`
-);
-
-  });
-
-  const toggleButtons = document.querySelectorAll(".map-toggle .chip");
-  const windyLayer = document.querySelector(".windy-embed");
-  const surfLayer = document.getElementById("map");
-
-  toggleButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      toggleButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const showWindy = btn.dataset.map === "windy";
-      windyLayer.classList.toggle("is-hidden", !showWindy);
-      surfLayer.classList.toggle("is-hidden", showWindy);
-      if (!showWindy) {
-        map.invalidateSize();
-      }
-    });
-  });
-
-const params = new URLSearchParams(window.location.search);
-const checkinId = params.get("checkin_id");
-const token = params.get("token");
-const spotId = params.get("spot_id");
-const notesErrorSpot = params.get("notes_error_spot");
-
-if (params.get("deleted")) {
-  localStorage.removeItem("last_checkin");
-}
-
-if (notesErrorSpot) {
-  params.delete("notes_error_spot");
-  const nextQuery = params.toString();
-  const nextUrl = nextQuery ? `${window.location.pathname}?${nextQuery}` : window.location.pathname;
-  window.history.replaceState({}, "", nextUrl);
-}
-
-
-if (checkinId && token && spotId) {
-  localStorage.setItem(
-    "last_checkin",
-    JSON.stringify({ checkinId, token, spotId })
-  );
-}
-
-const stored = localStorage.getItem("last_checkin");
-const active = (checkinId && token && spotId)
-  ? { checkinId, token, spotId }
-  : (stored ? JSON.parse(stored) : null);
-
-if (active) {
-  const card = document.querySelector(`.spot-card[data-spot-id="${active.spotId}"]`);
-  if (card) {
-    const form = card.querySelector(".checkin-form");
-    const del = card.querySelector(".checkin-delete-btn");
-    if (form && del) {
-      form.classList.add("is-hidden");
-      del.href = `/checkins/delete?id=${encodeURIComponent(active.checkinId)}&token=${encodeURIComponent(active.token)}`;
-      del.classList.remove("is-hidden");
-    }
-  }
-}
-
-
-  document.querySelectorAll(".spot-notes").forEach(block => {
-  const editBtn = block.querySelector(".spot-notes-edit-btn");
-  const form = block.querySelector(".spot-notes-form");
-  const display = block.querySelector(".spot-notes-display");
-
-  editBtn.addEventListener("click", () => {
-    form.classList.toggle("is-hidden");
-    display.classList.toggle("is-hidden");
-    editBtn.classList.toggle("is-hidden");
-  });
-});
-
-document.querySelectorAll(".spot-notes").forEach(block => {
-  const editBtn = block.querySelector(".spot-notes-edit-btn");
-  const form = block.querySelector(".spot-notes-form");
-  const display = block.querySelector(".spot-notes-display");
-  const cancelBtn = block.querySelector(".spot-notes-cancel-btn");
-
-  editBtn.addEventListener("click", () => {
-    form.classList.remove("is-hidden");
-    display.classList.add("is-hidden");
-    editBtn.classList.add("is-hidden");
-  });
-
-  cancelBtn.addEventListener("click", () => {
-    form.classList.add("is-hidden");
-    display.classList.remove("is-hidden");
-    editBtn.classList.remove("is-hidden");
-  });
-});
-
-
-});
+{% extends 'base.html' %}
+{% from 'components.html' import wind_arrow, station_card, time_controls %}
+{% block head %}<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer>
 </script>
-
-<section class="spots">
-{% for item in items %}
-<article class="spot-card" data-spot-id="{{ item.spot.id }}">
-  <div class="spot-main">
-    <h2>{{ item.spot.name }}</h2>
-    {% if item.checkin_count %}
-      <a class="spot-crew-count" href="/crew">{{ item.checkin_count }} {{ "person" if item.checkin_count == 1 else "people" }} going here today</a>
-    {% endif %}
-    <p class="meta">Score: <span class="pill {{ item.bucket }}">{{ item.bucket }}</span> ({{ '%.0f' % item.score }})</p>
-    <p class="reason">
-      <span class="wind-direction" title="Wind direction {{ item.wind_dir_deg }} degrees">
-        <svg
-          class="wind-direction__icon"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          style="transform: rotate({{ item.wind_dir_deg + 180 }}deg);"
-        >
-          <path d="M12 4 L18 11 H14 V20 H10 V11 H6 Z" />
-        </svg>
-      </span>
-      <span>{{ item.reason }}</span>
-    </p>
-<details class="spot-notes">
-  <summary>
-    <span class="spot-notes-title">Spot Notes of the day</span>
-  </summary>
-
-  <div class="spot-notes-body">
-    <p class="spot-notes-display {{ 'is-hidden' if notes_error_spot == item.spot.id else '' }}">{{ item.spot.notes or "No notes yet." }}</p>
-    {% if item.spot.notes_edited_by %}
-      <p class="spot-notes-meta">Notes edited by {{ item.spot.notes_edited_by }} at {{ item.spot.notes_edited_at }}</p>
-    {% endif %}
-
-    {% if notes_error_spot == item.spot.id %}
-      <p class="spot-notes-error">Wrong notes password. The update was not saved.</p>
-    {% endif %}
-
-    <button type="button" class="spot-notes-edit-btn {{ 'is-hidden' if notes_error_spot == item.spot.id else '' }}">Edit Notes of the day</button>
-
-    <form method="post" action="/spot-notes" class="spot-notes-form {{ '' if notes_error_spot == item.spot.id else 'is-hidden' }}">
-      <input type="hidden" name="spot_id" value="{{ item.spot.id }}">
-      <label>Your name</label>
-      <input type="text" name="editor_name" placeholder="your handle" required>
-      <label>Notes</label>
-      <textarea name="notes" rows="6" placeholder="Offshore wind today, actually looking really good and clean.">{{ item.spot.notes }}</textarea>
-      <label>Notes password</label>
-      <input type="password" name="password" placeholder="shared notes password" required>
-      <button type="submit">Save notes of the day</button>
-      <button type="button" class="spot-notes-cancel-btn">Cancel</button>
-    </form>
+<script src="/static/map.js" defer>
+</script>{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+<p class="eyebrow">
+<span class="little-line">
+</span> WIND · CAMERAS · FORECASTS</p>
+<h1>Lake Michigan<br>
+<span>surf conditions.</span>
+</h1>
+<p class="hero-description">Check the wind, compare surf spots, and see live cameras along the Wisconsin shore.</p>
+<div class="hero-meta">
+<span>
+<strong>06</strong> local spots</span>
+<span>
+<strong>{{ '%02d' | format(stations | selectattr('scope', 'equalto', 'basin') | list | length) }}</strong> offshore buoys</span>
+<a href="#spot-list">View spots <span aria-hidden="true">↓</span>
+</a>
+</div>
+</div>
+  <div class="hero-photo" data-gallery role="region" aria-roledescription="carousel" aria-label="Lake Michigan surf photos">
+    <img class="gallery-image" src="/static/banner-3.jpg" alt="Two surfers carrying boards along a Lake Michigan pier" width="1008" height="756" style="object-position:50% 60%" fetchpriority="high">
+    <div class="gallery-controls" hidden>
+      <button type="button" class="gallery-arrow" data-gallery-step="-1" aria-label="Previous photo"><span aria-hidden="true">‹</span></button>
+      <span class="gallery-count sr-only" aria-live="polite" aria-atomic="true">4 / 4</span>
+      <button type="button" class="gallery-arrow" data-gallery-step="1" aria-label="Next photo"><span aria-hidden="true">›</span></button>
+    </div>
+    <p class="gallery-message" role="status" hidden></p>
   </div>
-</details>
-
-    {% if item.spot.camera_url %}
-      {% set url = item.spot.camera_url %}
-      {% if "youtube.com" in url or "youtu.be" in url %}
-        {% if "youtu.be/" in url %}
-          {% set video_id = url.split("youtu.be/")[1].split("?")[0] %}
-        {% elif "v=" in url %}
-          {% set video_id = url.split("v=")[1].split("&")[0] %}
-        {% else %}
-          {% set video_id = "" %}
-        {% endif %}
-        {% if video_id %}
-          <div class="camera-embed camera-embed--iframe">
-            <iframe
-              src="https://www.youtube.com/embed/{{ video_id }}"
-              title="Live camera"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></iframe>
-          </div>
-          <p class="camera-link">
-            <a href="{{ url }}" target="_blank" rel="noopener">Open on YouTube</a>
-          </p>
-        {% else %}
-          <p class="camera-link">
-            <a href="{{ url }}" target="_blank" rel="noopener">Live camera</a>
-          </p>
-        {% endif %}
-      {% else %}
-        <p class="camera-link">
-          <a href="{{ url }}" target="_blank" rel="noopener">Live camera</a>
-        </p>
-      {% endif %}
-    {% endif %}
-
-    {% if item.spot.id == "north-pier-two-rivers" %}
-      <a class="camera-link-wrap" href="http://harborcam.two-rivers.org/camera/index.html#/video" target="_blank" rel="noopener">
-        <div class="camera-embed camera-embed--img">
-          <img
-            src="/camera/two-rivers"
-            alt="Two Rivers Harbor Cam"
-            loading="lazy"
-          />
-        </div>
-      </a>
-    {% endif %}
-
-    {% if item.spot.id == "port-washington" %}
-      <a class="camera-link-wrap" href="http://24.106.61.2:8081/camera/index.html#/video" target="_blank" rel="noopener">
-        <div class="camera-embed camera-embed--img">
-          <img
-            src="/camera/port-washington"
-            alt="Port Washington Harbor Cam"
-            loading="lazy"
-          />
-        </div>
-      </a>
-    {% endif %}
-
-    {% if item.spot.id == "kewaunee" %}
-      <a class="camera-link-wrap" href="{{ item.spot.camera_url }}" target="_blank" rel="noopener">
-        <div class="camera-embed camera-embed--img">
-          <img
-            src="/camera/kewaunee"
-            alt="Kewaunee Harbor Cam"
-            loading="lazy"
-          />
-        </div>
-      </a>
-    {% endif %}
-
-  </div>
-
-
-  <div class="spot-middle">
-    {% if item.spot.id == "sheboygan-elbow" %}
-      <div class="windfinder-embed">
-        <script src="https://www.windfinder.com/widget/forecast/js/sheboygan?unit_wave=ft&unit_rain=in&unit_temperature=f&unit_wind=kts&unit_pressure=hPa&days=1&show_day=0"></script>
-        <noscript>
-          <a rel="nofollow" href="https://www.windfinder.com/forecast/sheboygan?utm_source=forecast&utm_medium=web&utm_campaign=homepageweather&utm_content=noscript-forecast">Wind forecast for Sheboygan Breakwater Lighthouse</a>
-          provided by
-          <a rel="nofollow" href="https://www.windfinder.com?utm_source=forecast&utm_medium=web&utm_campaign=homepageweather&utm_content=noscript-logo">windfinder.com</a>
-        </noscript>
-      </div>
-    {% endif %}
-
-    {% if item.spot.id == "north-pier-two-rivers" %}
-      <div class="windfinder-embed">
-        <script src="https://www.windfinder.com/widget/forecast/js/two_rivers_coast_guard?unit_wave=ft&unit_rain=in&unit_temperature=f&unit_wind=kts&unit_pressure=hPa&days=1&show_day=0"></script>
-        <noscript>
-          <a rel="nofollow" href="https://www.windfinder.com/forecast/two_rivers_coast_guard?utm_source=forecast&utm_medium=web&utm_campaign=homepageweather&utm_content=noscript-forecast">Wind forecast for Two Rivers Coast Guard</a>
-          provided by
-          <a rel="nofollow" href="https://www.windfinder.com?utm_source=forecast&utm_medium=web&utm_campaign=homepageweather&utm_content=noscript-logo">windfinder.com</a>
-        </noscript>
-      </div>
-
-    {% endif %}
-
-  </div>
-  <div class="spot-actions">
-    <form method="post" action="/checkins" class="checkin-form">
-      <input type="hidden" name="spot_id" value="{{ item.spot.id }}">
-      <label>User</label><input type="text" name="user_id" placeholder="your handle" required>
-      <label>Arrive start time</label><input type="time" name="arrive_start" required>
-      <label>Leave time</label><input type="time" name="arrive_end" required>
-      <label>Note</label><input type="text" name="note" placeholder="board, car space, etc.">
-      <label>Visibility</label><select name="visibility"><option value="friends">Friends</option><option value="public">Public</option></select>
-      <button type="submit">I'm going here today</button>
-    </form>
-    <a class="checkin-delete-btn is-hidden" href="#">Delete my check‑in</a>
-  </div>
-</article>
-{% endfor %}
 </section>
 
+<div class="shore-heading" id="spot-list">
+<div>
+<p class="eyebrow">LOCAL CONDITIONS</p>
+<h2>Surf spots</h2>
+</div>{{ time_controls(h, at) }}</div>
+<div class="shore-layout">
+  <section class="spot-section" aria-label="Compare surf spots">
+    <div class="list-toolbar">
+<div class="filter-buttons" aria-label="Filter spots">
+<button class="filter-button active" data-filter="all" aria-pressed="true">All spots <span>6</span>
+</button>
+<button class="filter-button" data-filter="favorites" aria-pressed="false">Favorites <span aria-hidden="true">☆</span>
+</button>
+</div>
+<label class="sort-label">Sort <select id="spot-sort">
+<option value="coast">North → south</option>
+<option value="wind">Wind setup</option>
+<option value="surf">Surf estimate</option>
+</select>
+</label>
+</div>
+    <div class="spot-list">
+      {% for item in items %}{% set fc = item.forecast %}{% set rating = item.rating %}
+      <article class="spot-card" data-spot-id="{{ item.spot.id }}" data-coast="{{ loop.index }}" data-wind-score="{{ rating.wind_score if rating.wind_score is not none else -1 }}" data-surf-score="{{ rating.surf_score if rating.surf_score is not none else -1 }}">
+        <div class="spot-card-top">
+<div>
+<p class="spot-location">
+<span class="spot-number">{{ '%02d' | format(loop.index) }}</span> {{ item.spot.lat | round(3) }}° N / {{ (item.spot.lng | abs) | round(3) }}° W</p>
+<h3>
+<a href="/spots/{{ item.spot.id }}?h={{ h }}">{{ item.spot.name }}</a>
+</h3>
+</div>
+<button class="favorite-button" data-favorite="{{ item.spot.id }}" data-favorite-name="{{ item.spot.name }}" aria-label="Add {{ item.spot.name }} to favorites" title="Save to favorites in this browser" aria-pressed="false">☆</button>
+</div>
+        <div class="spot-metrics">
+<div class="primary-wind">{{ wind_arrow(fc.wind_dir_deg) }}<div>
+<span class="wind-number">{{ fc.wind_kts | round | int if fc.wind_kts is not none else '—' }}<small>kt</small>
+</span>
+<span class="metric-detail">{{ fc.wind_dir_deg | cardinal }} <span class="muted">· forecast wind</span>
+</span>
+</div>
+</div>
+<div class="wave-metric">
+<span class="metric-label">Modeled waves</span>
+<strong>{{ '%.1f' | format(fc.wave_height_m * 3.28084) if fc.wave_height_m is not none else '—' }} <small>ft</small>
+</strong>
+<span class="metric-detail">{{ '%.0f s' | format(fc.wave_period_s) if fc.wave_period_s is not none else 'Period unavailable' }}{% if fc.wave_status == 'stale' %} · stale{% endif %}</span>
+</div>
+<div class="rating-metric {{ rating.bucket }}">
+<span class="metric-label">{{ 'Surf estimate' if rating.surf_score is not none else 'Wind setup' }}</span>
+<strong>{{ rating.surf_score if rating.surf_score is not none else rating.wind_score if rating.wind_score is not none else '—' }}<small>/100</small>
+</strong>
+<span class="metric-detail">{{ rating.bucket | capitalize if rating.bucket != 'unknown' else 'Not rated' }}</span>
+</div>
+</div>
+        <div class="spot-card-bottom">
+<span class="data-caption {{ fc.status }}">{{ 'Sample forecast' if demo else (fc.source ~ ' · ' ~ (fc.fetched_at | age)) if fc.source else 'Forecast unavailable' }}{% if fc.status == 'stale' %} · stale{% endif %}</span>
+<a href="/spots/{{ item.spot.id }}?h={{ h }}">{% if item.camera %}<span class="camera-dot" aria-hidden="true">
+</span> Cam & {% endif %}forecast <span aria-hidden="true">↗</span>
+</a>
+</div>
+      </article>
+      {% endfor %}
+    </div>
+<p class="empty-state" id="favorites-empty" hidden>Tap a spot’s star to add it to your favorites. Favorites are saved in this browser.</p>
+<p class="section-note">Ratings are experimental model estimates. Wind setup describes building potential when a full surf estimate isn’t available. <a href="/about#scoring">How it works ↗</a>
+</p>
+  </section>
+  <aside class="map-panel" aria-label="Explore the lake">
+<div class="map-panel-heading">
+<div>
+<p class="eyebrow">KNOW YOUR COAST</p>
+<h3>The lake view</h3>
+</div>
+</div>
+<div class="map-switch" role="group" aria-label="Map type">
+<button class="active" data-map-tab="spots" aria-pressed="true">Spots & buoys</button>
+<button data-map-tab="windy" aria-pressed="false">Windy</button>
+</div>
+<div id="lake-map" class="lake-map">
+<p class="map-fallback">Loading the map. Every spot is also listed alongside it.</p>
+</div>
+<div id="windy-map" class="lake-map" hidden data-src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricWind=kt&zoom=7&overlay=wind&product=ecmwf&level=surface&lat=44.0&lon=-87.1">
+</div>
+<div class="map-legend">
+<span>
+<i class="legend-spot">
+</i> Surf spots</span>
+<span>
+<i class="legend-buoy">
+</i> Buoys & stations</span>
+</div>
+<p class="map-note">Spot markers show the selected forecast’s wind setup. Windy has its own model and time controls.</p>
+<a class="map-resource" href="https://www.windy.com/?43.900,-87.200,7" target="_blank" rel="noopener noreferrer">Open the full Windy map <span aria-hidden="true">↗</span>
+</a>
+</aside>
+</div>
+<section class="basin-section" aria-labelledby="basin-title">
+<div class="section-heading">
+<div>
+<p class="eyebrow">THE BIG PICTURE</p>
+<h2 id="basin-title">What’s happening offshore</h2>
+</div>
+<a class="text-link" href="/buoys">All buoys & wind <span aria-hidden="true">↗</span>
+</a>
+</div>
+<div class="basin-grid">{% for station in stations if station.scope == 'basin' %}{{ station_card(station, true) }}{% endfor %}</div>
+<p class="section-note">Measured waves and wind across the lake help reveal the bigger setup. Offshore readings are regional context, not a report from the beach.</p>
+</section>
+<script id="map-spots" type="application/json">[{% for item in items %}{"id":{{ item.spot.id | tojson }},"name":{{ item.spot.name | tojson }},"lat":{{ item.spot.lat }},"lng":{{ item.spot.lng }},"score":{{ item.rating.wind_score | tojson }},"wind":{{ item.forecast.wind_kts | tojson }},"direction":{{ item.forecast.wind_dir_deg | tojson }}}{% if not loop.last %},{% endif %}{% endfor %}]</script>
+<script id="station-data" type="application/json">{{ station_data | tojson }}</script>
 {% endblock %}

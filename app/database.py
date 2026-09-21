@@ -1,14 +1,26 @@
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
 import os
 
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
+
 DB_URL = os.getenv("DATABASE_URL", "sqlite:///./surf.db")
-engine = create_engine(DB_URL, connect_args={"check_same_thread": False} if DB_URL.startswith("sqlite") else {})
+engine = create_engine(
+    DB_URL, connect_args={"check_same_thread": False} if DB_URL.startswith("sqlite") else {}
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 def init_db():
     with engine.begin() as conn:
-        conn.execute(text("""
+        conn.execute(
+            text("""
+        CREATE TABLE IF NOT EXISTS weather_cache (
+          key TEXT PRIMARY KEY,
+          payload TEXT NOT NULL
+        );""")
+        )
+        conn.execute(
+            text("""
         CREATE TABLE IF NOT EXISTS spots (
           id TEXT PRIMARY KEY,
           name TEXT NOT NULL,
@@ -23,8 +35,10 @@ def init_db():
           notes_edited_at TEXT,
           camera_url TEXT,
           quality_offset REAL
-        );"""))
-        conn.execute(text("""
+        );""")
+        )
+        conn.execute(
+            text("""
         CREATE TABLE IF NOT EXISTS checkins (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           user_id TEXT,
@@ -35,4 +49,5 @@ def init_db():
           visibility TEXT DEFAULT 'friends',
           delete_token TEXT,
           created_at TEXT DEFAULT CURRENT_TIMESTAMP
-        );"""))
+        );""")
+        )
