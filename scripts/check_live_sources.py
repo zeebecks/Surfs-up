@@ -10,7 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
-def main():
+def main(buoys_only=False):
     with tempfile.TemporaryDirectory(prefix="lake-surf-live-") as temp:
         os.environ["DATABASE_URL"] = "sqlite:///" + str(Path(temp) / "audit.db")
 
@@ -21,7 +21,7 @@ def main():
         init_db()
         seed_spots_if_empty()
         store = WeatherStore()
-        spots = get_all_spots()
+        spots = [] if buoys_only else get_all_spots()
         asyncio.run(store.refresh(spots))
         print("Provider coverage (each source may be independently unavailable):")
         for spot in spots:
@@ -47,7 +47,10 @@ def main():
             print(
                 station["id"],
                 station["status"],
+                "wind:",
                 station["measurements"].get("wind_kts"),
+                "waves (m):",
+                station["measurements"].get("wave_height_m"),
                 "error:",
                 station["error"],
             )
@@ -88,4 +91,6 @@ def check_local():
 
 
 if __name__ == "__main__":
-    raise SystemExit(check_local() if "--local-only" in sys.argv else main())
+    raise SystemExit(
+        check_local() if "--local-only" in sys.argv else main(buoys_only="--buoys-only" in sys.argv)
+    )

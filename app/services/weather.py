@@ -30,12 +30,21 @@ STATIONS = [
         scope="basin",
     ),
     dict(
-        id="45007",
-        name="South Michigan",
+        id="45214",
+        name="South Michigan Spotter",
         kind="Offshore buoy",
         lat=42.674,
         lng=-87.026,
-        context="Southern basin · watch southerly wind building up the lake",
+        context="Southern basin · measured waves and water temperature",
+        scope="basin",
+    ),
+    dict(
+        id="45210",
+        name="Rawley Point East",
+        kind="Offshore buoy",
+        lat=44.055,
+        lng=-87.050,
+        context="Off Rawley Point · measured waves east of the Two Rivers area",
         scope="basin",
     ),
     dict(
@@ -483,13 +492,18 @@ class WeatherStore:
                         if now - parse_time(reading["time"]) < OBS_MAX_AGE
                         else "stale"
                     )
-            wind = measurements.get("wind_kts")
+            # A wave-only buoy is still reporting. Each sensor keeps its own age.
+            statuses = {reading["status"] for reading in measurements.values() if reading}
+            status = next(
+                (state for state in ("demo", "fresh", "stale") if state in statuses),
+                "unavailable",
+            )
             result.append(
                 {
                     **station,
                     "measurements": measurements,
                     "history": data.get("history", []),
-                    "status": wind["status"] if wind else "unavailable",
+                    "status": status,
                     "error": data.get("error"),
                     "fetched_at": data.get("fetched_at"),
                 }
@@ -541,12 +555,19 @@ class WeatherStore:
                 for key, value in history[0].items()
                 if key != "time"
             }
-            if i == 0:
+            if station["scope"] == "basin":
                 measurements.update(
                     wave_height_m={"value": 1.1, "time": stamp(now)},
                     wave_period_s={"value": 5, "time": stamp(now)},
                     water_temp_c={"value": 17, "time": stamp(now)},
                 )
+                for row in history:
+                    row.update(wave_height_m=1.1, wave_period_s=5, water_temp_c=17)
+            if station["id"] in {"45214", "45210"}:
+                for field in ("wind_kts", "wind_dir_deg", "gust_kts"):
+                    measurements[field] = None
+                    for row in history:
+                        row[field] = None
             self.records[f"buoy:{station['id']}"] = dict(
                 measurements=measurements, history=history, fetched_at=stamp(now)
             )

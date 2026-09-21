@@ -19,7 +19,7 @@
 <span>
 <strong>06</strong> local spots</span>
 <span>
-<strong>02</strong> offshore buoys</span>
+<strong>{{ '%02d' | format(stations | selectattr('scope', 'equalto', 'basin') | list | length) }}</strong> offshore buoys</span>
 <a href="#spot-list">View spots <span aria-hidden="true">↓</span>
 </a>
 </div>
@@ -125,7 +125,7 @@
 </i> Surf spots</span>
 <span>
 <i class="legend-buoy">
-</i> Wind stations</span>
+</i> Buoys & stations</span>
 </div>
 <p class="map-note">Spot markers show the selected forecast’s wind setup. Windy has its own model and time controls.</p>
 <a class="map-resource" href="https://www.windy.com/?43.900,-87.200,7" target="_blank" rel="noopener noreferrer">Open the full Windy map <span aria-hidden="true">↗</span>
@@ -142,7 +142,7 @@
 </a>
 </div>
 <div class="basin-grid">{% for station in stations if station.scope == 'basin' %}{{ station_card(station, true) }}{% endfor %}</div>
-<p class="section-note">Measured wind across the lake helps reveal the bigger setup. Offshore readings are regional context, not a report from the beach.</p>
+<p class="section-note">Measured waves and wind across the lake help reveal the bigger setup. Offshore readings are regional context, not a report from the beach.</p>
 </section>
 <script id="map-spots" type="application/json">[{% for item in items %}{"id":{{ item.spot.id | tojson }},"name":{{ item.spot.name | tojson }},"lat":{{ item.spot.lat }},"lng":{{ item.spot.lng }},"score":{{ item.rating.wind_score | tojson }},"wind":{{ item.forecast.wind_kts | tojson }},"direction":{{ item.forecast.wind_dir_deg | tojson }}}{% if not loop.last %},{% endif %}{% endfor %}]</script>
 <script id="station-data" type="application/json">{{ station_data | tojson }}</script>

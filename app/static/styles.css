@@ -1201,6 +1201,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   font-size:1.5rem
 }
 
+.station-waves {
+  margin-top:0;
+  padding-top:0;
+  border-top:0;
+  margin-bottom:22px
+}
+
 .trend-wrap {
   margin-top:24px
 }

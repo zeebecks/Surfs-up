@@ -13,12 +13,20 @@
   <div class="card-eyebrow">
 <span>{{ station.kind }} <span class="mono">/ {{ station.id }}</span>
 </span>
-<span class="status {{ station.status }}">{{ 'Reporting wind' if station.status == 'fresh' else 'Sample data' if station.status == 'demo' else 'Older wind' if station.status == 'stale' else 'No recent wind' }}</span>
+<span class="status {{ station.status }}">{{ 'Reporting' if station.status == 'fresh' else 'Sample data' if station.status == 'demo' else 'Older readings' if station.status == 'stale' else 'No recent readings' }}</span>
 </div>
   <h3>
 <a href="{{ station.url }}" target="_blank" rel="noopener noreferrer">{{ station.name }} <span class="outward" aria-hidden="true">↗</span>
 </a>
 </h3>
+  {% if station.scope == 'basin' %}
+  <div class="station-secondary station-waves">
+    <div><span class="metric-label">Wave height</span>{{ reading(station.measurements.get('wave_height_m'), 'ft', 3.28084, 0, 1) }}</div>
+    <div><span class="metric-label">Period</span>{{ reading(station.measurements.get('wave_period_s'), 's', 1, 0, 1) }}</div>
+    <div><span class="metric-label">Water temp</span>{{ reading(station.measurements.get('water_temp_c'), '°F', 1.8, 32) }}</div>
+  </div>
+  {% endif %}
+  {% if wind or station.scope != 'basin' %}
   <div class="station-wind">
     <div>
 <span class="metric-label">Observed wind</span>{{ reading(wind, 'kt') }}</div>
@@ -30,7 +38,11 @@
     <div>
 <span class="metric-label">Gust</span>{{ reading(station.measurements.get('gust_kts'), 'kt') }}</div>
   </div>
+  {% else %}
+  <p class="data-caption">Wind not reported in the latest observations.</p>
+  {% endif %}
   {% if not compact %}
+  {% if station.scope != 'basin' %}
   <div class="station-secondary">
     <div>
 <span class="metric-label">Wave height</span>{{ reading(station.measurements.get('wave_height_m'), 'ft', 3.28084, 0, 1) }}</div>
@@ -39,36 +51,53 @@
     <div>
 <span class="metric-label">Water</span>{{ reading(station.measurements.get('water_temp_c'), '°F', 1.8, 32) }}</div>
   </div>
-  {% if station.history %}<div class="trend-wrap">
+  {% endif %}
+  {% if station.history %}
+  {% if wind %}<div class="trend-wrap">
 <span class="metric-label">Recent wind · knots</span>
 <canvas class="wind-trend" data-station="{{ station.id }}" role="img" aria-label="Recent observed wind speed for {{ station.name }}. Timestamped values available in the readings table below.">
 </canvas>
 </div>
+  {% endif %}
   <details class="reading-history">
-<summary>View timestamped wind readings</summary>
+<summary>View timestamped readings</summary>
 <div class="table-scroll">
 <table>
-<caption class="sr-only">Wind observations for {{ station.name }}</caption>
+<caption class="sr-only">Observed conditions for {{ station.name }}</caption>
 <thead>
 <tr>
 <th>Observed</th>
+{% if wind %}
 <th>Wind</th>
 <th>From</th>
 <th>Gust</th>
+{% endif %}
+{% if station.scope == 'basin' %}
+<th>Waves (ft)</th>
+<th>Period (s)</th>
+<th>Water (°F)</th>
+{% endif %}
 </tr>
 </thead>
 <tbody>{% for row in station.history[:24] %}<tr>
 <td>{{ row.time | localtime('%a %-I:%M %p') }}</td>
+{% if wind %}
 <td>{{ row.wind_kts | round(1) if row.wind_kts is not none else '—' }} kt</td>
 <td>{{ row.wind_dir_deg | cardinal }}</td>
 <td>{{ row.gust_kts | round(1) if row.gust_kts is not none else '—' }} kt</td>
+{% endif %}
+{% if station.scope == 'basin' %}
+<td>{{ '%.1f' | format(row.wave_height_m * 3.28084) if row.get('wave_height_m') is not none else '—' }}</td>
+<td>{{ row.wave_period_s | round(1) if row.get('wave_period_s') is not none else '—' }}</td>
+<td>{{ (row.water_temp_c * 1.8 + 32) | round | int if row.get('water_temp_c') is not none else '—' }}</td>
+{% endif %}
 </tr>{% endfor %}</tbody>
 </table>
 </div>
 </details>{% endif %}
   {% endif %}
   <p class="station-context">{{ station.context }}</p>
-  {% if station.error %}<p class="source-warning">Latest fetch failed. {% if wind %}Showing the last available measurements with their original timestamps.{% else %}Check the station page for its current status.{% endif %}</p>{% endif %}
+  {% if station.error %}<p class="source-warning">Latest fetch failed. {% if station.status != 'unavailable' %}Showing the last available measurements with their original timestamps.{% else %}Check the station page for its current status.{% endif %}</p>{% endif %}
 </article>
 {% endmacro %}
 

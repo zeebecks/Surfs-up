@@ -35,7 +35,7 @@ See [.env.example](.env.example) for all settings. Without `NOTES_ADMIN_PASSWORD
 - Select Now, +3h, +6h, +12h, or +24h; open a spot for a 48-hour hourly table.
 - Save favorites on your device; sort north-to-south, by wind setup, or by surf estimate.
 - Explore spot markers, switch to an independent Windy map, or expand the map to the offshore buoys.
-- Follow northern/southern basin wind plus Sheboygan and Port Washington coastal observations, with per-measurement timestamps and recent wind trends.
+- Follow northern/southern basin and Rawley Point wave measurements, plus wind observations from the northern buoy, Sheboygan, and Port Washington, with per-measurement timestamps and recent wind trends.
 - Load cameras on demand and follow original camera links when embeds are unavailable.
 - Save dated field reports without overwriting the persistent local guide.
 - Make public, same-day crew check-ins. Removal uses a token saved on the device that created the check-in.
@@ -47,16 +47,16 @@ See [.env.example](.env.example) for all settings. Without `NOTES_ADMIN_PASSWORD
 | [NWS API](https://www.weather.gov/documentation/services-web-api) | Primary hourly wind, plus gusts from the raw forecast grid |
 | [Open-Meteo Weather](https://open-meteo.com/en/docs) | Labeled fallback wind forecast when NWS cannot supply usable data |
 | [Open-Meteo Marine](https://open-meteo.com/en/docs/marine-weather-api) | Offshore modeled wave height, period, direction; water-cell selection with a distance check |
-| [NOAA NDBC](https://www.ndbc.noaa.gov/) | Stations 45002, 45007, SGNW3, and PWAW3 |
+| [NOAA NDBC](https://www.ndbc.noaa.gov/) | Stations 45002, 45214, 45210, SGNW3, and PWAW3 |
 | [Windy](https://www.windy.com/) | Independent embedded wind map with its own timeline |
 | [Windfinder](https://www.windfinder.com/) | Additional forecast links on supported spot pages |
 | [GLOS Seagull](https://seagull.glos.org/) | Link to discover additional local observing platforms; not yet ingested |
 
 All six model locations were checked during implementation. Nearby spots can share a wave-model cell. Model output is **not** a measurement of waves breaking at the beach.
 
-NOAA 45007's recent-data feed returned HTTP 404 during the September 20, 2026 checks. Its card remains visible; it will resume showing measurements when the feed returns. An unavailable feed is not automatically described as seasonal removal.
+The southern buoy is [South Michigan Spotter (45214)](https://www.ndbc.noaa.gov/station_page.php?station=45214), replacing 45007. [Rawley Point East (45210)](https://www.ndbc.noaa.gov/station_page.php?station=45210) adds wave observations east of the Two Rivers area. Both can report waves without wind; their cards and map popups show the available measurements.
 
-A station does not need wave sensors to be useful. Wind is primary. Each sensor retains its own observation time; a missing field is never interpreted as zero. Observations older than two hours are labeled stale. The parser looks back at most 24 hours for each sensor; cached readings can remain visible beyond that during an outage, with their original age.
+A station does not need every sensor to be useful. Wave height appears on every offshore card, including the homepage. Station status reflects available readings; each field retains its own freshness label. Each sensor retains its own observation time; a missing field is never interpreted as zero. Observations older than two hours are labeled stale. The parser looks back at most 24 hours for each sensor; cached readings can remain visible beyond that during an outage, with their original age.
 
 Forecast retrieval timestamps describe when this app fetched data, not the model run time. Forecasts older than three hours, or whose latest refresh failed, are marked stale and excluded from ratings. Forecasts are selected only inside a valid interval. Today's buoy readings never become tomorrow's forecast.
 

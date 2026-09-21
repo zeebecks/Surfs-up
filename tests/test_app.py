@@ -25,6 +25,7 @@ from app.main import app
 from app.services.scoring import rate
 from app.services.spot_repo import get_all_spots, seed_spots_if_empty
 from app.services.weather import (
+    STATIONS,
     WeatherStore,
     add_nws_gusts,
     direction,
@@ -122,6 +123,21 @@ class ScoringTests(Base):
 
 
 class ParserTests(unittest.TestCase):
+    def test_wave_only_buoy_preserves_waves_without_inventing_wind(self):
+        now = utcnow().replace(second=0, microsecond=0)
+        raw = (
+            "#YY MM DD hh mm WDIR WSPD GST WVHT DPD APD MWD PRES ATMP WTMP DEWP VIS PTDY TIDE\n"
+            + now.strftime("%Y %m %d %H %M")
+            + " MM MM MM 1.6 MM MM 89 MM MM 21.5 MM MM MM MM\n"
+        )
+        result = parse_ndbc(raw, now)
+        self.assertEqual(result["measurements"]["wave_height_m"]["value"], 1.6)
+        self.assertEqual(result["measurements"]["water_temp_c"]["value"], 21.5)
+        self.assertIsNone(result["measurements"]["wave_period_s"])
+        self.assertIsNone(result["measurements"]["wind_kts"])
+        self.assertIsNone(result["measurements"]["wind_dir_deg"])
+        self.assertEqual(result["history"][0]["wave_height_m"], 1.6)
+
     def test_grid_gusts_honor_units_and_intervals(self):
         now = utcnow().replace(minute=0, second=0, microsecond=0)
         rows = fixture_rows(now)
@@ -323,7 +339,11 @@ class CacheTests(Base):
 
         asyncio.run(run())
         self.assertEqual(store.fetch_wind.await_count, 6)
-        self.assertEqual(store.fetch_buoy.await_count, 4)
+        self.assertEqual(store.fetch_buoy.await_count, len(STATIONS))
+        self.assertEqual(
+            {call.args[1]["id"] for call in store.fetch_buoy.await_args_list},
+            {"45002", "45214", "45210", "SGNW3", "PWAW3"},
+        )
 
     def test_provider_failure_keeps_last_good_readings(self):
         store = WeatherStore()
@@ -354,6 +374,35 @@ class CacheTests(Base):
         self.assertEqual(station["status"], "fresh")
         self.assertEqual(station["measurements"]["wave_height_m"]["status"], "stale")
         self.assertEqual(station["measurements"]["wave_height_m"]["time"], old)
+
+    def test_wave_only_station_status_uses_observations_and_their_age(self):
+        for hours, expected in ((0, "fresh"), (3, "stale")):
+            with self.subTest(hours=hours):
+                store = WeatherStore()
+                observed = stamp(utcnow() - timedelta(hours=hours))
+                store.records["buoy:45214"] = {
+                    "measurements": {
+                        "wind_kts": None,
+                        "wave_height_m": {"value": 0, "time": observed},
+                    }
+                }
+                station = next(s for s in store.stations() if s["id"] == "45214")
+                self.assertEqual(station["status"], expected)
+                self.assertEqual(station["measurements"]["wave_height_m"]["status"], expected)
+                self.assertEqual(station["measurements"]["wave_height_m"]["time"], observed)
+                self.assertIsNone(station["measurements"]["wind_kts"])
+
+    def test_fresh_wave_does_not_make_old_wind_fresh(self):
+        store = WeatherStore()
+        store.records["buoy:45002"] = {
+            "measurements": {
+                "wind_kts": {"value": 20, "time": stamp(utcnow() - timedelta(hours=3))},
+                "wave_height_m": {"value": 1.6, "time": stamp(utcnow())},
+            }
+        }
+        station = store.stations()[0]
+        self.assertEqual(station["status"], "fresh")
+        self.assertEqual(station["measurements"]["wind_kts"]["status"], "stale")
 
 
 class RouteTests(Base):
@@ -394,6 +443,35 @@ class RouteTests(Base):
         weather.load_demo(self.spots)
         for path in ("/", "/buoys", f"/spots/{self.spot.id}"):
             self.assertIn("DEMO MODE", self.client.get(path).text)
+
+    def test_offshore_cards_show_waves_on_home_buoy_and_spot_pages(self):
+        observed = stamp(utcnow())
+        for station_id in ("45002", "45214", "45210"):
+            weather.records[f"buoy:{station_id}"] = {
+                "measurements": {
+                    "wave_height_m": {"value": 1.6, "time": observed},
+                    "wind_kts": None,
+                },
+                "history": [{"time": observed, "wave_height_m": 1.6}],
+            }
+        for path in ("/", "/buoys", f"/spots/{self.spot.id}"):
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertEqual(response.status_code, 200)
+                for station_id in ("45002", "45214", "45210"):
+                    card = response.text.split(f'id="station-{station_id}"', 1)[1].split(
+                        "</article>", 1
+                    )[0]
+                    self.assertIn("Wave height", card)
+                    self.assertIn("5.2<small>ft</small>", card)
+                    self.assertIn('class="status fresh">Reporting', card)
+                    self.assertIn("Wind not reported", card)
+                    self.assertNotIn("No recent wind", card)
+                    if path == "/buoys":
+                        self.assertIn("Waves (ft)", card)
+                        self.assertIn("<td>5.2</td>", card)
+                self.assertNotIn("45007", response.text)
+        self.assertIn("<strong>03</strong> offshore buoys", self.client.get("/").text)
 
     def test_existing_notes_are_escaped(self):
         with patch.dict(os.environ, {"NOTES_ADMIN_PASSWORD": "test-password"}):

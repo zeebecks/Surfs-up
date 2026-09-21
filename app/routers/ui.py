@@ -16,7 +16,7 @@ from ..services.catalog import CAMERAS, GUIDES, STREAMS, WINDFINDER
 from ..services.scoring import rate
 from ..services.spot_repo import get_all_spots
 from ..services.util import get_session
-from ..services.weather import parse_time, stamp, utcnow, weather
+from ..services.weather import STATIONS, parse_time, stamp, utcnow, weather
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -172,7 +172,7 @@ def detail(request: Request, spot_id: str):
         }
         for i in range(48)
     ]
-    associated = {"45002", "45007"}
+    associated = {station["id"] for station in STATIONS if station["scope"] == "basin"}
     if spot_id.startswith("sheboygan"):
         associated.add("SGNW3")
     elif spot_id == "port-washington":

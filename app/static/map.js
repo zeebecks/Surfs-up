@@ -44,15 +44,20 @@
   for (const station of stations) {
     const marker = document.createElement('span'); marker.textContent = '◇';
     const icon = L.divIcon({className: 'buoy-marker', html: marker, iconSize: [23, 23], iconAnchor: [12, 12]});
-    const wind = station.measurements.wind_kts, dir = station.measurements.wind_dir_deg;
-    const details = wind ? `${Math.round(wind.value)} kt · ${station.status} · wind observed ${new Date(wind.time).toLocaleString()}` : 'No recent wind reading. Station is still shown for reference.';
+    const readings = [];
+    const wind = station.measurements.wind_kts, wave = station.measurements.wave_height_m, water = station.measurements.water_temp_c;
+    const observed = reading => `${reading.status} · ${new Date(reading.time).toLocaleString()}`;
+    if (wave) readings.push(`Waves ${(wave.value * 3.28084).toFixed(1)} ft · ${observed(wave)}`);
+    if (wind) readings.push(`Wind ${Math.round(wind.value)} kt · ${observed(wind)}`);
+    if (!wave && !wind && water) readings.push(`Water ${Math.round(water.value * 1.8 + 32)} °F · ${observed(water)}`);
+    const details = readings.length ? readings.join(' / ') : 'No recent readings. Station is still shown for reference.';
     // Each direction retains its own timestamp in the station card.
     L.marker([station.lat, station.lng], {icon, title: `${station.name} (${station.id})`}).bindPopup(popup(station.name, details, `/buoys#station-${station.id}`, 'View observations ↗')).addTo(buoyLayer);
   }
   const allPoints = [...points, ...stations.map(s => [s.lat, s.lng])];
   const fit = coords => { if (coords.length) map.fitBounds(coords, {padding: [35, 35], maxZoom: 10}); else map.setView([44, -87], 7); };
   fit(points.length ? points : allPoints);
-  const overlays = {'Wind stations': buoyLayer};
+  const overlays = {'Buoys & stations': buoyLayer};
   if (spots.length) overlays['Surf spots'] = spotLayer;
   L.control.layers(null, overlays, {collapsed: true}).addTo(map);
   if (points.length) {
