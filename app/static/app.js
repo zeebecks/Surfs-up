@@ -10,6 +10,9 @@
       const saved = favorites.has(button.dataset.favorite);
       button.setAttribute('aria-pressed', String(saved));
       button.textContent = saved ? '★' : '☆';
+      const name = button.dataset.favoriteName || 'this spot';
+      button.setAttribute('aria-label', saved ? `Remove ${name} from favorites` : `Add ${name} to favorites`);
+      button.title = saved ? 'Remove from favorites in this browser' : 'Save to favorites in this browser';
     });
     let visible = 0;
     document.querySelectorAll('.spot-card').forEach(card => {
@@ -34,6 +37,62 @@
     updateFavorites();
   }));
   updateFavorites();
+
+  // Load the other original photos only when requested, and keep the current
+  // photo visible while the next one loads. No automatic rotation.
+  document.querySelectorAll('[data-gallery]').forEach(gallery => {
+    const photos = [
+      {src: '/static/banner-4.jpg', alt: 'A surfer riding a Lake Michigan wave at sunrise', position: '50% 51%'},
+      {src: '/static/banner-1.jpeg', alt: 'A surfer entering Lake Michigan with waves rolling toward the beach', position: '50% 60%'},
+      {src: '/static/banner-2.png', alt: 'A surfer riding a wave as the sun rises over Lake Michigan', position: '50% 48%'},
+      {src: '/static/banner-3.jpg', alt: 'Two surfers carrying boards along a Lake Michigan pier', position: '50% 60%'},
+    ];
+    const image = gallery.querySelector('.gallery-image');
+    const count = gallery.querySelector('.gallery-count');
+    const message = gallery.querySelector('.gallery-message');
+    let current = Math.max(0, photos.findIndex(photo => photo.src === image.getAttribute('src')));
+    let requested = current;
+    let requestId = 0;
+
+    function showPhoto(index) {
+      requested = (index + photos.length) % photos.length;
+      const target = requested;
+      const id = ++requestId;
+      const photo = photos[target];
+      gallery.setAttribute('aria-busy', 'true');
+      message.textContent = `Loading photo ${target + 1}…`;
+      message.hidden = false;
+      const next = new Image();
+      next.onload = () => {
+        if (id !== requestId) return;
+        image.src = photo.src;
+        image.alt = photo.alt;
+        image.style.objectPosition = photo.position;
+        current = target;
+        count.textContent = `${current + 1} / ${photos.length}`;
+        gallery.setAttribute('aria-busy', 'false');
+        message.hidden = true;
+      };
+      next.onerror = () => {
+        if (id !== requestId) return;
+        requested = current;
+        gallery.setAttribute('aria-busy', 'false');
+        message.textContent = 'Couldn’t load that photo. Try an arrow again.';
+      };
+      next.src = photo.src;
+    }
+
+    gallery.querySelector('.gallery-controls').hidden = false;
+    gallery.querySelectorAll('[data-gallery-step]').forEach(button => {
+      button.addEventListener('click', () => showPhoto(requested + Number(button.dataset.galleryStep)));
+    });
+    gallery.addEventListener('keydown', event => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+      event.preventDefault();
+      showPhoto(requested + (event.key === 'ArrowLeft' ? -1 : 1));
+    });
+  });
+
   document.getElementById('spot-sort')?.addEventListener('change', event => {
     const key = event.target.value;
     const cards = [...document.querySelectorAll('.spot-card')];
@@ -131,11 +190,14 @@
       else ctx.lineTo(x(row), y(row));
       previous = row;
     }
-    ctx.stroke(); ctx.fillStyle = '#a2b2b8'; ctx.font = '9px system-ui';
+    const labelStyle = getComputedStyle(canvas);
+    ctx.stroke(); ctx.fillStyle = '#a2b2b8'; ctx.font = `${labelStyle.fontSize} ${labelStyle.fontFamily}`;
     ctx.fillText(Math.round(max).toString(), width - 23, 15);
     ctx.fillText('0', width - 23, height - 17);
     const elapsed = Math.round((last - first) / 3600000);
-    ctx.fillText(elapsed + 'h before latest reading', 6, height - 3);
+    const historyLabel = elapsed + 'h before latest reading';
+    const availableLabelWidth = width - 42 - ctx.measureText('Latest').width;
+    ctx.fillText(ctx.measureText(historyLabel).width <= availableLabelWidth ? historyLabel : elapsed + 'h ago', 6, height - 3);
     ctx.textAlign = 'right'; ctx.fillText('Latest', width - 30, height - 3);
   }
   document.querySelectorAll('.wind-trend').forEach(canvas => {

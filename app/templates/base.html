@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101e25">
-  <meta name="description" content="A local's window onto Lake Michigan. Wisconsin surf spots, wind forecasts, offshore buoy observations, and live cameras in one place.">
+  <meta name="description" content="Lake Michigan surf conditions, wind forecasts, buoy observations, and live cameras for Wisconsin surf spots.">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>{% block title %}Lake Surf · Read the lake{% endblock %}</title>
-  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <title>{% block title %}SurfsUP · Lake Michigan surf conditions{% endblock %}</title>
+  <link rel="icon" href="/static/surfsup-favicon.png" type="image/png" sizes="128x128">
   <link rel="stylesheet" href="/static/styles.css">
   <script src="/static/app.js" defer>
 </script>
@@ -18,9 +18,9 @@
   {% if demo %}<div class="demo-banner">DEMO MODE · Sample conditions for exploring the app. These are not live readings.</div>{% endif %}
   <header class="site-header">
     <div class="header-inner">
-      <a class="brand" href="/" aria-label="Lake Surf home">
-<span class="brand-mark" aria-hidden="true">≋</span>
-<span>LAKE<span class="brand-light">SURF</span>
+      <a class="brand" href="/" aria-label="SurfsUP home">
+<img class="brand-logo" src="/static/surfsup-logo.png" alt="Lake Michigan with a curling wave" width="28" height="60">
+<span>Surfs<span class="brand-light">UP</span>
 <small>LAKE MICHIGAN</small>
 </span>
 </a>
@@ -29,8 +29,6 @@
         <a href="{{ path }}" {% if active == key %}class="active" aria-current="page"{% endif %}>{{ label }}</a>
         {% endfor %}
       </nav>
-      <span class="header-location">WISCONSIN SHORE <span aria-hidden="true">↗</span>
-</span>
     </div>
   </header>
   <main id="main" class="container">
@@ -40,16 +38,21 @@
     {% block content %}{% endblock %}
   </main>
   <footer class="site-footer">
-    <div>
-<a class="footer-brand" href="/">LAKE SURF</a>
-<p>Freshwater. Fresh perspective.</p>
-</div>
-    <div class="footer-links">
-<a href="/about">Sources & scoring</a>
-<a href="https://www.weather.gov/mkx/" target="_blank" rel="noopener noreferrer">NWS ↗</a>
-<a href="https://www.linkedin.com/in/zacharybecka/" target="_blank" rel="noopener noreferrer">Made by Zach ↗</a>
-</div>
-    <p class="footer-note">Wind in knots · waves in feet · times in {{ now | localtime('%Z') }}<br>Built for the Wisconsin side of Lake Michigan.</p>
+    <div class="footer-top">
+      <a class="footer-brand" href="/" aria-label="SurfsUP home">
+        <img src="/static/surfsup-logo.png" alt="" width="24" height="52" loading="lazy">
+        <span>Surfs<span class="brand-light">UP</span><small>Lake Michigan</small></span>
+      </a>
+      <nav class="footer-links" aria-label="Resources">
+        <a href="/about">Sources & scoring</a>
+        <a href="https://www.weather.gov/mkx/" target="_blank" rel="noopener noreferrer">NWS forecast <span aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">© 2026 SurfsUP</p>
+      <p class="footer-note">Wind in knots · waves in feet · times in {{ now | localtime('%Z') }}</p>
+      <a class="footer-profile" href="https://www.linkedin.com/in/zacharybecka/" target="_blank" rel="noopener noreferrer">Zach Becka <span>· LinkedIn <span aria-hidden="true">↗</span></span></a>
+    </div>
   </footer>
 </body>
 </html>

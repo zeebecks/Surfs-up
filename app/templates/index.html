@@ -10,41 +10,35 @@
   <div class="hero-copy">
 <p class="eyebrow">
 <span class="little-line">
-</span> A LOCAL'S WINDOW ON THE LAKE</p>
-<h1>Read the lake.<br>
-<span>Find your window.</span>
+</span> WIND · CAMERAS · FORECASTS</p>
+<h1>Lake Michigan<br>
+<span>surf conditions.</span>
 </h1>
-<p class="hero-description">The wind, the water, and the spots we keep coming back to. Your Wisconsin shore, all in one place.</p>
+<p class="hero-description">Check the wind, compare surf spots, and see live cameras along the Wisconsin shore.</p>
 <div class="hero-meta">
 <span>
 <strong>06</strong> local spots</span>
 <span>
 <strong>02</strong> offshore buoys</span>
-<a href="#spot-list">Check the shore <span aria-hidden="true">↓</span>
+<a href="#spot-list">View spots <span aria-hidden="true">↓</span>
 </a>
 </div>
 </div>
-  <div class="hero-photo" role="img" aria-label="A surfer riding a Lake Michigan wave at sunrise">
-<span class="photo-label">FRESHWATER / WISCONSIN</span>
-<span class="photo-caption">Worth the early start.</span>
-</div>
+  <div class="hero-photo" data-gallery role="region" aria-roledescription="carousel" aria-label="Lake Michigan surf photos">
+    <img class="gallery-image" src="/static/banner-3.jpg" alt="Two surfers carrying boards along a Lake Michigan pier" width="1008" height="756" style="object-position:50% 60%" fetchpriority="high">
+    <div class="gallery-controls" hidden>
+      <button type="button" class="gallery-arrow" data-gallery-step="-1" aria-label="Previous photo"><span aria-hidden="true">‹</span></button>
+      <span class="gallery-count sr-only" aria-live="polite" aria-atomic="true">4 / 4</span>
+      <button type="button" class="gallery-arrow" data-gallery-step="1" aria-label="Next photo"><span aria-hidden="true">›</span></button>
+    </div>
+    <p class="gallery-message" role="status" hidden></p>
+  </div>
 </section>
-<section class="basin-section" aria-labelledby="basin-title">
-<div class="section-heading">
-<div>
-<p class="eyebrow">THE BIG PICTURE</p>
-<h2 id="basin-title">What’s happening offshore</h2>
-</div>
-<a class="text-link" href="/buoys">All buoys & wind <span aria-hidden="true">↗</span>
-</a>
-</div>
-<div class="basin-grid">{% for station in stations if station.scope == 'basin' %}{{ station_card(station, true) }}{% endfor %}</div>
-<p class="section-note">Measured wind across the lake helps reveal the bigger setup. Offshore readings are regional context, not a report from the beach.</p>
-</section>
+
 <div class="shore-heading" id="spot-list">
 <div>
-<p class="eyebrow">YOUR STRETCH OF SHORE</p>
-<h2>Six spots. One lake.</h2>
+<p class="eyebrow">LOCAL CONDITIONS</p>
+<h2>Surf spots</h2>
 </div>{{ time_controls(h, at) }}</div>
 <div class="shore-layout">
   <section class="spot-section" aria-label="Compare surf spots">
@@ -73,7 +67,7 @@
 <a href="/spots/{{ item.spot.id }}?h={{ h }}">{{ item.spot.name }}</a>
 </h3>
 </div>
-<button class="favorite-button" data-favorite="{{ item.spot.id }}" aria-label="Favorite {{ item.spot.name }}" aria-pressed="false">☆</button>
+<button class="favorite-button" data-favorite="{{ item.spot.id }}" data-favorite-name="{{ item.spot.name }}" aria-label="Add {{ item.spot.name }} to favorites" title="Save to favorites in this browser" aria-pressed="false">☆</button>
 </div>
         <div class="spot-metrics">
 <div class="primary-wind">{{ wind_arrow(fc.wind_dir_deg) }}<div>
@@ -105,7 +99,7 @@
       </article>
       {% endfor %}
     </div>
-<p class="empty-state" id="favorites-empty" hidden>Keep your regular spots close. Tap the star on a spot to save it here.</p>
+<p class="empty-state" id="favorites-empty" hidden>Tap a spot’s star to add it to your favorites. Favorites are saved in this browser.</p>
 <p class="section-note">Ratings are experimental model estimates. Wind setup describes building potential when a full surf estimate isn’t available. <a href="/about#scoring">How it works ↗</a>
 </p>
   </section>
@@ -115,7 +109,6 @@
 <p class="eyebrow">KNOW YOUR COAST</p>
 <h3>The lake view</h3>
 </div>
-<span class="map-cross" aria-hidden="true">＋</span>
 </div>
 <div class="map-switch" role="group" aria-label="Map type">
 <button class="active" data-map-tab="spots" aria-pressed="true">Spots & buoys</button>
@@ -139,6 +132,18 @@
 </a>
 </aside>
 </div>
+<section class="basin-section" aria-labelledby="basin-title">
+<div class="section-heading">
+<div>
+<p class="eyebrow">THE BIG PICTURE</p>
+<h2 id="basin-title">What’s happening offshore</h2>
+</div>
+<a class="text-link" href="/buoys">All buoys & wind <span aria-hidden="true">↗</span>
+</a>
+</div>
+<div class="basin-grid">{% for station in stations if station.scope == 'basin' %}{{ station_card(station, true) }}{% endfor %}</div>
+<p class="section-note">Measured wind across the lake helps reveal the bigger setup. Offshore readings are regional context, not a report from the beach.</p>
+</section>
 <script id="map-spots" type="application/json">[{% for item in items %}{"id":{{ item.spot.id | tojson }},"name":{{ item.spot.name | tojson }},"lat":{{ item.spot.lat }},"lng":{{ item.spot.lng }},"score":{{ item.rating.wind_score | tojson }},"wind":{{ item.forecast.wind_kts | tojson }},"direction":{{ item.forecast.wind_dir_deg | tojson }}}{% if not loop.last %},{% endif %}{% endfor %}]</script>
 <script id="station-data" type="application/json">{{ station_data | tojson }}</script>
 {% endblock %}

@@ -20,6 +20,8 @@
 }
 
 html {
+  /* Scale rem-based type together; honor the reader's browser font preference. */
+  font-size:112.5%;
   scroll-behavior:smooth;
   scroll-padding-top:100px
 }
@@ -29,7 +31,7 @@ body {
   background:var(--bg);
   color:var(--text);
   font-family:var(--body);
-  font-size:15px;
+  font-size:0.9375rem;
   line-height:1.6;
   -webkit-font-smoothing:antialiased
 }
@@ -70,12 +72,12 @@ h1,h2,h3 {
 }
 
 h2 {
-  font-size:25px;
+  font-size:1.5625rem;
   font-weight:650
 }
 
 h3 {
-  font-size:19px;
+  font-size:1.1875rem;
   font-weight:650
 }
 
@@ -152,15 +154,16 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   display:flex;
   align-items:center;
   gap:11px;
-  font:800 22px/1 var(--heading);
+  font:800 1.375rem/1 var(--heading);
   letter-spacing:-1px
 }
 
-.brand-mark {
-  font-size:55px;
-  line-height:1;
-  color:var(--accent);
-  transform:rotate(-12deg)
+.brand-logo {
+  display:block;
+  width:28px;
+  height:60px;
+  object-fit:contain;
+  flex-shrink:0
 }
 
 .brand-light {
@@ -169,7 +172,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .brand small {
   display:block;
-  font:500 8px/1 var(--body);
+  font:500 0.625rem/1 var(--body);
   letter-spacing:2.4px;
   margin-top:9px
 }
@@ -183,7 +186,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .site-header nav a {
   color:var(--muted);
-  font-size:13px;
+  font-size:0.8125rem;
   position:relative;
   display:flex;
   align-items:center;
@@ -204,18 +207,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   width:100%
 }
 
-.header-location {
-  font-size:10px;
-  letter-spacing:1.4px;
-  color:var(--muted)
-}
-
-.header-location span {
-  color:var(--accent);
-  margin-left:14px;
-  font-size:18px
-}
-
 .hero {
   display:grid;
   grid-template-columns:1.05fr 1fr;
@@ -225,7 +216,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .eyebrow {
-  font-size:10px;
+  font-size:0.625rem;
   font-weight:650;
   letter-spacing:1.7px;
   color:var(--accent);
@@ -243,7 +234,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .hero h1 {
-  font-size:clamp(36px,4.15vw,57px);
+  font-size:clamp(2.25rem,4.66875vw,3.5625rem);
   font-weight:600;
   letter-spacing:-2.7px;
   line-height:1.1
@@ -254,17 +245,18 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .hero-description {
-  max-width:390px;
+  max-width:440px;
   color:var(--muted);
-  font-size:14px;
+  font-size:0.875rem;
   line-height:1.8;
   margin-top:22px
 }
 
 .hero-meta {
   display:flex;
+  flex-wrap:wrap;
   gap:24px;
-  font-size:11px;
+  font-size:0.6875rem;
   align-items:center;
   color:var(--muted);
   margin-top:30px
@@ -272,7 +264,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .hero-meta strong {
   color:var(--text);
-  font-size:16px;
+  font-size:1rem;
   margin-right:5px
 }
 
@@ -290,25 +282,79 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   position:relative;
   border-radius:3px 45px 3px 3px;
   overflow:hidden;
-  background:linear-gradient(180deg,rgba(14,25,29,.12),rgba(14,25,29,.18) 45%,rgba(14,25,29,.78)),url('/static/banner-4.jpg') center 51%/cover
+  background:var(--panel-deep)
 }
 
-.photo-label {
+.gallery-image {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:50% 51%
+}
+
+.gallery-controls {
   position:absolute;
-  top:18px;
-  left:20px;
-  font-size:9px;
-  letter-spacing:1.5px;
+  inset:0;
+  pointer-events:none
+}
+
+.gallery-arrow {
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  display:grid;
+  place-items:center;
+  width:44px;
+  height:44px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#101c2370;
   color:#fff;
-  text-shadow:0 1px 5px #000
+  font-size:2rem;
+  line-height:1;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease,background .18s ease
 }
 
-.photo-caption {
+.gallery-arrow[data-gallery-step="-1"] {
+  left:12px
+}
+
+.gallery-arrow[data-gallery-step="1"] {
+  right:12px
+}
+
+.hero-photo:hover .gallery-arrow,
+.hero-photo:focus-within .gallery-arrow {
+  opacity:1;
+  pointer-events:auto
+}
+
+.gallery-arrow:hover {
+  background:#101c23bd
+}
+
+@media (hover:none), (pointer:coarse) {
+  .gallery-arrow {
+    opacity:1;
+    pointer-events:auto
+  }
+}
+
+.gallery-message {
   position:absolute;
-  bottom:20px;
-  left:22px;
-  font:500 20px var(--heading);
-  letter-spacing:-.6px
+  top:14px;
+  left:14px;
+  right:14px;
+  width:fit-content;
+  max-width:calc(100% - 28px);
+  padding:7px 11px;
+  border-radius:5px;
+  background:#101c23e8;
+  font-size:0.75rem
 }
 
 .section-heading {
@@ -324,7 +370,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .text-link {
-  font-size:12px;
+  font-size:0.75rem;
   color:var(--accent);
   white-space:nowrap
 }
@@ -334,6 +380,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .basin-section {
+  margin-top:36px;
   border-top:1px solid var(--border);
   padding-top:31px
 }
@@ -358,11 +405,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .card-eyebrow {
   display:flex;
+  flex-wrap:wrap;
   justify-content:space-between;
   align-items:center;
   gap:8px;
   margin-bottom:12px;
-  font-size:9px;
+  font-size:0.625rem;
   letter-spacing:.7px;
   color:var(--muted);
   text-transform:uppercase
@@ -377,7 +425,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   display:inline-flex;
   align-items:center;
   gap:6px;
-  font-size:8px;
+  font-size:0.625rem;
   letter-spacing:.6px;
   white-space:nowrap
 }
@@ -408,11 +456,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .station-card h3 {
   margin-bottom:21px;
-  font-size:20px
+  font-size:1.25rem
 }
 
 .outward {
-  font-size:16px;
+  font-size:1rem;
   font-weight:400;
   opacity:.6;
   margin-left:4px
@@ -427,21 +475,21 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .metric-label {
   display:block;
-  font-size:10px;
+  font-size:0.625rem;
   letter-spacing:.25px;
   color:var(--muted);
   margin-bottom:4px
 }
 
 .measurement-value {
-  font:500 32px/1.15 var(--heading);
+  font:500 2rem/1.15 var(--heading);
   display:block;
   letter-spacing:-1px;
   font-variant-numeric:tabular-nums
 }
 
 .measurement-value small {
-  font:400 13px var(--body);
+  font:400 0.8125rem var(--body);
   color:var(--muted);
   margin-left:4px;
   letter-spacing:0
@@ -449,7 +497,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .reading-age {
   display:block;
-  font-size:9px;
+  font-size:0.625rem;
   color:var(--muted);
   margin-top:5px;
   line-height:1.4
@@ -461,12 +509,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .station-direction {
   display:flex;
+  flex-wrap:wrap;
   gap:13px;
   align-items:center
 }
 
 .station-direction strong {
-  font:500 24px var(--heading)
+  font:500 1.5rem var(--heading)
 }
 
 .wind-arrow {
@@ -477,13 +526,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   height:38px;
   flex-shrink:0;
   color:var(--accent);
-  font:400 33px/1 var(--body);
+  font:400 2.0625rem/1 var(--body);
   transform:rotate(var(--direction));
   transform-origin:center
 }
 
 .wind-arrow.missing {
-  font-size:23px;
+  font-size:1.4375rem;
   color:var(--muted)
 }
 
@@ -491,13 +540,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   border-top:1px solid var(--border);
   margin-top:18px;
   padding-top:12px;
-  font-size:10px;
+  font-size:0.625rem;
   color:var(--muted)
 }
 
 .section-note {
   color:var(--muted);
-  font-size:11px;
+  font-size:0.6875rem;
   line-height:1.7;
   margin-top:13px
 }
@@ -542,7 +591,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .segmented a {
   display:block;
   padding:6px 13px;
-  font-size:11px;
+  font-size:0.6875rem;
   border-radius:5px;
   color:var(--muted)
 }
@@ -555,7 +604,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .time-caption {
   color:var(--muted);
-  font-size:10px
+  font-size:0.625rem
 }
 
 .shore-layout {
@@ -571,6 +620,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .list-toolbar {
   display:flex;
+  flex-wrap:wrap;
   align-items:center;
   justify-content:space-between;
   gap:12px;
@@ -586,7 +636,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   border:0;
   padding:4px 0;
   color:var(--muted);
-  font-size:11px;
+  font-size:0.6875rem;
   background:transparent
 }
 
@@ -595,7 +645,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .filter-button span {
-  font-size:10px;
+  font-size:0.625rem;
   display:inline-block;
   margin-left:4px;
   color:var(--muted)
@@ -605,17 +655,17 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   display:flex;
   gap:7px;
   align-items:center;
-  font-size:10px;
+  font-size:0.625rem;
   color:var(--muted)
 }
 
 .sort-label select {
-  font-size:10px;
+  font-size:0.625rem;
   padding:5px;
   background:transparent;
   border:0;
   color:var(--text);
-  max-width:115px
+  max-width:8rem
 }
 
 .spot-list {
@@ -643,7 +693,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .spot-location {
-  font-size:8px;
+  font-size:0.625rem;
   letter-spacing:.75px;
   color:var(--muted);
   margin-bottom:8px
@@ -656,7 +706,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .spot-card h3 {
-  font-size:17px;
+  font-size:1.0625rem;
   letter-spacing:-.45px
 }
 
@@ -664,7 +714,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   border:0;
   background:none;
   color:#a0b3b6;
-  font-size:24px;
+  font-size:1.5rem;
   line-height:1;
   width:36px;
   height:38px;
@@ -697,23 +747,23 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .primary-wind .wind-arrow {
   width:30px;
-  font-size:32px
+  font-size:2rem
 }
 
 .wind-number {
-  font:550 34px/1 var(--heading);
+  font:550 2.125rem/1 var(--heading);
   letter-spacing:-1.5px
 }
 
 .wind-number small {
-  font:400 12px var(--body);
+  font:400 0.75rem var(--body);
   color:var(--muted);
   margin-left:4px;
   letter-spacing:0
 }
 
 .metric-detail {
-  font-size:9px;
+  font-size:0.625rem;
   display:block;
   margin-top:6px;
   line-height:1.4
@@ -730,19 +780,19 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .wave-metric strong,.rating-metric strong {
   display:block;
-  font:500 25px/1.1 var(--heading);
+  font:500 1.5625rem/1.1 var(--heading);
   font-variant-numeric:tabular-nums;
   letter-spacing:-1px
 }
 
 .wave-metric small,.rating-metric small {
-  font:400 11px var(--body);
+  font:400 0.6875rem var(--body);
   color:var(--muted);
   letter-spacing:0
 }
 
 .rating-metric .metric-label {
-  font-size:9px
+  font-size:0.625rem
 }
 
 .poor {
@@ -763,11 +813,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .spot-card-bottom {
   display:flex;
+  flex-wrap:wrap;
   justify-content:space-between;
   gap:10px;
   border-top:1px solid var(--border);
   padding:11px 0;
-  font-size:10px
+  font-size:0.625rem
 }
 
 .spot-card-bottom a {
@@ -780,7 +831,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .data-caption {
-  font-size:10px;
+  font-size:0.625rem;
   color:var(--muted);
   line-height:1.5
 }
@@ -815,18 +866,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .map-panel-heading .eyebrow {
-  font-size:9px;
+  font-size:0.625rem;
   margin-bottom:5px
 }
 
 .map-panel-heading h3 {
-  font-size:22px
-}
-
-.map-cross {
-  color:var(--muted);
-  font-size:26px;
-  font-weight:300
+  font-size:1.375rem
 }
 
 .map-switch {
@@ -841,7 +886,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   border-bottom:2px solid transparent;
   background:none;
   color:var(--muted);
-  font-size:11px;
+  font-size:0.6875rem;
   padding:10px 0
 }
 
@@ -866,14 +911,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .map-fallback {
   padding:35px;
   color:var(--muted);
-  font-size:12px
+  font-size:0.75rem
 }
 
 .map-legend {
   display:flex;
+  flex-wrap:wrap;
   gap:18px;
   padding:16px 22px 0;
-  font-size:10px;
+  font-size:0.625rem;
   color:var(--muted)
 }
 
@@ -899,17 +945,19 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .map-note {
   padding:11px 22px;
-  font-size:10px;
+  font-size:0.625rem;
   color:var(--muted);
   line-height:1.7
 }
 
 .map-resource {
   display:flex;
+  flex-wrap:wrap;
+  gap:8px 14px;
   justify-content:space-between;
   margin:0 22px;
   padding:15px 0;
-  font-size:11px;
+  font-size:0.6875rem;
   border-top:1px solid var(--border);
   color:var(--accent)
 }
@@ -929,7 +977,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   justify-content:center;
   border:2px solid #123c38;
   border-radius:50%;
-  font-size:10px;
+  font-size:0.625rem;
   font-weight:700;
   box-shadow:0 2px 7px #0008
 }
@@ -948,18 +996,18 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   background:var(--amber);
   border:2px solid #553b24;
   color:#332416;
-  font-size:13px;
+  font-size:0.8125rem;
   border-radius:4px
 }
 
 .map-popup h3 {
-  font-size:14px;
+  font-size:0.875rem;
   margin-bottom:8px;
   color:#142d33
 }
 
 .map-popup p {
-  font-size:12px;
+  font-size:0.75rem;
   margin:4px 0
 }
 
@@ -970,46 +1018,99 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .leaflet-container {
-  font-family:var(--body)
+  font-family:var(--body);
+  font-size:0.75rem
+}
+
+.leaflet-control-layers {
+  font-size:0.75rem
 }
 
 .leaflet-control-attribution {
-  font-size:8px!important
+  font-size:0.625rem!important
 }
 
 .site-footer {
   max-width:1192px;
+  width:calc(100% - 88px);
   margin:58px auto 0;
-  padding:29px 0 35px;
+  padding:32px 0 25px;
   border-top:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  gap:25px;
   color:var(--muted);
-  font-size:10px
+  font-size:0.75rem
+}
+
+.footer-top {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  align-items:center;
+  gap:24px;
+  padding-bottom:28px
 }
 
 .footer-brand {
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
   font-family:var(--heading);
-  font-size:14px;
+  font-size:1.375rem;
   font-weight:750;
-  letter-spacing:.5px;
+  line-height:1;
+  letter-spacing:-.8px;
   color:var(--text)
 }
 
-.site-footer p {
-  margin-top:5px
+.footer-brand img {
+  object-fit:contain;
+  flex-shrink:0
+}
+
+.footer-brand small {
+  display:block;
+  margin-top:9px;
+  font:400 0.75rem/1.4 var(--body);
+  letter-spacing:.2px;
+  color:var(--muted)
 }
 
 .footer-links {
   display:flex;
-  gap:22px;
-  align-items:center
+  flex-wrap:wrap;
+  gap:12px 26px;
+  align-items:center;
+  color:var(--text)
 }
 
-.footer-note {
-  text-align:right;
-  line-height:1.9
+.footer-links a,.footer-profile {
+  display:inline-block;
+  padding:8px 0
+}
+
+.footer-bottom {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px 24px;
+  padding-top:16px;
+  border-top:1px solid var(--border)
+}
+
+.footer-copyright {
+  white-space:nowrap
+}
+
+.footer-profile {
+  color:var(--accent)
+}
+
+.footer-profile>span {
+  color:var(--muted)
+}
+
+.footer-profile:hover>span {
+  color:var(--accent)
 }
 
 .notice {
@@ -1018,7 +1119,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   border-radius:8px;
   padding:12px 16px;
   margin-top:20px;
-  font-size:12px
+  font-size:0.75rem
 }
 
 .notice button {
@@ -1034,7 +1135,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   text-align:center;
   background:#45395d;
   color:#e6d7ff;
-  font-size:12px
+  font-size:0.75rem
 }
 
 .page-heading {
@@ -1043,14 +1144,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .page-heading h1 {
-  font-size:clamp(36px,5vw,54px);
+  font-size:clamp(2.25rem,5.625vw,3.375rem);
   font-weight:550;
   letter-spacing:-2px;
   line-height:1.15
 }
 
 .page-heading>p:last-child {
-  font-size:15px;
+  font-size:0.9375rem;
   color:var(--muted);
   line-height:1.8;
   max-width:620px;
@@ -1077,7 +1178,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .buoy-intro p {
   color:var(--muted);
-  font-size:13px;
+  font-size:0.8125rem;
   margin-bottom:20px
 }
 
@@ -1097,7 +1198,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .station-secondary .measurement-value {
-  font-size:24px
+  font-size:1.5rem
 }
 
 .trend-wrap {
@@ -1107,7 +1208,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .wind-trend {
   display:block;
   width:100%;
-  height:75px
+  height:75px;
+  font-size:0.625rem
 }
 
 .reading-history {
@@ -1115,7 +1217,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .reading-history summary {
-  font-size:11px;
+  font-size:0.6875rem;
   color:var(--accent)
 }
 
@@ -1128,7 +1230,7 @@ details {
 }
 
 .source-warning {
-  font-size:10px;
+  font-size:0.625rem;
   margin-top:10px
 }
 
@@ -1137,7 +1239,7 @@ details {
 }
 
 .subtle-label {
-  font-size:10px;
+  font-size:0.625rem;
   color:var(--muted)
 }
 
@@ -1151,7 +1253,7 @@ details {
 table {
   border-collapse:collapse;
   width:100%;
-  font-size:11px;
+  font-size:0.6875rem;
   text-align:left
 }
 
@@ -1170,7 +1272,7 @@ th {
   display:inline-block;
   margin-top:30px;
   color:var(--muted);
-  font-size:12px
+  font-size:0.75rem
 }
 
 .detail-heading {
@@ -1182,12 +1284,12 @@ th {
 }
 
 .detail-heading h1 {
-  font-size:clamp(30px,4vw,45px);
+  font-size:clamp(1.875rem,4.5vw,2.8125rem);
   font-weight:550
 }
 
 .favorite-button.large {
-  font-size:30px;
+  font-size:1.875rem;
   width:44px;
   height:44px
 }
@@ -1209,38 +1311,39 @@ th {
 
 .detail-wind {
   display:flex;
+  flex-wrap:wrap;
   gap:20px;
   align-items:center;
   margin:25px 0
 }
 
 .detail-wind>.wind-arrow {
-  font-size:62px;
+  font-size:3.875rem;
   width:55px;
   height:55px
 }
 
 .detail-wind>strong {
-  font:500 72px/1 var(--heading);
+  font:500 4.5rem/1 var(--heading);
   letter-spacing:-4px
 }
 
 .detail-wind small {
-  font:400 18px var(--body);
+  font:400 1.125rem var(--body);
   letter-spacing:0;
   color:var(--muted);
   margin-left:7px
 }
 
 .detail-wind b {
-  font-size:23px;
+  font-size:1.4375rem;
   font-weight:500
 }
 
 .detail-wind div>span {
   display:block;
   color:var(--muted);
-  font-size:11px
+  font-size:0.6875rem
 }
 
 .detail-metrics {
@@ -1252,12 +1355,12 @@ th {
 }
 
 .detail-metrics strong {
-  font:500 24px var(--heading);
+  font:500 1.5rem var(--heading);
   white-space:nowrap
 }
 
 .detail-metrics small {
-  font:400 11px var(--body);
+  font:400 0.6875rem var(--body);
   color:var(--muted)
 }
 
@@ -1282,13 +1385,13 @@ th {
 }
 
 .camera-placeholder p {
-  font-size:12px;
+  font-size:0.75rem;
   color:var(--muted);
   max-width:320px
 }
 
 .camera-placeholder h2 {
-  font-size:23px;
+  font-size:1.4375rem;
   max-width:330px
 }
 
@@ -1297,7 +1400,7 @@ th {
   flex-direction:column;
   gap:12px;
   align-items:center;
-  font-size:12px;
+  font-size:0.75rem;
   border:0;
   color:var(--text);
   background:none
@@ -1312,7 +1415,7 @@ th {
   border:1px solid #6a878f;
   border-radius:50%;
   color:var(--accent);
-  font-size:19px;
+  font-size:1.1875rem;
   padding-left:4px
 }
 
@@ -1320,7 +1423,7 @@ th {
   display:flex;
   justify-content:space-between;
   padding:14px 20px;
-  font-size:10px;
+  font-size:0.625rem;
   color:var(--muted);
   gap:12px
 }
@@ -1349,11 +1452,11 @@ th {
   padding:10px 20px;
   color:var(--accent);
   width:100%;
-  font-size:11px
+  font-size:0.6875rem
 }
 
 .camera-symbol {
-  font-size:45px;
+  font-size:2.8125rem;
   color:var(--muted)
 }
 
@@ -1369,7 +1472,7 @@ th {
 }
 
 .hourly-table {
-  font-size:12px;
+  font-size:0.75rem;
   text-align:center
 }
 
@@ -1385,7 +1488,7 @@ th {
   min-width:117px;
   background:#172831;
   text-align:left;
-  font-size:11px;
+  font-size:0.6875rem;
   padding-left:16px;
   border-right:1px solid var(--border)
 }
@@ -1397,7 +1500,7 @@ th {
 .hourly-table thead span {
   display:block;
   color:var(--muted);
-  font-size:9px;
+  font-size:0.625rem;
   margin-bottom:4px
 }
 
@@ -1407,26 +1510,26 @@ th {
 
 .hourly-table .wind-cell {
   font-weight:600;
-  font-size:18px;
+  font-size:1.125rem;
   color:var(--accent);
   background:linear-gradient(to top,rgba(153,223,204,.1) var(--wind-bar),transparent var(--wind-bar))
 }
 
 .hourly-table .wind-arrow {
-  font-size:23px;
+  font-size:1.4375rem;
   width:24px;
   height:26px
 }
 
 .table-direction {
   display:block;
-  font-size:9px;
+  font-size:0.625rem;
   color:var(--muted);
   margin-top:4px
 }
 
 .hourly-table .table-status {
-  font-size:8px;
+  font-size:0.625rem;
   color:var(--muted)
 }
 
@@ -1444,18 +1547,18 @@ th {
 }
 
 .rating-big {
-  font:500 44px var(--heading);
+  font:500 2.75rem var(--heading);
   letter-spacing:-1.7px
 }
 
 .rating-big small {
-  font:400 12px var(--body);
+  font:400 0.75rem var(--body);
   color:var(--muted);
   letter-spacing:0
 }
 
 .rating-panel>p:not(.eyebrow),.guide-panel>p:not(.eyebrow) {
-  font-size:13px;
+  font-size:0.8125rem;
   color:var(--muted);
   line-height:1.8
 }
@@ -1466,12 +1569,12 @@ th {
   border:1px solid #416067;
   border-radius:4px;
   color:var(--cyan);
-  font-size:10px;
+  font-size:0.625rem;
   margin-top:15px
 }
 
 .factor-list {
-  font-size:11px;
+  font-size:0.6875rem;
   margin:20px 0
 }
 
@@ -1482,7 +1585,7 @@ th {
 
 .factor-list dt {
   color:var(--muted);
-  font-size:10px
+  font-size:0.625rem
 }
 
 .factor-list dd {
@@ -1499,7 +1602,7 @@ th {
   gap:10px 20px;
   margin-top:20px;
   color:var(--accent);
-  font-size:11px
+  font-size:0.6875rem
 }
 
 #field-notes {
@@ -1509,17 +1612,17 @@ th {
 }
 
 #field-notes h3 {
-  font-size:17px;
+  font-size:1.0625rem;
   margin-bottom:10px
 }
 
 #field-notes p {
-  font-size:12px;
+  font-size:0.75rem;
   margin-top:8px
 }
 
 #field-notes .data-caption {
-  font-size:10px
+  font-size:0.625rem
 }
 
 .user-note {
@@ -1528,7 +1631,7 @@ th {
 }
 
 #field-notes summary {
-  font-size:12px;
+  font-size:0.75rem;
   color:var(--accent)
 }
 
@@ -1539,7 +1642,7 @@ th {
 }
 
 .stack-form label {
-  font-size:11px;
+  font-size:0.6875rem;
   color:var(--muted);
   margin-top:6px
 }
@@ -1552,7 +1655,7 @@ input,select,textarea {
   border-radius:6px;
   min-width:0;
   width:100%;
-  font-size:13px
+  font-size:0.9375rem
 }
 
 textarea {
@@ -1566,7 +1669,7 @@ textarea {
   border-radius:6px;
   padding:12px 16px;
   font-weight:650;
-  font-size:12px;
+  font-size:0.75rem;
   margin-top:12px
 }
 
@@ -1578,7 +1681,7 @@ textarea {
   border:1px solid #638279;
   border-radius:6px;
   padding:12px 18px;
-  font-size:12px;
+  font-size:0.75rem;
   color:var(--accent);
   white-space:nowrap
 }
@@ -1594,11 +1697,11 @@ textarea {
 }
 
 .crew-callout h2 {
-  font-size:23px
+  font-size:1.4375rem
 }
 
 .crew-callout p {
-  font-size:12px;
+  font-size:0.75rem;
   color:var(--muted);
   margin-top:8px
 }
@@ -1614,7 +1717,7 @@ textarea {
 }
 
 .prose-panel h2 {
-  font-size:23px;
+  font-size:1.4375rem;
   margin:28px 0 15px
 }
 
@@ -1623,7 +1726,7 @@ textarea {
 }
 
 .prose-panel p {
-  font-size:13px;
+  font-size:0.8125rem;
   line-height:1.9;
   color:var(--muted);
   margin-top:15px
@@ -1641,13 +1744,13 @@ textarea {
 
 .sources-panel>a strong {
   display:block;
-  font-size:13px
+  font-size:0.8125rem
 }
 
 .sources-panel>a span {
   display:block;
   color:var(--muted);
-  font-size:11px;
+  font-size:0.6875rem;
   margin-top:5px;
   line-height:1.7
 }
@@ -1660,7 +1763,7 @@ textarea {
 
 .lede {
   color:var(--muted);
-  font-size:14px;
+  font-size:0.875rem;
   max-width:700px;
   margin-top:15px
 }
@@ -1680,7 +1783,7 @@ textarea {
 }
 
 .step-number {
-  font:500 32px var(--heading);
+  font:500 2rem var(--heading);
   color:var(--accent)
 }
 
@@ -1689,7 +1792,7 @@ textarea {
 }
 
 .explain-grid p {
-  font-size:12px;
+  font-size:0.75rem;
   line-height:1.9;
   color:var(--muted)
 }
@@ -1702,7 +1805,7 @@ textarea {
 }
 
 .count-badge {
-  font:400 13px var(--body);
+  font:400 0.8125rem var(--body);
   color:var(--accent);
   background:#283e43;
   border-radius:20px;
@@ -1719,7 +1822,7 @@ textarea {
 }
 
 .empty-panel>span {
-  font-size:53px;
+  font-size:3.3125rem;
   color:var(--muted)
 }
 
@@ -1730,7 +1833,7 @@ textarea {
 .empty-panel p {
   margin-top:12px;
   color:var(--muted);
-  font-size:12px
+  font-size:0.75rem
 }
 
 .form-row {
@@ -1745,7 +1848,7 @@ textarea {
 }
 
 .checkin-panel h2 {
-  font-size:24px
+  font-size:1.5rem
 }
 
 .crew-list {
@@ -1773,7 +1876,7 @@ textarea {
   flex-shrink:0;
   background:#2d484b;
   color:var(--accent);
-  font-size:18px
+  font-size:1.125rem
 }
 
 .crew-info {
@@ -1781,17 +1884,17 @@ textarea {
 }
 
 .crew-info h3 {
-  font-size:17px;
+  font-size:1.0625rem;
   overflow-wrap:anywhere
 }
 
 .crew-info>a {
-  font-size:12px;
+  font-size:0.75rem;
   color:var(--accent)
 }
 
 .crew-info p {
-  font-size:11px;
+  font-size:0.6875rem;
   margin-top:8px;
   color:var(--muted)
 }
@@ -1801,7 +1904,7 @@ textarea {
 }
 
 .text-button {
-  font-size:10px;
+  font-size:0.625rem;
   color:var(--amber);
   border:0;
   background:none;
@@ -1810,7 +1913,7 @@ textarea {
 
 .form-error {
   color:#f2ac9a;
-  font-size:12px
+  font-size:0.75rem
 }
 
 .empty-state {
@@ -1819,7 +1922,7 @@ textarea {
   border:1px dashed var(--border);
   border-radius:var(--radius);
   color:var(--muted);
-  font-size:13px
+  font-size:0.8125rem
 }
 
 @media(min-width:1440px) {
@@ -1834,10 +1937,6 @@ textarea {
 }
 
 @media(max-width:1100px) {
-  .header-location {
-    display:none
-  }
-
   .container {
     padding:0 30px
   }
@@ -1847,8 +1946,7 @@ textarea {
   }
 
   .site-footer {
-    margin-left:30px;
-    margin-right:30px
+    width:calc(100% - 60px)
   }
 
   .hero {
@@ -1874,7 +1972,7 @@ textarea {
   }
 
   .spot-card h3 {
-    font-size:15px
+    font-size:0.9375rem
   }
 
   .spot-metrics {
@@ -1910,7 +2008,7 @@ textarea {
   }
 
   .card-eyebrow {
-    font-size:8px;
+    font-size:0.625rem;
     letter-spacing:.2px
   }
 
@@ -1927,11 +2025,11 @@ textarea {
   }
 
   .detail-wind>strong {
-    font-size:62px
+    font-size:3.875rem
   }
 
   .detail-metrics strong {
-    font-size:21px
+    font-size:1.3125rem
   }
 
 }
@@ -1944,7 +2042,7 @@ textarea {
   }
 
   .hero h1 {
-    font-size:38px;
+    font-size:2.375rem;
     letter-spacing:-1.8px
   }
 
@@ -1961,11 +2059,11 @@ textarea {
   }
 
   .hero-description {
-    font-size:12px
+    font-size:0.75rem
   }
 
   .hero-copy .eyebrow {
-    font-size:8px
+    font-size:0.625rem
   }
 
   .shore-layout {
@@ -1986,7 +2084,7 @@ textarea {
   }
 
   .map-panel-heading h3 {
-    font-size:19px
+    font-size:1.1875rem
   }
 
   .map-panel-heading .eyebrow {
@@ -2008,7 +2106,7 @@ textarea {
   }
 
   .spot-card h3 {
-    font-size:19px
+    font-size:1.1875rem
   }
 
   .spot-metrics {
@@ -2020,11 +2118,11 @@ textarea {
   }
 
   .wind-number {
-    font-size:38px
+    font-size:2.375rem
   }
 
   .wave-metric strong,.rating-metric strong {
-    font-size:30px
+    font-size:1.875rem
   }
 
   .metric-detail .muted {
@@ -2032,7 +2130,7 @@ textarea {
   }
 
   .station-direction strong {
-    font-size:20px
+    font-size:1.25rem
   }
 
   .station-wind {
@@ -2044,7 +2142,7 @@ textarea {
   }
 
   .measurement-value {
-    font-size:27px
+    font-size:1.6875rem
   }
 
   .card-eyebrow {
@@ -2053,11 +2151,11 @@ textarea {
   }
 
   .station-card h3 {
-    font-size:18px
+    font-size:1.125rem
   }
 
   .section-heading h2,.shore-heading h2 {
-    font-size:23px
+    font-size:1.4375rem
   }
 
   .detail-grid,.about-grid {
@@ -2093,22 +2191,9 @@ textarea {
     margin-left:58px
   }
 
-  .site-footer {
-    flex-wrap:wrap
-  }
-
-  .footer-note {
-    text-align:left;
-    width:100%
-  }
-
-  .footer-links {
-    gap:17px
-  }
-
 }
 
-@media(max-width:560px) {
+@media(max-width:680px) {
   .container {
     padding:0 19px
   }
@@ -2122,15 +2207,16 @@ textarea {
   }
 
   .brand {
-    font-size:20px
+    font-size:1.25rem
   }
 
-  .brand-mark {
-    font-size:40px
+  .brand-logo {
+    width:23px;
+    height:50px
   }
 
   .brand small {
-    font-size:7px;
+    font-size:0.625rem;
     letter-spacing:2px;
     margin-top:7px
   }
@@ -2143,7 +2229,7 @@ textarea {
   }
 
   .site-header nav a {
-    font-size:12px
+    font-size:0.75rem
   }
 
   .hero {
@@ -2153,21 +2239,21 @@ textarea {
   }
 
   .hero h1 {
-    font-size:43px;
+    font-size:clamp(2rem,12vw,2.6875rem);
     letter-spacing:-2px
   }
 
   .hero-description {
-    font-size:13px;
+    font-size:0.8125rem;
     max-width:335px;
     margin-top:18px
   }
 
   .hero-meta {
     margin-top:20px;
-    flex-wrap:nowrap;
+    flex-wrap:wrap;
     gap:19px;
-    font-size:10px
+    font-size:0.625rem
   }
 
   .hero-meta a {
@@ -2177,20 +2263,7 @@ textarea {
 
   .hero-photo {
     height:170px;
-    border-radius:3px 30px 3px 3px;
-    background-position:center 47%
-  }
-
-  .photo-label {
-    font-size:8px;
-    top:12px;
-    left:15px
-  }
-
-  .photo-caption {
-    font-size:16px;
-    bottom:12px;
-    left:15px
+    border-radius:3px 30px 3px 3px
   }
 
   .section-heading {
@@ -2200,11 +2273,11 @@ textarea {
   }
 
   .section-heading h2,.shore-heading h2 {
-    font-size:21px
+    font-size:1.3125rem
   }
 
   .section-heading>.text-link {
-    font-size:10px;
+    font-size:0.625rem;
     margin-top:25px;
     white-space:normal;
     text-align:right;
@@ -2216,7 +2289,7 @@ textarea {
   }
 
   .eyebrow {
-    font-size:9px;
+    font-size:0.625rem;
     letter-spacing:1.4px
   }
 
@@ -2230,12 +2303,12 @@ textarea {
   }
 
   .card-eyebrow {
-    font-size:8px;
-    flex-wrap:nowrap
+    font-size:0.625rem;
+    flex-wrap:wrap
   }
 
   .station-card h3 {
-    font-size:20px;
+    font-size:1.25rem;
     margin-bottom:17px
   }
 
@@ -2249,11 +2322,11 @@ textarea {
   }
 
   .measurement-value {
-    font-size:31px
+    font-size:1.9375rem
   }
 
   .station-direction strong {
-    font-size:23px
+    font-size:1.4375rem
   }
 
   .station-direction .wind-arrow {
@@ -2261,11 +2334,11 @@ textarea {
   }
 
   .station-context {
-    font-size:10px
+    font-size:0.625rem
   }
 
   .section-note {
-    font-size:10px
+    font-size:0.625rem
   }
 
   .shore-heading {
@@ -2292,7 +2365,7 @@ textarea {
   }
 
   .map-panel-heading h3 {
-    font-size:18px
+    font-size:1.125rem
   }
 
   .lake-map {
@@ -2304,7 +2377,7 @@ textarea {
   }
 
   .map-note {
-    font-size:10px
+    font-size:0.625rem
   }
 
   .spot-card {
@@ -2312,11 +2385,11 @@ textarea {
   }
 
   .spot-card h3 {
-    font-size:17px
+    font-size:1.0625rem
   }
 
   .spot-location {
-    font-size:8px
+    font-size:0.625rem
   }
 
   .spot-metrics {
@@ -2331,19 +2404,19 @@ textarea {
 
   .primary-wind .wind-arrow {
     width:27px;
-    font-size:29px
+    font-size:1.8125rem
   }
 
   .wind-number {
-    font-size:32px
+    font-size:2rem
   }
 
   .wave-metric strong,.rating-metric strong {
-    font-size:26px
+    font-size:1.625rem
   }
 
   .metric-detail {
-    font-size:9px
+    font-size:0.625rem
   }
 
   .metric-detail .muted {
@@ -2355,19 +2428,19 @@ textarea {
   }
 
   .metric-label {
-    font-size:9px
+    font-size:0.625rem
   }
 
   .rating-metric .metric-label {
-    font-size:8px
+    font-size:0.625rem
   }
 
   .spot-card-bottom {
-    font-size:9px
+    font-size:0.625rem
   }
 
   .data-caption {
-    font-size:9px
+    font-size:0.625rem
   }
 
   .spot-card-bottom a span:last-child {
@@ -2379,7 +2452,7 @@ textarea {
   }
 
   .favorite-button {
-    font-size:23px;
+    font-size:1.4375rem;
     width:31px
   }
 
@@ -2393,15 +2466,19 @@ textarea {
   }
 
   .site-footer {
-    margin:35px 19px 0;
-    gap:20px;
-    padding:25px 0
+    width:calc(100% - 38px);
+    margin:35px auto 0;
+    padding:26px 0 22px
   }
 
   .footer-links {
-    font-size:10px;
-    flex-wrap:wrap;
-    gap:15px
+    gap:12px 22px
+  }
+
+  .footer-bottom {
+    align-items:flex-start;
+    flex-direction:column;
+    gap:8px
   }
 
   .page-heading {
@@ -2410,11 +2487,11 @@ textarea {
   }
 
   .page-heading h1 {
-    font-size:38px
+    font-size:2.375rem
   }
 
   .page-heading>p:last-child {
-    font-size:13px
+    font-size:0.8125rem
   }
 
   .buoy-intro {
@@ -2427,7 +2504,7 @@ textarea {
   }
 
   .section-heading .subtle-label {
-    font-size:9px;
+    font-size:0.625rem;
     max-width:110px;
     text-align:right
   }
@@ -2437,7 +2514,7 @@ textarea {
   }
 
   .detail-heading h1 {
-    font-size:30px
+    font-size:1.875rem
   }
 
   .detail-grid {
@@ -2445,7 +2522,7 @@ textarea {
   }
 
   .detail-wind>strong {
-    font-size:70px
+    font-size:4.375rem
   }
 
   .detail-wind {
@@ -2453,7 +2530,7 @@ textarea {
   }
 
   .detail-metrics strong {
-    font-size:24px
+    font-size:1.5rem
   }
 
   .conditions-panel,.rating-panel,.guide-panel,.prose-panel,.checkin-panel {
@@ -2491,7 +2568,7 @@ textarea {
   }
 
   .crew-info h3 {
-    font-size:16px
+    font-size:1rem
   }
 
   .text-button {
@@ -2521,7 +2598,7 @@ textarea {
   }
 
   .notice {
-    font-size:11px
+    font-size:0.6875rem
   }
 
   .notice button {
@@ -2551,7 +2628,7 @@ textarea {
   background:#162a32;
   color:#eef1e9;
   padding:8px 11px;
-  font:11px var(--body);
+  font:0.6875rem var(--body);
   box-shadow:0 2px 8px #0003
 }
 

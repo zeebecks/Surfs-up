@@ -30,6 +30,6 @@ async def lifespan(app):
             await task
 
 
-app = FastAPI(title="Lake Surf", lifespan=lifespan)
+app = FastAPI(title="SurfsUP", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 app.include_router(ui.router)

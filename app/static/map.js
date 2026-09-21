@@ -52,7 +52,9 @@
   const allPoints = [...points, ...stations.map(s => [s.lat, s.lng])];
   const fit = coords => { if (coords.length) map.fitBounds(coords, {padding: [35, 35], maxZoom: 10}); else map.setView([44, -87], 7); };
   fit(points.length ? points : allPoints);
-  L.control.layers(null, {'Surf spots': spotLayer, 'Wind stations': buoyLayer}, {collapsed: true}).addTo(map);
+  const overlays = {'Wind stations': buoyLayer};
+  if (spots.length) overlays['Surf spots'] = spotLayer;
+  L.control.layers(null, overlays, {collapsed: true}).addTo(map);
   if (points.length) {
     const control = L.control({position: 'bottomleft'});
     control.onAdd = () => {

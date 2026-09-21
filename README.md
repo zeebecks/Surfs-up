@@ -1,4 +1,4 @@
-# Lake Surf
+# SurfsUP
 
 A wind-first surf dashboard for the Wisconsin shore of Lake Michigan. Compare six local spots, follow the northern and southern offshore buoys, and check cameras and hourly forecasts without opening a dozen tabs.
 

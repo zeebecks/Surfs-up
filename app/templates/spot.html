@@ -1,6 +1,6 @@
 {% extends 'base.html' %}{% from 'components.html' import wind_arrow, station_card, time_controls %}
 {% set fc = item.forecast %}{% set rating = item.rating %}
-{% block title %}{{ item.spot.name }} · Lake Surf{% endblock %}
+{% block title %}{{ item.spot.name }} · SurfsUP{% endblock %}
 {% block content %}
 <a class="back-link" href="/?h={{ h }}">← All spots</a>
 <div class="detail-heading">
@@ -8,7 +8,7 @@
 <p class="eyebrow">WISCONSIN SHORE / {{ item.spot.lat | round(3) }}° N</p>
 <h1>{{ item.spot.name }}</h1>
 </div>
-<button class="favorite-button large" data-favorite="{{ item.spot.id }}" aria-label="Favorite {{ item.spot.name }}" aria-pressed="false">☆</button>
+<button class="favorite-button large" data-favorite="{{ item.spot.id }}" data-favorite-name="{{ item.spot.name }}" aria-label="Add {{ item.spot.name }} to favorites" title="Save to favorites in this browser" aria-pressed="false">☆</button>
 </div>
 {{ time_controls(h, at, '/spots/' ~ item.spot.id) }}
 <div class="detail-grid">
@@ -61,7 +61,7 @@
 <section class="forecast-panel" aria-labelledby="hourly-title">
 <div class="section-heading">
 <div>
-<p class="eyebrow">FIND YOUR WINDOW</p>
+<p class="eyebrow">HOURLY FORECAST</p>
 <h2 id="hourly-title">The next 48 hours</h2>
 </div>
 <span class="subtle-label">Scroll to explore →</span>
