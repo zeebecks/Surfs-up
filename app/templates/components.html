@@ -7,11 +7,12 @@
 {% if measurement %}<time datetime="{{ measurement.time }}" title="{{ measurement.time | localtime }}" class="reading-age {{ measurement.status }}">{{ measurement.time | age }}{% if measurement.status == 'stale' %} · stale{% endif %}</time>{% else %}<span class="reading-age">Not reported</span>{% endif %}
 {% endmacro %}
 
-{% macro station_card(station, compact=false) %}
+{% macro station_card(station, compact=false, detail=true) %}
+{% if detail %}{% from 'spot_icons.html' import wind_arrow as detail_wind_arrow, icon %}{% endif %}
 {% set wind = station.measurements.get('wind_kts') %}{% set direction = station.measurements.get('wind_dir_deg') %}
-<article class="station-card {{ 'compact' if compact else '' }}" id="station-{{ station.id }}">
+<article class="station-card {{ 'compact' if compact else '' }} {{ 'station-detail' if detail else '' }}" id="station-{{ station.id }}">
   <div class="card-eyebrow">
-<span>{{ station.kind }} <span class="mono">/ {{ station.id }}</span>
+<span>{% if detail %}{{ icon('buoy' if station.scope == 'basin' else 'wind') }}{% endif %}{{ station.kind }} <span class="mono">/ {{ station.id }}</span>
 </span>
 <span class="status {{ station.status }}">{{ 'Reporting' if station.status == 'fresh' else 'Sample data' if station.status == 'demo' else 'Older readings' if station.status == 'stale' else 'No recent readings' }}</span>
 </div>
@@ -21,21 +22,23 @@
 </h3>
   {% if station.scope == 'basin' %}
   <div class="station-secondary station-waves">
-    <div><span class="metric-label">Wave height</span>{{ reading(station.measurements.get('wave_height_m'), 'ft', 3.28084, 0, 1) }}</div>
-    <div><span class="metric-label">Period</span>{{ reading(station.measurements.get('wave_period_s'), 's', 1, 0, 1) }}</div>
-    <div><span class="metric-label">Water temp</span>{{ reading(station.measurements.get('water_temp_c'), '°F', 1.8, 32) }}</div>
+    <div><span class="metric-label">{% if detail %}{{ icon('wave') }}{% endif %}Wave height</span>{{ reading(station.measurements.get('wave_height_m'), 'ft', 3.28084, 0, 1) }}</div>
+    <div><span class="metric-label">{% if detail %}{{ icon('period') }}{% endif %}Period</span>{{ reading(station.measurements.get('wave_period_s'), 's', 1, 0, 1) }}</div>
+    <div><span class="metric-label">{% if detail %}{{ icon('temperature') }}{% endif %}Water temp</span>{{ reading(station.measurements.get('water_temp_c'), '°F', 1.8, 32) }}</div>
   </div>
   {% endif %}
   {% if wind or station.scope != 'basin' %}
+  {% if detail %}{% set observed_style = (wind.value | round | int if wind else none) | wind_style %}{% endif %}
   <div class="station-wind">
-    <div>
+    <div{% if detail %} class="observed-wind-value" style="--wind-color:{{ observed_style.color }}"{% endif %}>
 <span class="metric-label">Observed wind</span>{{ reading(wind, 'kt') }}</div>
-    <div class="station-direction">{{ wind_arrow(direction.value if direction else none) }}<div>
+    <div class="station-direction"{% if detail %} style="--wind-color:{{ observed_style.color }};--wind-tint:{{ observed_style.tint }}"{% endif %}>{% if detail %}{{ detail_wind_arrow(direction.value if direction else none) }}{% else %}{{ wind_arrow(direction.value if direction else none) }}{% endif %}<div>
 <strong>{{ direction.value | cardinal if direction else '—' }}</strong>
 <span class="reading-age {{ direction.status if direction else '' }}">{{ direction.time | age if direction else 'Not reported' }}{% if direction and direction.status == 'stale' %} · stale{% endif %}</span>
 </div>
 </div>
-    <div>
+    {% if detail %}{% set gust = station.measurements.get('gust_kts') %}{% set gust_style = (gust.value | round | int if gust else none) | wind_style %}{% endif %}
+    <div{% if detail %} class="observed-wind-value" style="--wind-color:{{ gust_style.color }}"{% endif %}>
 <span class="metric-label">Gust</span>{{ reading(station.measurements.get('gust_kts'), 'kt') }}</div>
   </div>
   {% else %}

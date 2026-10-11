@@ -1,11 +1,15 @@
-{% extends 'base.html' %}{% from 'components.html' import wind_arrow, station_card, time_controls %}
+{% extends 'base.html' %}{% from 'components.html' import station_card, time_controls %}
+{% from 'spot_icons.html' import wind_arrow, icon %}
+{% from 'weather_icons.html' import weather_icon %}
 {% set fc = item.forecast %}{% set rating = item.rating %}
 {% block title %}{{ item.spot.name }} · SurfsUP{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/spot.css">{% endblock %}
 {% block content %}
+<div class="spot-detail-shell">
 <a class="back-link" href="/?h={{ h }}">← All spots</a>
 <div class="detail-heading">
 <div>
-<p class="eyebrow">WISCONSIN SHORE / {{ item.spot.lat | round(3) }}° N</p>
+<p class="eyebrow">WISCONSIN SHORE <span class="heading-divider">/</span> {{ item.spot.lat | round(3) }}° N</p>
 <h1>{{ item.spot.name }}</h1>
 </div>
 <button class="favorite-button large" data-favorite="{{ item.spot.id }}" data-favorite-name="{{ item.spot.name }}" aria-label="Add {{ item.spot.name }} to favorites" title="Save to favorites in this browser" aria-pressed="false">☆</button>
@@ -13,10 +17,11 @@
 {{ time_controls(h, at, '/spots/' ~ item.spot.id) }}
 <div class="detail-grid">
   <section class="conditions-panel">
-<p class="eyebrow">{{ 'SAMPLE FORECAST' if demo else 'FORECAST CONDITIONS' }}</p>
-<p class="conditions-time"><span>Local forecast time</span> <time datetime="{{ at }}">{{ at | localtime }}</time></p>
+<div class="conditions-heading"><p class="eyebrow">{{ 'SAMPLE FORECAST' if demo else 'FORECAST CONDITIONS' }}</p><a class="hourly-jump" href="#hourly-title">48-hour outlook {{ icon('arrow') }}</a></div>
+<p class="conditions-time">{{ icon('clock') }} <span>Local forecast time</span> <time datetime="{{ at }}">{{ at | localtime('%a, %b %-d · %-I:%M %p %Z') }}</time></p>
 <div class="conditions-overview">
-<div class="detail-wind">{{ wind_arrow(fc.wind_dir_deg) }}<strong>{{ fc.wind_kts | round | int if fc.wind_kts is not none else '—' }}<small>kt</small>
+{% set current_wind_style = (fc.wind_kts | round | int if fc.wind_kts is not none else none) | wind_style %}
+<div class="detail-wind" style="--wind-color:{{ current_wind_style.color }};--wind-tint:{{ current_wind_style.tint }}">{{ wind_arrow(fc.wind_dir_deg) }}<strong>{{ fc.wind_kts | round | int if fc.wind_kts is not none else '—' }}<small>kt</small>
 </strong>
 <div>
 <b>{{ fc.wind_dir_deg | cardinal }}</b>
@@ -24,24 +29,23 @@
 </div>
 </div>
 <div class="air-weather">
-{% from 'weather_icons.html' import weather_icon %}
 {{ weather_icon(conditions.icon) }}
 <div><span class="metric-label">Air temperature</span><strong>{{ conditions.temperature_f | round | int if conditions.temperature_f is not none else '—' }}<small>°F</small></strong><span class="weather-description">{{ conditions.description }}</span></div>
 </div>
 </div>
 <div class="detail-metrics">
 <div>
-<span class="metric-label">Gusts</span>
+<span class="metric-label">{{ icon('wind') }} Gusts</span>
 <strong>{{ fc.gust_kts | round | int if fc.gust_kts is not none else '—' }} <small>kt</small>
 </strong>
 </div>
 <div>
-<span class="metric-label">Modeled waves</span>
+<span class="metric-label">{{ icon('wave') }} Modeled waves</span>
 <strong>{{ '%.1f' | format(fc.wave_height_m * 3.28084) if fc.wave_height_m is not none else '—' }} <small>ft</small>
 </strong>
 </div>
 <div>
-<span class="metric-label">Period / from</span>
+<span class="metric-label">{{ icon('period') }} Period / from</span>
 <strong>{{ '%.0f' | format(fc.wave_period_s) if fc.wave_period_s is not none else '—' }}<small>s · {{ fc.wave_dir_deg | cardinal }}</small>
 </strong>
 </div>
@@ -50,16 +54,19 @@
 <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17h18M3 21h18M7 17a5 5 0 0 1 10 0M12 2v7m-3-3 3-3 3 3M3 10l2 2m14 0 2-2"/></svg><div><span class="metric-label">Sunrise</span><time{% if conditions.sunrise %} datetime="{{ conditions.sunrise }}"{% endif %}>{{ conditions.sunrise | localtime('%-I:%M %p') }}</time></div></div>
 <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17h18M3 21h18M7 17a5 5 0 0 1 10 0M12 2v7m-3-3 3 3 3-3M3 10l2 2m14 0 2-2"/></svg><div><span class="metric-label">Sunset</span><time{% if conditions.sunset %} datetime="{{ conditions.sunset }}"{% endif %}>{{ conditions.sunset | localtime('%-I:%M %p') }}</time></div></div>
 </div>
+<div class="conditions-sources">
 <p class="data-caption {{ fc.status }}">Wind: {{ fc.source or 'unavailable' }}{% if fc.fetched_at %} · retrieved {{ fc.fetched_at | age }}{% endif %}{% if fc.status == 'stale' %} · stale{% endif %}</p>
 <p class="data-caption {{ fc.wave_status }}">Waves: {{ fc.wave_source or 'unavailable' }}{% if fc.wave_fetched_at %} · retrieved {{ fc.wave_fetched_at | age }}{% endif %}{% if fc.wave_status == 'stale' %} · stale{% endif %}</p>
 <p class="data-caption {{ conditions.status }}">Weather & daylight: {{ 'Sample weather' if demo else 'Open-Meteo' }}{% if conditions.fetched_at %} · retrieved {{ conditions.fetched_at | age }}{% endif %}{% if conditions.status == 'stale' %} · stale{% elif conditions.status == 'unavailable' %} · unavailable{% endif %}</p>
 {% if item.windfinder %}<a class="conditions-windfinder" href="{{ item.windfinder }}" target="_blank" rel="noopener noreferrer">Windfinder ↗</a>{% endif %}
+</div>
 </section>
   <section class="camera-panel" aria-label="Camera for {{ item.spot.name }}">
     {% if item.camera %}<div class="camera-placeholder" data-camera-kind="{{ item.camera.kind }}" data-camera-src="{{ item.camera.embed }}" data-camera-title="{{ item.camera.name }}">
 <span class="eyebrow">A LOOK AT THE WATER</span>
+<svg class="camera-scene" viewBox="0 0 420 110" aria-hidden="true"><path d="M10 38h400M10 62c22-18 44-18 66 0s44 18 66 0 44-18 66 0 44 18 66 0 44-18 66 0 44 18 66 0M10 86c22-18 44-18 66 0s44 18 66 0 44-18 66 0 44 18 66 0 44-18 66 0 44 18 66 0"/><circle cx="320" cy="17" r="12"/></svg>
 <button class="camera-play" type="button">
-<span aria-hidden="true">▶</span> Load camera</button>
+<span aria-hidden="true">{{ icon('play') }}</span> Load camera</button>
 <p>Check the actual scene before heading out.</p>
 </div>
 <div class="camera-footer">
@@ -80,24 +87,30 @@
 </div>
 <span class="subtle-label">Scroll to explore →</span>
 </div>
+<div class="wind-scale" aria-label="Wind speed color scale in knots">
+<span class="wind-scale-label">{{ icon('wind') }} Wind scale <small>kt</small></span>
+<div class="wind-scale-bands">{% for band in wind_legend %}<span style="--wind-color:{{ band.color }};--wind-tint:{{ band.tint }}"><i aria-hidden="true"></i>{{ band.label }}</span>{% endfor %}</div>
+</div>
 <div class="table-scroll forecast-scroll" tabindex="0" aria-label="Hourly forecast, scroll horizontally">
 <table class="hourly-table">
-<caption class="sr-only">Hourly wind and modeled wave forecasts in local time</caption>
+<caption class="sr-only">Hourly wind, weather, and modeled wave forecasts in local time</caption>
+<colgroup><col>{% for row in hourly %}<col{% if loop.index0 == h %} class="forecast-hour-selected"{% endif %}>{% endfor %}</colgroup>
 <thead>
 <tr>
 <th scope="col">Local time</th>{% for row in hourly %}<th scope="col" {% if loop.index0 == h %}class="selected-hour"{% endif %}>
-<span>{{ row.time | localtime('%a') }}</span>{{ row.time | localtime('%-I %p') }}</th>{% endfor %}</tr>
+<span>{{ row.time | localtime('%a %-d') }}</span>{{ row.time | localtime('%-I %p') }}{% if loop.index0 == h %}<span class="selected-hour-label">Viewing</span>{% endif %}</th>{% endfor %}</tr>
 </thead>
 <tbody>
 <tr>
 <th scope="row">Wind <small>kt</small>
-</th>{% for row in hourly %}<td class="wind-cell" style="--wind-bar: {{ ([100, (row.wind_kts or 0) / 35 * 100] | min) }}%">{{ row.wind_kts | round | int if row.wind_kts is not none else '—' }}</td>{% endfor %}</tr>
+</th>{% for row in hourly %}{% set ws = (row.wind_kts | round | int if row.wind_kts is not none else none) | wind_style %}<td class="wind-cell {{ ws.class_name }} {{ 'is-selected' if loop.index0 == h else '' }}" style="--wind-bar:{{ ws.height }}%;--wind-color:{{ ws.color }};--wind-tint:{{ ws.tint }}"><span class="wind-value">{{ row.wind_kts | round | int if row.wind_kts is not none else '—' }}</span><span class="wind-meter" aria-hidden="true"><i></i></span></td>{% endfor %}</tr>
 <tr>
 <th scope="row">From</th>{% for row in hourly %}<td>{{ wind_arrow(row.wind_dir_deg) }}<span class="table-direction">{{ row.wind_dir_deg | cardinal }}</span>
 </td>{% endfor %}</tr>
 <tr>
 <th scope="row">Gust <small>kt</small>
-</th>{% for row in hourly %}<td>{{ row.gust_kts | round | int if row.gust_kts is not none else '—' }}</td>{% endfor %}</tr>
+</th>{% for row in hourly %}{% set ws = (row.gust_kts | round | int if row.gust_kts is not none else none) | wind_style %}<td class="gust-cell {{ ws.class_name }}" style="--wind-color:{{ ws.color }};--wind-tint:{{ ws.tint }}"><span>{{ row.gust_kts | round | int if row.gust_kts is not none else '—' }}</span></td>{% endfor %}</tr>
+<tr class="hourly-weather-row"><th scope="row">Weather <small>°F</small></th>{% for row in hourly %}<td>{{ weather_icon(row.conditions.icon) }}<span class="hourly-temperature" title="{{ row.conditions.description }}">{{ row.conditions.temperature_f | round | int if row.conditions.temperature_f is not none else '—' }}</span><span class="sr-only">{{ row.conditions.description }}</span></td>{% endfor %}</tr>
 <tr>
 <th scope="row">Waves <small>ft</small>
 </th>{% for row in hourly %}<td>{{ '%.1f' | format(row.wave_height_m * 3.28084) if row.wave_height_m is not none else '—' }}</td>{% endfor %}</tr>
@@ -109,11 +122,11 @@
 </tbody>
 </table>
 </div>
-<p class="section-note">Wind forecasts and offshore wave models are separate sources. Blank readings remain unavailable. Neighboring spots may share the same wave model cell.</p>
+<p class="section-note">Colors show wind speed in knots; gusts use the same scale. Wind forecasts and offshore wave models are separate sources. Blank readings remain unavailable. Neighboring spots may share the same wave model cell.</p>
 </section>
 <div class="detail-grid lower-detail">
 <section class="rating-panel">
-<p class="eyebrow">EXPERIMENTAL / V2</p>
+<div class="lower-card-heading"><span class="section-emblem">{{ icon('setup') }}</span><p class="eyebrow">EXPERIMENTAL MODEL</p></div>
 <div class="rating-heading">
 <h2>{{ 'Surf estimate' if rating.surf_score is not none else 'Wind setup' }}</h2>
 <span class="rating-big {{ rating.bucket }}">{{ rating.surf_score if rating.surf_score is not none else rating.wind_score if rating.wind_score is not none else '—' }}<small>/100</small>
@@ -128,7 +141,7 @@
 <a class="text-link" href="/about#scoring">What goes into the rating ↗</a>
 </section>
 <section class="guide-panel">
-<p class="eyebrow">LOCAL KNOWLEDGE</p>
+<div class="lower-card-heading"><span class="section-emblem">{{ icon('notes') }}</span><p class="eyebrow">LOCAL KNOWLEDGE</p></div>
 <h2>The spot notes</h2>
 <p>{{ item.guide }}</p>
 <p class="section-note">Local guide from the original spot list. These preferences are starting points for calibration.</p>
@@ -136,7 +149,7 @@
 <a href="https://forecast.weather.gov/MapClick.php?lat={{ item.spot.lat }}&lon={{ item.spot.lng }}" target="_blank" rel="noopener noreferrer">NWS forecast ↗</a>{% if item.windfinder %}<a href="{{ item.windfinder }}" target="_blank" rel="noopener noreferrer">Windfinder ↗</a>{% endif %}<a href="https://www.google.com/maps/search/?api=1&query={{ item.spot.lat }},{{ item.spot.lng }}" target="_blank" rel="noopener noreferrer">Open location ↗</a>
 </div>
 <div id="field-notes">
-<h3>From the shore</h3>{% if item.spot.notes_edited_by %}<p class="user-note">{{ item.spot.notes }}</p>
+<h3>{{ icon('notes') }} From the shore</h3>{% if item.spot.notes_edited_by %}<p class="user-note">{{ item.spot.notes }}</p>
 <p class="data-caption">{{ item.spot.notes_edited_by }} · {{ item.spot.notes_edited_at | localtime }}</p>{% elif item.spot.notes and item.spot.notes != item.guide %}<p class="user-note">{{ item.spot.notes }}</p>{% else %}<p class="muted">No field report yet. Been down to the water?</p>{% endif %}{% if notes_enabled %}<details {% if notes_error %}open{% endif %}>
 <summary>Update field report</summary>{% if notes_error %}<p class="form-error" role="alert">That password didn’t match. Your report was not saved.</p>{% endif %}<form method="post" action="/spot-notes" class="stack-form">
 <input type="hidden" name="spot_id" value="{{ item.spot.id }}">
@@ -155,16 +168,19 @@
 <div>
 <p class="eyebrow">KEEP AN EYE ON THE SETUP</p>
 <h2>Wind & wave observations</h2>
+<p class="observations-note">Latest station readings · independent of the forecast hour above</p>
 </div>
 <a class="text-link" href="/buoys">All stations ↗</a>
 </div>
-<div class="station-grid">{% for station in stations %}{{ station_card(station, true) }}{% endfor %}</div>
+<div class="station-grid">{% for station in stations %}{{ station_card(station, true, true) }}{% endfor %}</div>
 <section class="crew-callout">
+<span class="section-emblem crew-emblem">{{ icon('crew') }}</span>
 <div>
 <h2>Heading out?</h2>
-<p>{{ item.checkins }} {{ 'person' if item.checkins == 1 else 'people' }} checking this spot today. Keep a little company on the shore.</p>
+<p><strong>{{ item.checkins }}</strong> {{ 'person' if item.checkins == 1 else 'people' }} checking this spot today. Keep a little company on the shore.</p>
 </div>
 <a class="secondary-button" href="/crew?spot={{ item.spot.id }}#check-in">Check in with the crew ↗</a>
 </section>
 <script id="station-data" type="application/json">{{ station_data | tojson }}</script>
+</div>
 {% endblock %}

@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
-{% from 'components.html' import wind_arrow, station_card, time_controls %}
+{% from 'components.html' import station_card, time_controls %}
+{% from 'icons.html' import wind_arrow, icon %}
 {% block head %}<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="/static/home.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer>
 </script>
 <script src="/static/map.js" defer>
 </script>{% endblock %}
 {% block content %}
+<div class="home-shell">
 <section class="hero">
   <div class="hero-copy">
-<p class="eyebrow">
-<span class="little-line">
-</span> WIND · CAMERAS · FORECASTS</p>
+<p class="eyebrow">WIND · CAMERAS · FORECASTS</p>
 <h1>Lake Michigan<br>
 <span>surf conditions.</span>
 </h1>
@@ -46,7 +47,7 @@
 <div class="filter-buttons" aria-label="Filter spots">
 <button class="filter-button active" data-filter="all" aria-pressed="true">All spots <span>6</span>
 </button>
-<button class="filter-button" data-filter="favorites" aria-pressed="false">Favorites <span aria-hidden="true">☆</span>
+<button class="filter-button" data-filter="favorites" aria-pressed="false"><svg class="spot-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9Z"/></svg> Favorites
 </button>
 </div>
 <label class="sort-label">Sort <select id="spot-sort">
@@ -56,8 +57,14 @@
 </select>
 </label>
 </div>
+    {% if wind_legend %}<details class="home-wind-key">
+      <summary><span class="wind-key-label">{{ icon('wind') }} Wind colors <small>kt</small></span><span class="wind-key-preview" aria-hidden="true">{% for band in wind_legend %}<i style="--wind-color:{{ band.color }}"></i>{% endfor %}</span><svg class="spot-icon wind-key-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <div class="wind-key-bands">{% for band in wind_legend %}<span><i aria-hidden="true" style="--wind-color:{{ band.color }}"></i>{{ band.label | replace(' kt', '') }}</span>{% endfor %}</div>
+      <p>Colors show wind speed. Ratings describe the surf setup.</p>
+    </details>{% endif %}
     <div class="spot-list">
       {% for item in items %}{% set fc = item.forecast %}{% set rating = item.rating %}
+      {% set wind_color = (fc.wind_kts | round | int if fc.wind_kts is not none else none) | wind_style %}
       <article class="spot-card" data-spot-id="{{ item.spot.id }}" data-default-order="{{ loop.index }}" data-wind-score="{{ rating.wind_score if rating.wind_score is not none else -1 }}" data-surf-score="{{ rating.surf_score if rating.surf_score is not none else -1 }}">
         <div class="spot-card-top">
 <div>
@@ -70,7 +77,7 @@
 <button class="favorite-button" data-favorite="{{ item.spot.id }}" data-favorite-name="{{ item.spot.name }}" aria-label="Add {{ item.spot.name }} to favorites" title="Save to favorites in this browser" aria-pressed="false">☆</button>
 </div>
         <div class="spot-metrics">
-<div class="primary-wind">{{ wind_arrow(fc.wind_dir_deg) }}<div>
+<div class="primary-wind" style="--wind-color:{{ wind_color.color }};--wind-tint:{{ wind_color.tint }}">{{ wind_arrow(fc.wind_dir_deg) }}<div>
 <span class="wind-number">{{ fc.wind_kts | round | int if fc.wind_kts is not none else '—' }}<small>kt</small>
 </span>
 <span class="metric-detail">{{ fc.wind_dir_deg | cardinal }} <span class="muted">· forecast wind</span>
@@ -78,13 +85,13 @@
 </div>
 </div>
 <div class="wave-metric">
-<span class="metric-label">Modeled waves</span>
+<span class="metric-label">{{ icon('wave') }} Modeled waves</span>
 <strong>{{ '%.1f' | format(fc.wave_height_m * 3.28084) if fc.wave_height_m is not none else '—' }} <small>ft</small>
 </strong>
 <span class="metric-detail">{{ '%.0f s' | format(fc.wave_period_s) if fc.wave_period_s is not none else 'Period unavailable' }}{% if fc.wave_status == 'stale' %} · stale{% endif %}</span>
 </div>
 <div class="rating-metric {{ rating.bucket }}">
-<span class="metric-label">{{ 'Surf estimate' if rating.surf_score is not none else 'Wind setup' }}</span>
+<span class="metric-label">{{ icon('setup') }} {{ 'Surf estimate' if rating.surf_score is not none else 'Wind setup' }}</span>
 <strong>{{ rating.surf_score if rating.surf_score is not none else rating.wind_score if rating.wind_score is not none else '—' }}<small>/100</small>
 </strong>
 <span class="metric-detail">{{ rating.bucket | capitalize if rating.bucket != 'unknown' else 'Not rated' }}</span>
@@ -92,8 +99,7 @@
 </div>
         <div class="spot-card-bottom">
 <span class="data-caption {{ fc.status }}">{{ 'Sample forecast' if demo else (fc.source ~ ' · ' ~ (fc.fetched_at | age)) if fc.source else 'Forecast unavailable' }}{% if fc.status == 'stale' %} · stale{% endif %}</span>
-<a href="/spots/{{ item.spot.id }}?h={{ h }}">{% if item.camera %}<span class="camera-dot" aria-hidden="true">
-</span> Cam & {% endif %}forecast <span aria-hidden="true">↗</span>
+<a class="spot-forecast-link" href="/spots/{{ item.spot.id }}?h={{ h }}">{% if item.camera %}{{ icon('play') }} Cam & forecast{% else %}View forecast{% endif %} {{ icon('arrow') }}
 </a>
 </div>
       </article>
@@ -116,7 +122,7 @@
 <span>Spots & buoys</span>
 </button>
 <button type="button" data-map-tab="windy" aria-pressed="false" aria-controls="windy-map">
-<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h6a3 3 0 1 1-3 3"/></svg>
+{{ icon('wind') }}
 <span>Windy</span>
 </button>
 </div>
@@ -150,6 +156,7 @@
 <div class="basin-grid">{% for station in stations if station.scope == 'basin' %}{{ station_card(station, true) }}{% endfor %}</div>
 <p class="section-note">Measured waves and wind across the lake help reveal the bigger setup. Offshore readings are regional context, not a report from the beach.</p>
 </section>
+</div>
 <script id="map-spots" type="application/json">[{% for item in items %}{"id":{{ item.spot.id | tojson }},"name":{{ item.spot.name | tojson }},"lat":{{ item.spot.lat }},"lng":{{ item.spot.lng }},"score":{{ item.rating.wind_score | tojson }},"wind":{{ item.forecast.wind_kts | tojson }},"direction":{{ item.forecast.wind_dir_deg | tojson }}}{% if not loop.last %},{% endif %}{% endfor %}]</script>
 <script id="station-data" type="application/json">{{ station_data | tojson }}</script>
 {% endblock %}

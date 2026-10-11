@@ -1,0 +1,4 @@
+{# Shared entry point for the icon set introduced on the spot page. #}
+{% from 'spot_icons.html' import icon as _icon, wind_arrow as _wind_arrow %}
+{% macro icon(name) %}{{ _icon(name) }}{% endmacro %}
+{% macro wind_arrow(direction) %}{{ _wind_arrow(direction) }}{% endmacro %}

@@ -1,0 +1,512 @@
+/* Companion pages use the same quiet mint, outlined icons, and panel surfaces. */
+.secondary-page .page-heading {
+  max-width:800px;
+  padding:42px 0 32px
+}
+
+.secondary-page .page-kicker {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:20px
+}
+
+.secondary-page .page-kicker .eyebrow {
+  margin:0;
+  font-size:.8125rem;
+  letter-spacing:1.4px
+}
+
+.secondary-page .page-heading>p:last-child {
+  color:#a7bec0;
+  font-size:.9375rem;
+  max-width:660px
+}
+
+.secondary-page .section-heading {
+  gap:16px;
+  align-items:center
+}
+
+.secondary-page .section-heading .panel-heading {
+  margin-bottom:0
+}
+
+.secondary-page .panel-heading .eyebrow {
+  font-size:.8125rem;
+  letter-spacing:1px;
+  margin:0 0 7px
+}
+
+.secondary-page .section-heading .subtle-label {
+  line-height:1.7;
+  font-size:.8125rem;
+  max-width:260px;
+  text-align:right
+}
+
+.buoys-page .buoy-intro {
+  grid-template-columns:1fr 1.15fr;
+  border-color:#31464e;
+  background:linear-gradient(140deg,#1b3239,#15262e);
+  box-shadow:0 10px 26px #0000000d;
+  margin-bottom:20px
+}
+
+.buoys-page .buoy-intro>div:first-child {
+  padding:30px
+}
+
+.buoys-page .observations-label {
+  font-size:.8125rem;
+  letter-spacing:.8px
+}
+
+.buoys-page .observations-label::before {
+  display:none
+}
+
+.buoys-page .observations-label .spot-icon {
+  width:17px;
+  height:17px
+}
+
+.buoys-page .buoy-intro h2 {
+  font-size:1.625rem;
+  line-height:1.25;
+  margin:18px 0 14px
+}
+
+.buoys-page .buoy-intro p {
+  font-size:.875rem;
+  color:#aec1c1;
+  line-height:1.85
+}
+
+.buoys-page .sensor-link {
+  display:inline-flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px 12px;
+  font-size:.875rem;
+  line-height:1.6;
+  border-radius:9px;
+  padding:10px 13px
+}
+
+.buoys-page .sensor-link span {
+  font-size:.8125rem;
+  color:#aac8c3
+}
+
+.buoys-page .buoy-map {
+  border-left:1px solid #31464e;
+  min-height:305px
+}
+
+.buoys-page .wind-scale {
+  margin-bottom:32px
+}
+
+.buoys-page>.section-note {
+  border:1px solid #31464e;
+  border-radius:10px;
+  background:#14272e;
+  padding:17px 20px;
+  margin-top:24px;
+  color:#a7bec0;
+  font-size:.875rem;
+  line-height:1.8
+}
+
+.about-page .about-grid {
+  align-items:start;
+  gap:24px
+}
+
+.about-page .prose-panel {
+  padding:28px;
+  border-color:#31464e;
+  border-top:2px solid #669e92;
+  background:linear-gradient(145deg,#192e35,#15262e)
+}
+
+.about-page .prose-panel h2 {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  line-height:1.35;
+  font-size:1.25rem
+}
+
+.about-page .prose-panel h2 .spot-icon {
+  flex-shrink:0;
+  width:22px;
+  height:22px;
+  color:var(--accent)
+}
+
+.about-page .prose-panel p {
+  font-size:.875rem;
+  color:#a7bec0;
+  line-height:1.9
+}
+
+.about-page .sources-panel .panel-heading {
+  margin-bottom:20px
+}
+
+.about-page .sources-panel .panel-heading h2 {
+  margin:0
+}
+
+.about-page .sources-panel>a {
+  border:1px solid #31464e;
+  border-radius:9px;
+  background:#12262d;
+  margin-top:9px;
+  padding:13px 15px;
+  transition:background .18s,border-color .18s
+}
+
+.about-page .sources-panel>a:hover {
+  background:#1d373d;
+  border-color:#99dfcc66
+}
+
+.about-page .sources-panel>a strong {
+  color:var(--accent);
+  font-size:.875rem;
+  font-weight:550
+}
+
+.about-page .sources-panel>a span {
+  font-size:.8125rem;
+  line-height:1.8;
+  color:#aac0c2
+}
+
+.about-page .sources-panel .section-note {
+  font-size:.8125rem
+}
+
+.about-page .scoring-explainer .lede {
+  font-size:.9375rem;
+  line-height:1.8
+}
+
+.about-page .explain-grid {
+  gap:18px;
+  margin-top:24px
+}
+
+.about-page .explain-grid>div {
+  border-color:#31464e;
+  padding:24px;
+  background:linear-gradient(145deg,#192e35,#15262e)
+}
+
+.about-page .explain-heading {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px
+}
+
+.about-page .step-number {
+  font-size:.875rem;
+  color:#91afad;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:1px
+}
+
+.about-page .explain-grid p {
+  color:#a7bec0;
+  font-size:.875rem;
+  line-height:1.85
+}
+
+.about-page .scoring-explainer>.section-note {
+  font-size:.875rem;
+  line-height:1.8
+}
+
+.crew-page .crew-layout {
+  gap:24px;
+  grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)
+}
+
+.crew-page .empty-panel {
+  border:1px solid #31464e;
+  background:radial-gradient(ellipse at 50% 0,#2a494733,transparent 70%),#14272f;
+  padding:50px 24px
+}
+
+.crew-page .empty-panel>.empty-emblem {
+  width:64px;
+  height:64px;
+  border-radius:18px;
+  color:var(--accent)
+}
+
+.crew-page .empty-emblem .spot-icon {
+  width:35px;
+  height:35px
+}
+
+.crew-page .empty-panel h3 {
+  font-size:1.25rem;
+  margin-top:24px
+}
+
+.crew-page .empty-panel p {
+  font-size:.875rem;
+  line-height:1.8;
+  max-width:330px;
+  margin:12px auto 20px
+}
+
+.crew-page .empty-panel .secondary-button {
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  font-size:.875rem
+}
+
+.crew-page .empty-panel .secondary-button .spot-icon,
+.crew-page .primary-button .spot-icon {
+  width:18px;
+  height:18px
+}
+
+.crew-page .checkin-panel {
+  border-color:#31464e;
+  border-top:2px solid #669e92;
+  background:linear-gradient(145deg,#192e35,#15262e);
+  padding:27px;
+  scroll-margin-top:24px
+}
+
+.crew-page .checkin-panel .panel-heading {
+  margin-bottom:24px
+}
+
+.crew-page .checkin-panel h2 {
+  font-size:1.3125rem;
+  line-height:1.35
+}
+
+.crew-page .stack-form label {
+  font-size:.875rem;
+  color:#c4d5d0
+}
+
+.crew-page .stack-form input,
+.crew-page .stack-form select {
+  border-color:#3a5259;
+  border-radius:9px;
+  font-size:.9375rem;
+  background:#11242c
+}
+
+.crew-page .form-row>div,
+.crew-page .form-row input {
+  min-width:0
+}
+
+.crew-page .stack-form .section-note {
+  font-size:.8125rem;
+  color:#a7bec0;
+  line-height:1.8
+}
+
+.crew-page .stack-form .primary-button {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:11px;
+  border-radius:9px;
+  font-size:.9375rem
+}
+
+.crew-page .crew-card {
+  border-color:#31464e;
+  background:linear-gradient(145deg,#192e35,#15262e);
+  padding:22px
+}
+
+.crew-page .crew-avatar {
+  border:1px solid #99dfcc30;
+  border-radius:12px;
+  background:#99dfcc0b
+}
+
+.crew-page .crew-info>a {
+  display:inline-block;
+  margin-top:6px
+}
+
+.crew-page .crew-time {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px;
+  font-size:.875rem
+}
+
+.crew-page .crew-time .spot-icon {
+  width:15px;
+  height:15px;
+  color:#8dafaa
+}
+
+.crew-page .user-note {
+  border-left:2px solid #669e92;
+  padding:5px 0 5px 12px;
+  color:#bfd0cd;
+  line-height:1.7;
+  overflow-wrap:anywhere
+}
+
+@media(max-width:900px) {
+  .buoys-page .buoy-intro {
+    grid-template-columns:1fr 1fr
+  }
+
+  .buoys-page .buoy-intro>div:first-child {
+    padding:24px
+  }
+
+  .crew-page .crew-layout {
+    grid-template-columns:1fr 1fr
+  }
+
+  .crew-page .checkin-panel {
+    padding:22px
+  }
+}
+
+@media(max-width:680px) {
+  .secondary-page .page-heading {
+    padding:30px 0 28px
+  }
+
+  .secondary-page .page-heading h1 {
+    font-size:2.25rem;
+    letter-spacing:-1px
+  }
+
+  .secondary-page .page-heading>p:last-child {
+    font-size:.875rem
+  }
+
+  .secondary-page .page-kicker {
+    gap:10px;
+    margin-bottom:18px
+  }
+
+  .secondary-page .page-kicker .eyebrow {
+    line-height:1.6;
+    letter-spacing:1px
+  }
+
+  .secondary-page .section-heading {
+    flex-wrap:wrap;
+    gap:12px
+  }
+
+  .secondary-page .section-heading .subtle-label {
+    text-align:left;
+    max-width:none;
+    width:100%
+  }
+
+  .buoys-page .buoy-intro {
+    grid-template-columns:1fr
+  }
+
+  .buoys-page .buoy-intro>div:first-child {
+    padding:24px 21px
+  }
+
+  .buoys-page .buoy-intro h2 {
+    font-size:1.4375rem
+  }
+
+  .buoys-page .buoy-map {
+    min-height:240px;
+    height:240px;
+    border-left:0;
+    border-top:1px solid #31464e
+  }
+
+  .buoys-page>.section-note {
+    padding:16px;
+    font-size:.8125rem
+  }
+
+  .about-page .prose-panel {
+    padding:23px 21px
+  }
+
+  .about-page .sources-panel .panel-heading {
+    gap:10px
+  }
+
+  .about-page .sources-panel>a {
+    padding:13px
+  }
+
+  .about-page .explain-grid>div {
+    padding:22px
+  }
+
+  .crew-page .crew-layout {
+    grid-template-columns:1fr;
+    gap:26px
+  }
+
+  .crew-page .checkin-panel {
+    padding:24px 21px
+  }
+
+  .crew-page .crew-card {
+    flex-wrap:wrap;
+    padding:20px;
+    gap:12px
+  }
+
+  .crew-page .crew-info {
+    flex:1
+  }
+
+  .crew-page .delete-checkin {
+    margin-left:46px
+  }
+}
+
+@media(max-width:390px) {
+  .secondary-page .page-heading h1 {
+    font-size:2rem
+  }
+
+  .secondary-page .page-kicker .eyebrow {
+    letter-spacing:.65px
+  }
+
+  .secondary-page .panel-heading {
+    gap:9px
+  }
+
+  .secondary-page .section-heading h2 {
+    font-size:1.25rem
+  }
+
+  .about-page .sources-panel .panel-heading h2 {
+    font-size:1.1875rem
+  }
+
+  .crew-page .checkin-panel .panel-heading h2 {
+    font-size:1.1875rem
+  }
+}

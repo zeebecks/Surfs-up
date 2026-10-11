@@ -18,6 +18,7 @@ from ..services.scoring import rate
 from ..services.spot_repo import get_all_spots
 from ..services.util import get_session
 from ..services.weather import STATIONS, parse_time, stamp, utcnow, weather
+from ..services.wind_style import WIND_LEGEND, wind_style
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -62,7 +63,7 @@ def localtime(value, fmt="%a %-I:%M %p %Z"):
         return "Unknown time"
 
 
-templates.env.filters.update(cardinal=cardinal, age=age, localtime=localtime)
+templates.env.filters.update(cardinal=cardinal, age=age, localtime=localtime, wind_style=wind_style)
 
 
 def _today_utc_bounds():
@@ -134,6 +135,7 @@ def render(request, template, **context):
             "refreshing": weather.refreshing,
             "now": stamp(utcnow()),
             "active": "spots",
+            "wind_legend": WIND_LEGEND,
             "station_data": station_data,
             **context,
         },
@@ -167,6 +169,7 @@ def detail(request: Request, spot_id: str):
         {
             "time": stamp(start + timedelta(hours=i)),
             **weather.forecast(spot_id, start + timedelta(hours=i)),
+            "conditions": conditions_at(weather, spot_id, start + timedelta(hours=i)),
         }
         for i in range(48)
     ]
@@ -181,6 +184,7 @@ def detail(request: Request, spot_id: str):
         item=present(spot, at, counts().get(spot_id, 0)),
         conditions=conditions_at(weather, spot_id, at),
         hourly=hourly,
+        wind_legend=WIND_LEGEND,
         stations=[s for s in weather.stations() if s["id"] in associated],
         h=h,
         at=stamp(at),

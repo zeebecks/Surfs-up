@@ -195,6 +195,8 @@
   const stationData = document.getElementById('station-data');
   let stations = [];
   try { stations = JSON.parse(stationData?.textContent || '[]'); } catch { /* Leave the readings table usable. */ }
+  let windPalette = [];
+  try { windPalette = JSON.parse(document.getElementById('wind-palette')?.textContent || '[]'); } catch { /* The mint chart remains usable. */ }
   function drawTrend(canvas) {
     const station = stations.find(s => s.id === canvas.dataset.station);
     const rows = [...(station?.history || [])].reverse();
@@ -209,15 +211,30 @@
     const first = Date.parse(rows[0].time), last = Date.parse(rows[rows.length - 1].time);
     if (last === first) return;
     const x = row => 6 + (Date.parse(row.time) - first) / (last - first) * (width - 40);
-    const y = row => height - 19 - row.wind_kts / max * (height - 30);
+    const y = knots => height - 19 - knots / max * (height - 30);
     ctx.strokeStyle = '#314950'; ctx.lineWidth = 1;
     for (const f of [0, .5, 1]) { const yy = height - 19 - f * (height - 30); ctx.beginPath(); ctx.moveTo(5, yy); ctx.lineTo(width - 29, yy); ctx.stroke(); }
-    ctx.strokeStyle = '#99dfcc'; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.beginPath();
+    ctx.strokeStyle = '#99dfcc';
+    if (windPalette.length) {
+      const gradient = ctx.createLinearGradient(0, y(0), 0, y(max));
+      let color = windPalette[0].color;
+      gradient.addColorStop(0, color);
+      for (const band of windPalette.slice(1)) {
+        if (band.min_kts >= max) break;
+        const stop = band.min_kts / max;
+        gradient.addColorStop(stop, color);
+        gradient.addColorStop(stop, band.color);
+        color = band.color;
+      }
+      gradient.addColorStop(1, color);
+      ctx.strokeStyle = gradient;
+    }
+    ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.beginPath();
     let previous;
     for (const row of rows) {
       if (!Number.isFinite(row.wind_kts)) { previous = null; continue; }
-      if (!previous || Date.parse(row.time) - Date.parse(previous.time) > 7200000) ctx.moveTo(x(row), y(row));
-      else ctx.lineTo(x(row), y(row));
+      if (!previous || Date.parse(row.time) - Date.parse(previous.time) > 7200000) ctx.moveTo(x(row), y(row.wind_kts));
+      else ctx.lineTo(x(row), y(row.wind_kts));
       previous = row;
     }
     const labelStyle = getComputedStyle(canvas);

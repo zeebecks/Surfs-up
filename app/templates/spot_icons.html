@@ -1,0 +1,20 @@
+{% macro icon(name) %}
+<svg class="spot-icon" viewBox="0 0 24 24" aria-hidden="true">
+{% if name == 'clock' %}<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+{% elif name == 'wind' %}<path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h6a3 3 0 1 1-3 3"/>
+{% elif name == 'wave' %}<path d="M2 11c3 0 4-7 9-7 5 0 7 3 6 6-2-2-5-1-5 1 0 3 5 3 10 3M2 19c2-2 4-2 6 0s4 2 6 0 4-2 8 0"/>
+{% elif name == 'period' %}<path d="M3 12h18M6 9l-3 3 3 3m12-6 3 3-3 3M7 4h10M7 20h10"/>
+{% elif name == 'play' %}<path class="play-triangle" d="m9 6 10 6-10 6Z"/>
+{% elif name == 'arrow' %}<path d="M4 12h16m-6-6 6 6-6 6"/>
+{% elif name == 'notes' %}<path d="M6 3h12v18H6Z M9 7h6M9 11h6M9 15h3"/>
+{% elif name == 'setup' %}<path d="M3 17a9 9 0 1 1 18 0M5 17h14M12 17l5-8M6 8l2 2m4-5v3m6 0-2 2"/>
+{% elif name == 'buoy' %}<path d="M12 3v6m-3-6h6M8 9h8l2 8H6Zm-5 11c2-2 4-2 6 0s4 2 6 0 4-2 8 0"/>
+{% elif name == 'temperature' %}<path d="M9 14V5a3 3 0 0 1 6 0v9a5 5 0 1 1-6 0Zm3-6v9M12 17h.01"/>
+{% elif name == 'crew' %}<circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M17 5a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 6"/>
+{% endif %}
+</svg>
+{% endmacro %}
+
+{% macro wind_arrow(direction) %}
+{% if direction is not none %}<span class="wind-arrow" style="--direction:{{ direction + 180 }}deg" title="Wind from {{ direction | cardinal }} ({{ direction | round | int }}°); arrow shows travel direction" aria-label="Wind from {{ direction | cardinal }}"><svg viewBox="0 0 48 48" aria-hidden="true"><path class="compass-needle" d="M24 6 36 39 24 32 12 39Z"/><path class="compass-spine" d="M24 6v26"/></svg></span>{% else %}<span class="wind-arrow missing" aria-label="Direction unavailable">—</span>{% endif %}
+{% endmacro %}

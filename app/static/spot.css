@@ -1,0 +1,1155 @@
+/* Trial detail-page styling. Wind colors describe speed, never surf quality. */
+.spot-detail-shell {
+  --detail-border:#31464e;
+  --detail-panel:#172a32
+}
+
+.spot-detail-shell .spot-icon {
+  width:18px;
+  height:18px;
+  flex-shrink:0;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.6;
+  stroke-linecap:round;
+  stroke-linejoin:round
+}
+
+.spot-detail-shell .back-link {
+  display:inline-flex;
+  align-items:center;
+  border:1px solid var(--border);
+  border-radius:30px;
+  padding:7px 14px;
+  font-size:.8125rem;
+  transition:color .18s,border-color .18s
+}
+
+.spot-detail-shell .back-link:hover {
+  border-color:#6b9b92
+}
+
+.spot-detail-shell .detail-heading {
+  margin-top:26px;
+  margin-bottom:25px
+}
+
+.spot-detail-shell .heading-divider {
+  color:#58736e;
+  margin:0 7px
+}
+
+.spot-detail-shell .detail-heading h1 {
+  font-size:clamp(1.875rem,3.8vw,3.125rem);
+  letter-spacing:-.045em;
+  margin-top:10px
+}
+
+.spot-detail-shell .favorite-button.large {
+  border:1px solid var(--detail-border);
+  border-radius:50%;
+  width:52px;
+  height:52px;
+  font-size:1.875rem
+}
+
+.spot-detail-shell .segmented {
+  padding:5px;
+  border-radius:12px;
+  background:#14252c
+}
+
+.spot-detail-shell .segmented a {
+  border-radius:8px
+}
+
+.spot-detail-shell .detail-grid {
+  grid-template-columns:1.05fr 1fr;
+  gap:22px
+}
+
+.spot-detail-shell .conditions-panel {
+  position:relative;
+  overflow:hidden;
+  border-color:var(--detail-border);
+  background:radial-gradient(ellipse at 0 0,#99dfcc0c,transparent 65%),var(--detail-panel);
+  box-shadow:0 12px 32px #00000012
+}
+
+.spot-detail-shell .conditions-panel:before {
+  content:'';
+  position:absolute;
+  top:0;
+  left:28px;
+  width:64px;
+  height:3px;
+  background:var(--accent);
+  border-radius:0 0 4px 4px
+}
+
+.spot-detail-shell .conditions-heading {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px
+}
+
+.spot-detail-shell .conditions-heading .eyebrow {
+  margin:0;
+  font-size:.8125rem;
+  letter-spacing:1.25px
+}
+
+.spot-detail-shell .hourly-jump {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:.8125rem;
+  color:var(--muted)
+}
+
+.spot-detail-shell .hourly-jump:hover {
+  color:var(--accent)
+}
+
+.spot-detail-shell .hourly-jump .spot-icon {
+  width:15px;
+  height:15px
+}
+
+.spot-detail-shell .conditions-time {
+  align-items:center;
+  font-size:.8125rem;
+  margin-top:15px;
+  gap:5px 8px
+}
+
+.spot-detail-shell .conditions-time>span {
+  position:absolute;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  clip-path:inset(50%)
+}
+
+.spot-detail-shell .conditions-time .spot-icon {
+  width:15px;
+  height:15px;
+  color:#8fa9ae
+}
+
+.spot-detail-shell .conditions-time time {
+  color:#bbcdd0
+}
+
+.spot-detail-shell .conditions-overview {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:20px;
+  margin:28px 0 25px;
+  align-items:center
+}
+
+.spot-detail-shell .detail-wind {
+  display:grid;
+  grid-template-columns:72px 1fr;
+  column-gap:14px;
+  row-gap:7px;
+  margin:0
+}
+
+.spot-detail-shell .detail-wind>.wind-arrow {
+  grid-row:span 2;
+  width:72px;
+  height:72px;
+  color:var(--wind-color,var(--accent));
+  background:var(--wind-tint,#1e3d39);
+  border:1px solid #ffffff14;
+  border-radius:50%;
+  position:relative;
+  align-self:center
+}
+
+.spot-detail-shell .wind-arrow svg {
+  width:100%;
+  height:100%;
+  display:block
+}
+
+.spot-detail-shell .compass-needle {
+  fill:currentColor;
+  stroke:currentColor;
+  stroke-width:1;
+  stroke-linejoin:round
+}
+
+.spot-detail-shell .compass-spine {
+  fill:none;
+  stroke:#102129;
+  stroke-width:1;
+  opacity:.45
+}
+
+.spot-detail-shell .detail-wind>.wind-arrow:before {
+  content:'';
+  position:absolute;
+  inset:6px;
+  border:1px dashed #ffffff21;
+  border-radius:50%
+}
+
+.spot-detail-shell .detail-wind>strong {
+  font-size:3.5rem;
+  line-height:1;
+  letter-spacing:-2.8px;
+  white-space:nowrap
+}
+
+.spot-detail-shell .detail-wind small {
+  font-size:1rem;
+  margin-left:5px
+}
+
+.spot-detail-shell .detail-wind>div {
+  display:flex;
+  align-items:baseline;
+  gap:7px
+}
+
+.spot-detail-shell .detail-wind b {
+  font-size:.875rem;
+  color:var(--wind-color,var(--accent));
+  font-weight:650
+}
+
+.spot-detail-shell .detail-wind div>span {
+  font-size:.8125rem
+}
+
+.spot-detail-shell .air-weather {
+  border-left:1px solid var(--detail-border);
+  padding:3px 0 3px 20px;
+  gap:10px
+}
+
+.spot-detail-shell .air-weather .weather-icon {
+  width:44px;
+  height:44px
+}
+
+.spot-detail-shell .air-weather strong {
+  font-size:2.25rem;
+  margin:2px 0
+}
+
+.spot-detail-shell .air-weather .metric-label {
+  font-size:.8125rem;
+  letter-spacing:0
+}
+
+.spot-detail-shell .weather-icon-cloud>path:first-child,
+.spot-detail-shell .weather-icon-rain>path:first-child,
+.spot-detail-shell .weather-icon-snow>path:first-child,
+.spot-detail-shell .weather-icon-fog>path:first-child,
+.spot-detail-shell .weather-icon-storm>path:first-child {
+  fill:#89cdd812
+}
+
+.spot-detail-shell .weather-icon-sun circle,
+.spot-detail-shell .weather-icon-partly-cloudy circle {
+  fill:#ecc38c16
+}
+
+.spot-detail-shell .detail-metrics {
+  padding:19px 0;
+  gap:15px
+}
+
+.spot-detail-shell .detail-metrics .metric-label {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  line-height:1.4;
+  margin-bottom:9px;
+  font-size:.8125rem
+}
+
+.spot-detail-shell .detail-metrics .spot-icon {
+  width:16px;
+  height:16px;
+  color:#8db6b4
+}
+
+.spot-detail-shell .detail-metrics strong {
+  font-size:1.625rem
+}
+
+.spot-detail-shell .daylight-times {
+  padding:0;
+  border:0;
+  margin-bottom:22px;
+  gap:12px
+}
+
+.spot-detail-shell .daylight-times>div {
+  border:1px solid #31464e;
+  background:#12242b99;
+  border-radius:10px;
+  padding:12px 14px;
+  gap:12px
+}
+
+.spot-detail-shell .daylight-times svg {
+  width:27px;
+  height:27px
+}
+
+.spot-detail-shell .daylight-times .metric-label {
+  font-size:.8125rem;
+  margin-bottom:1px
+}
+
+.spot-detail-shell .daylight-times time {
+  font-size:.9375rem;
+  font-weight:550
+}
+
+.spot-detail-shell .conditions-sources {
+  border-top:1px solid var(--detail-border);
+  padding-top:15px
+}
+
+.spot-detail-shell .conditions-sources .data-caption {
+  font-size:.8125rem;
+  line-height:1.75
+}
+
+.spot-detail-shell .conditions-windfinder {
+  border:1px solid #99dfcc33;
+  border-radius:7px;
+  padding:6px 11px;
+  margin-top:12px;
+  font-size:.8125rem;
+  background:#99dfcc08
+}
+
+.spot-detail-shell .conditions-windfinder:hover {
+  background:#99dfcc13;
+  text-decoration:none
+}
+
+.spot-detail-shell .camera-panel {
+  border-color:var(--detail-border);
+  background:#14272f
+}
+
+.spot-detail-shell .camera-placeholder {
+  position:relative;
+  overflow:hidden;
+  padding:35px 24px;
+  min-height:365px;
+  flex:1;
+  background:radial-gradient(ellipse at 50% 30%,#244149 0,transparent 70%),linear-gradient(155deg,#172e38,#14252e)
+}
+
+.spot-detail-shell .camera-scene {
+  position:absolute;
+  width:90%;
+  max-width:520px;
+  left:5%;
+  bottom:22px;
+  fill:none;
+  stroke:#8ccfc3;
+  stroke-width:1;
+  opacity:.09;
+  pointer-events:none
+}
+
+.spot-detail-shell .camera-placeholder.camera-loaded {
+  padding:0;
+  gap:0;
+  min-height:0
+}
+
+.spot-detail-shell .camera-play span {
+  width:76px;
+  height:76px;
+  border-color:#99dfcc66;
+  background:#99dfcc0a;
+  padding:0;
+  box-shadow:0 0 0 10px #99dfcc04;
+  transition:background .2s,box-shadow .2s
+}
+
+.spot-detail-shell .camera-play:hover span {
+  background:#99dfcc20;
+  box-shadow:0 0 0 10px #99dfcc0b
+}
+
+.spot-detail-shell .camera-play .spot-icon {
+  width:28px;
+  height:28px
+}
+
+.spot-detail-shell .play-triangle {
+  fill:currentColor;
+  stroke:none
+}
+
+.spot-detail-shell .camera-footer {
+  border-top:1px solid var(--detail-border);
+  padding:16px 22px;
+  flex-wrap:wrap;
+  font-size:.8125rem
+}
+
+.spot-detail-shell .forecast-panel {
+  margin-top:42px
+}
+
+.spot-detail-shell .wind-scale {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:12px 20px;
+  padding:15px 18px;
+  margin-bottom:12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#14242b
+}
+
+.spot-detail-shell .wind-scale-label {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:.8125rem;
+  color:#bbcccf
+}
+
+.spot-detail-shell .wind-scale-label small {
+  color:var(--muted);
+  font-size:.8125rem
+}
+
+.spot-detail-shell .wind-scale-bands {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 15px
+}
+
+.spot-detail-shell .wind-scale-bands>span {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:.8125rem;
+  color:#bbcccf;
+  font-variant-numeric:tabular-nums
+}
+
+.spot-detail-shell .wind-scale-bands i {
+  display:block;
+  width:15px;
+  height:7px;
+  border-radius:2px;
+  background:var(--wind-color)
+}
+
+.spot-detail-shell .forecast-scroll {
+  position:relative;
+  border-color:var(--detail-border);
+  border-radius:14px;
+  max-height:none;
+  background:#15262f
+}
+
+.spot-detail-shell .hourly-table th,
+.spot-detail-shell .hourly-table td {
+  min-width:70px;
+  padding:12px 9px;
+  border-bottom-color:#2b4149;
+  font-size:.875rem
+}
+
+.spot-detail-shell .hourly-table thead th {
+  background:#1a3038;
+  vertical-align:top;
+  padding-top:18px;
+  padding-bottom:14px
+}
+
+.spot-detail-shell .hourly-table th:first-child {
+  background:#192e36;
+  min-width:130px;
+  padding-left:18px;
+  font-size:.8125rem;
+  font-weight:550;
+  z-index:2
+}
+
+.spot-detail-shell .hourly-table thead th:first-child {
+  vertical-align:middle
+}
+
+.spot-detail-shell .hourly-table th.selected-hour {
+  background:#264b48;
+  box-shadow:inset 0 3px var(--accent)
+}
+
+.spot-detail-shell .hourly-table .selected-hour-label {
+  font-size:.8125rem;
+  color:var(--accent);
+  font-weight:550;
+  letter-spacing:.3px;
+  margin:5px 0 0
+}
+
+.spot-detail-shell .forecast-hour-selected {
+  background:#99dfcc06
+}
+
+.spot-detail-shell .hourly-table .wind-cell {
+  position:relative;
+  background:transparent;
+  height:106px;
+  vertical-align:top;
+  color:var(--wind-color);
+  padding-top:13px
+}
+
+.spot-detail-shell .wind-value {
+  display:block;
+  position:relative;
+  z-index:1;
+  font-size:1.125rem;
+  font-weight:650
+}
+
+.spot-detail-shell .wind-meter {
+  display:block;
+  height:48px;
+  width:100%;
+  position:relative;
+  margin-top:7px;
+  background:var(--wind-tint);
+  border-radius:5px 5px 2px 2px;
+  overflow:hidden
+}
+
+.spot-detail-shell .wind-meter i {
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  height:var(--wind-bar);
+  background:var(--wind-color);
+  opacity:.72;
+  border-radius:3px 3px 0 0
+}
+
+.spot-detail-shell .wind-band-unknown .wind-meter {
+  visibility:hidden
+}
+
+.spot-detail-shell .wind-cell.is-selected {
+  background:#99dfcc09
+}
+
+.spot-detail-shell .gust-cell span {
+  display:block;
+  border-radius:5px;
+  background:var(--wind-tint);
+  color:var(--wind-color);
+  padding:4px 0;
+  font-weight:550
+}
+
+.spot-detail-shell .hourly-table .wind-arrow {
+  width:27px;
+  height:27px
+}
+
+.spot-detail-shell .hourly-weather-row .weather-icon {
+  display:block;
+  margin:0 auto 6px;
+  width:29px;
+  height:29px;
+  stroke-width:1.8
+}
+
+.spot-detail-shell .hourly-temperature {
+  color:#d8e3dc;
+  font-size:.875rem
+}
+
+.spot-detail-shell .table-status {
+  font-size:.8125rem
+}
+
+.spot-detail-shell .lower-detail>section {
+  border-color:var(--detail-border);
+  background:linear-gradient(145deg,#192e35,#15262e)
+}
+
+.spot-detail-shell .resource-links a {
+  border-radius:8px
+}
+
+@media(max-width:1100px) {
+  .spot-detail-shell .conditions-overview {
+    grid-template-columns:1fr
+  }
+
+  .spot-detail-shell .air-weather {
+    padding:0;
+    border:0;
+    gap:12px
+  }
+
+  .spot-detail-shell .air-weather>div {
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:0 12px;
+    align-items:baseline
+  }
+
+  .spot-detail-shell .air-weather .metric-label {
+    grid-column:span 2
+  }
+}
+
+@media(max-width:900px) {
+  .spot-detail-shell .detail-grid {
+    grid-template-columns:1fr
+  }
+
+  .spot-detail-shell .conditions-overview {
+    grid-template-columns:minmax(0,1fr) auto
+  }
+
+  .spot-detail-shell .air-weather {
+    border-left:1px solid var(--detail-border);
+    padding-left:20px
+  }
+
+  .spot-detail-shell .air-weather>div {
+    display:block
+  }
+
+  .spot-detail-shell .camera-placeholder {
+    min-height:285px
+  }
+}
+
+@media(max-width:560px) {
+  .spot-detail-shell .segmented a {
+    min-width:0;
+    padding:8px 6px
+  }
+
+  .spot-detail-shell .conditions-panel {
+    padding:22px 18px
+  }
+
+  .spot-detail-shell .conditions-heading .eyebrow {
+    font-size:.8125rem
+  }
+
+  .spot-detail-shell .hourly-jump {
+    font-size:.8125rem
+  }
+
+  .spot-detail-shell .conditions-overview {
+    grid-template-columns:1fr;
+    gap:20px;
+    margin:25px 0 22px
+  }
+
+  .spot-detail-shell .detail-wind {
+    grid-template-columns:66px 1fr
+  }
+
+  .spot-detail-shell .detail-wind>.wind-arrow {
+    width:66px;
+    height:66px
+  }
+
+  .spot-detail-shell .detail-wind>strong {
+    font-size:3.5rem
+  }
+
+  .spot-detail-shell .air-weather {
+    padding:0;
+    border:0;
+    gap:14px
+  }
+
+  .spot-detail-shell .air-weather>div {
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:0 10px;
+    align-items:baseline
+  }
+
+  .spot-detail-shell .air-weather .metric-label {
+    grid-column:span 2
+  }
+
+  .spot-detail-shell .air-weather .weather-icon {
+    width:44px;
+    height:44px;
+    margin:0 11px
+  }
+
+  .spot-detail-shell .air-weather strong {
+    font-size:1.875rem
+  }
+
+  .spot-detail-shell .detail-metrics {
+    gap:10px
+  }
+
+  .spot-detail-shell .detail-metrics .spot-icon {
+    display:none
+  }
+
+  .spot-detail-shell .detail-metrics .metric-label {
+    font-size:.8125rem;
+    min-height:2.8em;
+    align-items:flex-start
+  }
+
+  .spot-detail-shell .detail-metrics strong {
+    font-size:1.3125rem
+  }
+
+  .spot-detail-shell .detail-metrics small {
+    font-size:.8125rem
+  }
+
+  .spot-detail-shell .daylight-times>div {
+    padding:10px;
+    gap:8px
+  }
+
+  .spot-detail-shell .daylight-times svg {
+    width:23px;
+    height:23px
+  }
+
+  .spot-detail-shell .daylight-times time {
+    font-size:.8125rem
+  }
+
+  .spot-detail-shell .wind-scale {
+    padding:13px 14px;
+    gap:10px
+  }
+
+  .spot-detail-shell .wind-scale-bands {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    width:100%;
+    gap:9px 8px
+  }
+
+  .spot-detail-shell .wind-scale-bands>span {
+    font-size:.8125rem;
+    gap:5px
+  }
+
+  .spot-detail-shell .hourly-table th:first-child {
+    min-width:105px;
+    padding-left:12px
+  }
+
+  .spot-detail-shell .favorite-button.large {
+    width:44px;
+    height:44px
+  }
+
+  .spot-detail-shell .camera-footer {
+    padding:14px 18px
+  }
+}
+
+/* Matching treatment for the local notes and measured station readings. */
+.spot-detail-shell .lower-detail>section {
+  position:relative;
+  border-top:2px solid #669e92;
+  box-shadow:0 10px 26px #0000000d
+}
+
+.spot-detail-shell .lower-card-heading {
+  display:flex;
+  align-items:center;
+  gap:11px;
+  margin-bottom:17px
+}
+
+.spot-detail-shell .lower-card-heading .eyebrow {
+  font-size:.8125rem;
+  letter-spacing:1px;
+  margin:0
+}
+
+.spot-detail-shell .section-emblem {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:35px;
+  height:35px;
+  flex-shrink:0;
+  border:1px solid #99dfcc26;
+  border-radius:9px;
+  color:var(--accent);
+  background:#99dfcc09
+}
+
+.spot-detail-shell .section-emblem .spot-icon {
+  width:21px;
+  height:21px
+}
+
+.spot-detail-shell .rating-heading {
+  margin:0 0 17px
+}
+
+.spot-detail-shell .rating-big {
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap:3px;
+  flex-shrink:0;
+  padding:9px 14px;
+  font-size:2.25rem;
+  line-height:1.25;
+  border:1px solid #ffffff15;
+  border-radius:12px;
+  background:#10232b99
+}
+
+.spot-detail-shell .confidence-label {
+  border-radius:6px;
+  border-color:#89cdd835;
+  background:#89cdd809
+}
+
+.spot-detail-shell .factor-list>div {
+  display:grid;
+  grid-template-columns:minmax(100px,.85fr) minmax(0,1.7fr);
+  gap:12px;
+  padding:13px 0;
+  align-items:baseline
+}
+
+.spot-detail-shell .factor-list dd {
+  margin:0;
+  color:#cbd9d7;
+  line-height:1.6
+}
+
+.spot-detail-shell .resource-links {
+  gap:8px;
+  margin-top:20px
+}
+
+.spot-detail-shell .resource-links a,
+.spot-detail-shell .section-heading>.text-link {
+  padding:7px 11px;
+  border:1px solid #99dfcc30;
+  border-radius:7px;
+  background:#99dfcc06;
+  font-size:.8125rem;
+  transition:background .18s,border-color .18s
+}
+
+.spot-detail-shell .resource-links a:hover,
+.spot-detail-shell .section-heading>.text-link:hover {
+  border-color:#99dfcc66;
+  background:#99dfcc13
+}
+
+.spot-detail-shell #field-notes {
+  border:1px solid #31464e;
+  border-radius:10px;
+  background:#11232a70;
+  padding:18px;
+  margin-top:22px
+}
+
+.spot-detail-shell #field-notes h3 {
+  display:flex;
+  align-items:center;
+  gap:8px
+}
+
+.spot-detail-shell #field-notes h3 .spot-icon {
+  color:#8cb9b0;
+  width:17px;
+  height:17px
+}
+
+.spot-detail-shell .observations-note {
+  color:var(--muted);
+  font-size:.8125rem;
+  line-height:1.6;
+  margin-top:8px
+}
+
+.spot-detail-shell .station-detail {
+  border-color:var(--detail-border);
+  border-top:2px solid #648b89;
+  padding:24px;
+  background:radial-gradient(ellipse at 0 0,#89cdd809,transparent 65%),var(--detail-panel)
+}
+
+.spot-detail-shell .station-detail .card-eyebrow {
+  gap:10px 14px;
+  letter-spacing:.5px;
+  margin-bottom:14px
+}
+
+.spot-detail-shell .station-detail .card-eyebrow>span:first-child {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:6px
+}
+
+.spot-detail-shell .station-detail .card-eyebrow .spot-icon {
+  width:17px;
+  height:17px;
+  color:#95b8b5
+}
+
+.spot-detail-shell .station-detail .status {
+  border:1px solid currentColor;
+  border-radius:20px;
+  padding:3px 8px;
+  font-size:.8125rem;
+  letter-spacing:.3px;
+  text-transform:none;
+  background:#99dfcc06
+}
+
+.spot-detail-shell .station-detail h3 {
+  font-size:1.25rem;
+  margin-bottom:22px
+}
+
+.spot-detail-shell .station-detail h3 a {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:14px
+}
+
+.spot-detail-shell .station-detail .outward {
+  color:var(--accent);
+  opacity:.8
+}
+
+.spot-detail-shell .station-waves {
+  gap:10px
+}
+
+.spot-detail-shell .station-waves>div {
+  border:1px solid #31464e;
+  border-radius:9px;
+  background:#12242b80;
+  padding:12px 11px
+}
+
+.spot-detail-shell .station-waves .metric-label {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  line-height:1.4;
+  margin-bottom:10px
+}
+
+.spot-detail-shell .station-waves .spot-icon {
+  width:15px;
+  height:15px;
+  color:#8db6b4
+}
+
+.spot-detail-shell .station-waves .measurement-value {
+  font-size:1.875rem
+}
+
+.spot-detail-shell .station-detail .station-wind {
+  border-top:1px solid var(--detail-border);
+  padding-top:18px;
+  gap:14px
+}
+
+.spot-detail-shell .station-detail .observed-wind-value .measurement-value {
+  color:var(--wind-color)
+}
+
+.spot-detail-shell .station-detail .station-direction {
+  gap:10px
+}
+
+.spot-detail-shell .station-detail .station-direction .wind-arrow {
+  width:44px;
+  height:44px;
+  border:1px solid #ffffff12;
+  border-radius:50%;
+  background:var(--wind-tint);
+  color:var(--wind-color)
+}
+
+.spot-detail-shell .station-detail .station-context {
+  padding-top:14px;
+  line-height:1.7
+}
+
+.spot-detail-shell .crew-callout {
+  display:flex;
+  align-items:center;
+  gap:18px;
+  border:1px solid var(--detail-border);
+  border-radius:14px;
+  padding:24px;
+  margin-top:28px;
+  background:linear-gradient(115deg,#1c3339,#15262e)
+}
+
+.spot-detail-shell .crew-callout>div {
+  flex:1;
+  min-width:0
+}
+
+.spot-detail-shell .crew-emblem {
+  width:46px;
+  height:46px;
+  border-radius:12px
+}
+
+.spot-detail-shell .crew-emblem .spot-icon {
+  width:25px;
+  height:25px
+}
+
+.spot-detail-shell .crew-callout p {
+  line-height:1.7;
+  margin-top:5px
+}
+
+.spot-detail-shell .crew-callout p strong {
+  color:var(--accent)
+}
+
+.spot-detail-shell .crew-callout .secondary-button {
+  border-radius:9px;
+  white-space:nowrap;
+  background:#99dfcc07
+}
+
+@media(max-width:1100px) {
+  .spot-detail-shell .station-detail {
+    padding:20px
+  }
+
+  .spot-detail-shell .station-waves .spot-icon {
+    display:none
+  }
+
+  .spot-detail-shell .station-waves>div {
+    padding:11px 9px
+  }
+
+  .spot-detail-shell .station-detail .station-wind {
+    gap:10px
+  }
+}
+
+@media(max-width:900px) {
+  .spot-detail-shell .crew-callout {
+    flex-wrap:wrap
+  }
+}
+
+@media(max-width:680px) {
+  .spot-detail-shell .station-waves .spot-icon {
+    display:block
+  }
+
+  .spot-detail-shell .station-waves .measurement-value {
+    font-size:1.75rem
+  }
+
+  .spot-detail-shell .station-detail .station-direction .wind-arrow {
+    width:38px;
+    height:38px
+  }
+
+  .spot-detail-shell .crew-callout {
+    display:grid;
+    grid-template-columns:40px minmax(0,1fr);
+    padding:20px;
+    gap:16px
+  }
+
+  .spot-detail-shell .crew-emblem {
+    width:40px;
+    height:40px
+  }
+
+  .spot-detail-shell .crew-callout .secondary-button {
+    grid-column:span 2;
+    text-align:center
+  }
+}
+
+@media(max-width:390px) {
+  .spot-detail-shell .station-waves .spot-icon {
+    display:none
+  }
+
+  .spot-detail-shell .station-waves .metric-label {
+    min-height:2.8em;
+    align-items:flex-start
+  }
+
+  .spot-detail-shell .station-waves .measurement-value {
+    font-size:1.5rem
+  }
+
+  .spot-detail-shell .station-waves .measurement-value small {
+    font-size:.8125rem
+  }
+
+  .spot-detail-shell .station-waves>div {
+    padding:10px 8px
+  }
+
+  .spot-detail-shell .station-detail .station-wind {
+    grid-template-columns:1fr 1.2fr .7fr;
+    gap:8px
+  }
+
+  .spot-detail-shell .station-detail .station-direction {
+    gap:7px
+  }
+
+  .spot-detail-shell .station-detail .station-direction .wind-arrow {
+    width:31px;
+    height:31px
+  }
+
+  .spot-detail-shell .factor-list>div {
+    grid-template-columns:1fr;
+    gap:5px
+  }
+
+  .spot-detail-shell .rating-big {
+    padding:8px 10px;
+    font-size:2rem
+  }
+}

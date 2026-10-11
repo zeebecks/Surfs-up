@@ -1,0 +1,575 @@
+/* Coast overview: the same quiet surfaces and wind scale as the spot page. */
+.home-shell .hero-photo {
+  border:1px solid #9dcfc51c;
+  box-shadow:0 12px 32px #00000014
+}
+
+.home-shell .hero-meta>a {
+  display:inline-flex;
+  align-items:center;
+  border:1px solid #99dfcc30;
+  border-radius:8px;
+  padding:7px 11px;
+  background:#99dfcc07
+}
+
+.home-shell .spot-section {
+  container-type:inline-size
+}
+
+.home-shell .list-toolbar {
+  gap:12px 15px;
+  margin-bottom:12px
+}
+
+.home-shell .filter-buttons {
+  padding:4px;
+  gap:4px;
+  border:1px solid var(--detail-border);
+  border-radius:11px;
+  background:#14252c
+}
+
+.home-shell .filter-button {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:7px 11px;
+  border-radius:7px;
+  font-size:.8125rem;
+  transition:background .18s,color .18s
+}
+
+.home-shell .filter-button:hover {
+  color:var(--text);
+  background:#ffffff07
+}
+
+.home-shell .filter-button.active {
+  color:var(--accent);
+  background:#99dfcc14
+}
+
+.home-shell .filter-button .spot-icon {
+  width:16px;
+  height:16px
+}
+
+.home-shell .filter-button span {
+  padding:0 5px;
+  border-radius:4px;
+  margin:0;
+  color:inherit;
+  background:#ffffff08
+}
+
+.home-shell .sort-label {
+  font-size:.8125rem
+}
+
+.home-shell .sort-label select {
+  border:1px solid var(--detail-border);
+  border-radius:8px;
+  background:#172a32;
+  padding:8px 10px;
+  font-size:.8125rem;
+  max-width:9rem
+}
+
+.home-shell .home-wind-key {
+  border:1px solid #31464e;
+  border-radius:9px;
+  background:#13242b;
+  margin-bottom:14px
+}
+
+.home-shell .home-wind-key summary {
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:10px 13px;
+  cursor:pointer;
+  list-style:none
+}
+
+.home-shell .home-wind-key summary::-webkit-details-marker {
+  display:none
+}
+
+.home-shell .wind-key-label {
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:#bbcccf;
+  font-size:.8125rem
+}
+
+.home-shell .wind-key-label small {
+  font-size:.8125rem;
+  color:var(--muted)
+}
+
+.home-shell .wind-key-preview {
+  display:flex;
+  align-items:center;
+  gap:3px;
+  margin-left:auto
+}
+
+.home-shell .wind-key-preview i {
+  display:block;
+  width:15px;
+  height:5px;
+  border-radius:2px;
+  background:var(--wind-color)
+}
+
+.home-shell .wind-key-chevron {
+  width:15px;
+  height:15px;
+  color:var(--muted);
+  transition:transform .18s
+}
+
+.home-shell .home-wind-key[open] .wind-key-chevron {
+  transform:rotate(180deg)
+}
+
+.home-shell .wind-key-bands {
+  display:grid;
+  grid-template-columns:repeat(8,minmax(0,1fr));
+  gap:9px;
+  border-top:1px solid #2a3e46;
+  padding:13px 14px 8px
+}
+
+.home-shell .wind-key-bands>span {
+  display:flex;
+  align-items:center;
+  gap:5px;
+  color:#bbcccf;
+  font-size:.8125rem;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap
+}
+
+.home-shell .wind-key-bands i {
+  width:7px;
+  height:7px;
+  flex-shrink:0;
+  border-radius:2px;
+  background:var(--wind-color)
+}
+
+.home-shell .home-wind-key p {
+  font-size:.8125rem;
+  color:var(--muted);
+  padding:0 14px 12px
+}
+
+.home-shell .spot-list {
+  gap:15px
+}
+
+.home-shell .spot-card {
+  position:relative;
+  border-color:var(--detail-border);
+  border-radius:14px;
+  padding:21px 22px 0;
+  background:radial-gradient(ellipse at 0 0,#99dfcc08,transparent 65%),var(--detail-panel);
+  box-shadow:0 8px 22px #0000000b;
+  transition:border-color .2s,box-shadow .2s
+}
+
+.home-shell .spot-card:hover {
+  border-color:#608f87;
+  box-shadow:0 8px 24px #00000017
+}
+
+.home-shell .spot-card-top {
+  align-items:flex-start;
+  gap:12px
+}
+
+.home-shell .spot-card-top>div {
+  min-width:0
+}
+
+.home-shell .spot-location {
+  font-size:.8125rem;
+  letter-spacing:.45px;
+  margin-bottom:7px
+}
+
+.home-shell .spot-card h3 {
+  font-size:1.1875rem;
+  line-height:1.4;
+  letter-spacing:-.03em
+}
+
+.home-shell .favorite-button {
+  display:grid;
+  place-items:center;
+  border:1px solid #344b51;
+  border-radius:50%;
+  width:38px;
+  height:38px;
+  font-size:1.5rem;
+  background:#11232b50
+}
+
+.home-shell .favorite-button[aria-pressed=true] {
+  border-color:#99dfcc55;
+  background:#99dfcc09
+}
+
+.home-shell .spot-metrics {
+  grid-template-columns:1.2fr .95fr .95fr;
+  gap:12px;
+  margin:24px 0 21px
+}
+
+.home-shell .spot-metrics>div {
+  min-width:0
+}
+
+.home-shell .primary-wind {
+  gap:11px
+}
+
+.home-shell .primary-wind .wind-arrow {
+  width:45px;
+  height:45px;
+  color:var(--wind-color);
+  border:1px solid #ffffff12;
+  border-radius:50%;
+  background:var(--wind-tint)
+}
+
+.home-shell .primary-wind .wind-arrow svg {
+  width:72%;
+  height:72%
+}
+
+.home-shell .wind-number {
+  color:var(--wind-color);
+  font-size:2.5rem;
+  font-variant-numeric:tabular-nums
+}
+
+.home-shell .wind-number small {
+  font-size:.8125rem
+}
+
+.home-shell .metric-detail {
+  font-size:.8125rem;
+  line-height:1.5
+}
+
+.home-shell .metric-detail .muted {
+  display:none
+}
+
+.home-shell .primary-wind .metric-detail::after {
+  content:' · wind';
+  color:var(--muted)
+}
+
+.home-shell .wave-metric,
+.home-shell .rating-metric {
+  padding-left:14px;
+  border-color:var(--detail-border)
+}
+
+.home-shell .spot-metrics .metric-label {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:.8125rem;
+  line-height:1.45;
+  margin-bottom:9px
+}
+
+.home-shell .spot-metrics .metric-label .spot-icon {
+  width:16px;
+  height:16px;
+  color:#8db6b4
+}
+
+.home-shell .wave-metric strong,
+.home-shell .rating-metric strong {
+  font-size:1.8125rem
+}
+
+.home-shell .wave-metric small,
+.home-shell .rating-metric small {
+  font-size:.8125rem
+}
+
+.home-shell .spot-card-bottom {
+  align-items:center;
+  border-color:var(--detail-border);
+  padding:13px 0;
+  gap:8px 12px
+}
+
+.home-shell .spot-forecast-link {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 9px;
+  border:1px solid #99dfcc2d;
+  border-radius:7px;
+  background:#99dfcc06;
+  color:var(--accent);
+  font-size:.8125rem;
+  transition:background .18s,border-color .18s
+}
+
+.home-shell .spot-forecast-link:hover {
+  background:#99dfcc14;
+  border-color:#99dfcc66
+}
+
+.home-shell .spot-forecast-link .spot-icon {
+  width:15px;
+  height:15px
+}
+
+.home-shell .spot-forecast-link .play-triangle {
+  fill:currentColor;
+  stroke:none
+}
+
+.home-shell .section-note {
+  line-height:1.8
+}
+
+.home-shell .map-panel {
+  border-color:var(--detail-border);
+  border-top:2px solid #6caaa0;
+  border-radius:14px;
+  background:radial-gradient(ellipse at 0 0,#99dfcc09,transparent 65%),var(--detail-panel);
+  box-shadow:0 12px 30px #00000012
+}
+
+.home-shell .map-panel-heading {
+  padding:22px 22px 18px;
+  gap:16px
+}
+
+.home-shell .map-panel-heading h3 {
+  font-size:1.3125rem
+}
+
+.home-shell .map-switch {
+  gap:9px;
+  padding-bottom:20px;
+  border-color:var(--detail-border)
+}
+
+.home-shell .map-switch button {
+  font-size:.875rem;
+  min-height:52px;
+  border-radius:9px;
+  box-shadow:none
+}
+
+.home-shell .map-switch button.active {
+  box-shadow:0 3px 12px #99dfcc14
+}
+
+.home-shell .map-switch button[data-map-tab='windy']:not(.active) {
+  background:linear-gradient(125deg,#253e49,#1b303a);
+  border-color:#699aa5
+}
+
+.home-shell .map-legend {
+  color:#b6c7c7;
+  gap:18px
+}
+
+.home-shell .map-note {
+  line-height:1.75
+}
+
+.home-shell .map-resource {
+  border-top-color:var(--detail-border);
+  font-size:.8125rem;
+  color:var(--accent)
+}
+
+.home-shell .basin-section>.section-heading>.text-link {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid #99dfcc30;
+  border-radius:8px;
+  padding:8px 11px;
+  max-width:none;
+  color:var(--accent);
+  background:#99dfcc06;
+  font-size:.8125rem;
+  white-space:nowrap
+}
+
+@container (max-width:510px) {
+  .home-shell .wind-key-bands {
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:10px
+  }
+}
+
+@container (max-width:440px) {
+  .home-shell .spot-metrics {
+    grid-template-columns:1fr 1fr;
+    gap:13px
+  }
+
+  .home-shell .primary-wind {
+    grid-column:span 2;
+    margin-bottom:4px
+  }
+
+  .home-shell .primary-wind .wind-arrow {
+    width:48px;
+    height:48px
+  }
+
+  .home-shell .wave-metric,
+  .home-shell .rating-metric {
+    align-self:stretch;
+    padding:12px;
+    border:1px solid var(--detail-border);
+    border-radius:9px;
+    background:#12242b80
+  }
+
+  .home-shell .spot-metrics .metric-label {
+    min-height:1.45em
+  }
+}
+
+@media(max-width:1100px) {
+  .home-shell .spot-card {
+    padding-left:18px;
+    padding-right:18px
+  }
+
+  .home-shell .spot-card h3 {
+    font-size:1.125rem
+  }
+}
+
+@media(max-width:560px) {
+  .home-shell .hero-meta {
+    gap:13px
+  }
+
+  .home-shell .hero-meta>a {
+    padding:6px 9px
+  }
+
+  .home-shell .list-toolbar {
+    align-items:flex-start;
+    gap:10px
+  }
+
+  .home-shell .filter-button {
+    padding:7px 9px
+  }
+
+  .home-shell .sort-label {
+    margin-left:auto
+  }
+
+  .home-shell .map-panel-heading {
+    padding:18px 18px 15px;
+    gap:10px
+  }
+
+  .home-shell .map-panel-heading h3 {
+    font-size:1.1875rem
+  }
+
+  .home-shell .map-switch {
+    padding:5px 18px 18px
+  }
+
+  .home-shell .map-switch button {
+    font-size:.8125rem;
+    padding:11px 8px;
+    gap:6px
+  }
+
+  .home-shell .spot-card {
+    padding:19px 17px 0
+  }
+
+  .home-shell .spot-location {
+    letter-spacing:0
+  }
+
+  .home-shell .spot-metrics {
+    margin-top:20px;
+    margin-bottom:18px
+  }
+
+  .home-shell .basin-section>.section-heading {
+    flex-wrap:wrap
+  }
+
+  .home-shell .basin-section>.section-heading>.text-link {
+    margin-top:0;
+    text-align:left
+  }
+}
+
+@media(max-width:390px) {
+  .home-shell .sort-label {
+    width:100%;
+    justify-content:space-between
+  }
+
+  .home-shell .sort-label select {
+    max-width:none;
+    flex:1
+  }
+
+  .home-shell .wind-key-preview {
+    gap:2px
+  }
+
+  .home-shell .wind-key-preview i {
+    width:10px
+  }
+
+  .home-shell .home-wind-key summary {
+    gap:7px;
+    padding:10px
+  }
+
+  .home-shell .spot-card h3 {
+    font-size:1.0625rem
+  }
+
+  .home-shell .spot-card-bottom {
+    align-items:flex-start;
+    gap:10px
+  }
+
+  .home-shell .spot-metrics .metric-label .spot-icon {
+    display:none
+  }
+
+  .home-shell .spot-metrics .metric-label {
+    min-height:2.9em;
+    align-items:flex-start
+  }
+
+  .home-shell .wave-metric,
+  .home-shell .rating-metric {
+    padding:11px 10px
+  }
+}

@@ -9,11 +9,12 @@
   <title>{% block title %}SurfsUP · Lake Michigan surf conditions{% endblock %}</title>
   <link rel="icon" href="/static/surfsup-favicon.png" type="image/png" sizes="128x128">
   <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/site.css">
   <script src="/static/app.js" defer>
 </script>
   {% block head %}{% endblock %}
 </head>
-<body data-ready="{{ 'true' if weather_ready else 'false' }}" data-demo="{{ 'true' if demo else 'false' }}">
+<body class="site-polish" data-ready="{{ 'true' if weather_ready else 'false' }}" data-demo="{{ 'true' if demo else 'false' }}">
   <a class="skip-link" href="#main">Skip to conditions</a>
   {% if demo %}<div class="demo-banner">DEMO MODE · Sample conditions for exploring the app. These are not live readings.</div>{% endif %}
   <header class="site-header">
@@ -54,5 +55,6 @@
       <a class="footer-profile" href="https://www.linkedin.com/in/zacharybecka/" target="_blank" rel="noopener noreferrer">Zach Becka <span>· LinkedIn <span aria-hidden="true">↗</span></span></a>
     </div>
   </footer>
+  <script id="wind-palette" type="application/json">{{ wind_legend | tojson }}</script>
 </body>
 </html>
