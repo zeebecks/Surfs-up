@@ -10,8 +10,10 @@
   <link rel="icon" href="/static/surfsup-favicon.png" type="image/png" sizes="128x128">
   <link rel="stylesheet" href="/static/styles.css">
   <link rel="stylesheet" href="/static/site.css">
+  <link rel="stylesheet" href="/static/forecast.css">
   <script src="/static/app.js" defer>
 </script>
+  <script src="/static/forecast.js" defer></script>
   {% block head %}{% endblock %}
 </head>
 <body class="site-polish" data-ready="{{ 'true' if weather_ready else 'false' }}" data-demo="{{ 'true' if demo else 'false' }}">

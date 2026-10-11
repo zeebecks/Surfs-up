@@ -1,0 +1,226 @@
+/* The same hourly timeline controls the cards and the detailed outlook. */
+.time-controls.forecast-time-control {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:center;
+  gap:18px;
+  width:min(100%,760px);
+  padding:14px 18px;
+  margin-bottom:24px;
+  border:1px solid #344d53;
+  border-radius:14px;
+  background:linear-gradient(110deg,#99dfcc09,transparent 70%),#14252c
+}
+
+.forecast-time-control .forecast-now {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:72px;
+  min-height:48px;
+  padding:9px 16px;
+  border:1px solid #69978e;
+  border-radius:9px;
+  background:#99dfcc0b;
+  color:var(--accent);
+  font-weight:650;
+  transition:background .15s,border-color .15s
+}
+
+.forecast-time-control .forecast-now:hover {
+  border-color:var(--accent);
+  background:#99dfcc1c
+}
+
+.forecast-time-control .forecast-now.active {
+  border-color:var(--accent);
+  background:var(--accent);
+  color:#142d30
+}
+
+.forecast-time-form {
+  min-width:0
+}
+
+.forecast-time-label {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  min-width:0
+}
+
+.forecast-time-control .time-caption {
+  font-size:.875rem;
+  line-height:1.5;
+  color:var(--text)
+}
+
+.forecast-offset {
+  flex-shrink:0;
+  padding:2px 8px;
+  border-radius:6px;
+  background:#99dfcc12;
+  color:var(--accent);
+  font-size:.8125rem;
+  font-weight:650;
+  font-variant-numeric:tabular-nums
+}
+
+/* The range thumb travels between centers 12px inside each endpoint. */
+.forecast-daylight {
+  position:relative;
+  height:22px;
+  margin:8px 12px 0;
+  padding:0;
+  list-style:none
+}
+
+.forecast-daylight-marker {
+  position:absolute;
+  top:0;
+  left:var(--daylight-position);
+  display:grid;
+  place-items:center;
+  width:20px;
+  height:22px;
+  transform:translateX(-50%);
+  color:#ebc07c;
+  cursor:help
+}
+
+.forecast-daylight-marker svg {
+  display:block;
+  width:20px;
+  height:20px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.75;
+  stroke-linecap:round;
+  stroke-linejoin:round
+}
+
+.forecast-range {
+  appearance:none;
+  -webkit-appearance:none;
+  display:block;
+  width:100%;
+  min-width:0;
+  height:36px;
+  margin:3px 0 0;
+  padding:0;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  cursor:pointer;
+  touch-action:pan-y
+}
+
+.forecast-range::-webkit-slider-runnable-track {
+  height:5px;
+  border-radius:8px;
+  background:linear-gradient(to right,var(--accent) 0,var(--accent) var(--forecast-position),#3a555b var(--forecast-position),#3a555b 100%)
+}
+
+.forecast-range::-moz-range-track {
+  height:5px;
+  border-radius:8px;
+  background:#3a555b
+}
+
+.forecast-range::-moz-range-progress {
+  height:5px;
+  border-radius:8px;
+  background:var(--accent)
+}
+
+.forecast-range::-webkit-slider-thumb {
+  appearance:none;
+  -webkit-appearance:none;
+  width:24px;
+  height:24px;
+  margin-top:-9.5px;
+  border:3px solid #17302f;
+  border-radius:50%;
+  background:#b1eadb;
+  box-shadow:0 0 0 1px #99dfcc9c,0 2px 8px #0004
+}
+
+.forecast-range::-moz-range-thumb {
+  width:18px;
+  height:18px;
+  border:3px solid #17302f;
+  border-radius:50%;
+  background:#b1eadb;
+  box-shadow:0 0 0 1px #99dfcc9c,0 2px 8px #0004
+}
+
+.forecast-range:focus-visible {
+  outline:2px solid var(--accent);
+  outline-offset:3px
+}
+
+.forecast-ticks {
+  display:flex;
+  justify-content:space-between;
+  gap:4px;
+  color:var(--muted);
+  font-size:.8125rem;
+  line-height:1.4
+}
+
+.forecast-apply {
+  min-height:42px;
+  margin-top:12px;
+  padding:6px 12px;
+  border:1px solid #69978e;
+  border-radius:7px;
+  background:#99dfcc18;
+  color:var(--accent)
+}
+
+.forecast-enhanced .forecast-apply {
+  display:none
+}
+
+.home-shell .spot-section > .forecast-time-control {
+  width:100%;
+  margin-bottom:16px
+}
+
+@media (max-width:480px) {
+  .time-controls.forecast-time-control {
+    gap:12px;
+    padding:13px 12px
+  }
+
+  .forecast-time-control .forecast-now {
+    min-width:58px;
+    min-height:46px;
+    padding:8px 10px
+  }
+
+  .forecast-time-label {
+    align-items:start;
+    gap:6px
+  }
+
+  .forecast-time-control .time-caption {
+    font-size:.8125rem
+  }
+
+  .forecast-offset {
+    padding:1px 5px
+  }
+}
+
+@media (max-width:350px) {
+  .forecast-time-label {
+    display:block
+  }
+
+  .forecast-offset {
+    display:inline-block;
+    margin-top:4px
+  }
+}

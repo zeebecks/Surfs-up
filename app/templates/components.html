@@ -104,9 +104,30 @@
 </article>
 {% endmacro %}
 
-{% macro time_controls(h, at, path='/') %}
-<div class="time-controls">
-<div class="segmented" aria-label="Forecast time">{% for hour,label in [(0,'Now'),(3,'+3h'),(6,'+6h'),(12,'+12h'),(24,'+24h')] %}<a href="{{ path }}?h={{ hour }}" {% if h == hour %}class="active" aria-current="true"{% endif %}>{{ label }}</a>{% endfor %}</div>
-<span class="time-caption">Forecast for {{ at | localtime('%a %-I %p %Z') }}</span>
+{% macro time_controls(h, at, path='/', daylight_events=(), daylight_reference='') %}
+<div class="time-controls forecast-time-control" style="--forecast-position:{{ h / 48 * 100 }}%">
+<a class="forecast-now{% if h == 0 %} active{% endif %}" data-forecast-now href="{{ path }}?h=0" {% if h == 0 %}aria-current="true"{% endif %}>Now</a>
+<form class="forecast-time-form" action="{{ path }}" method="get">
+  <div class="forecast-time-label">
+    <output class="time-caption" data-forecast-caption for="forecast-hour" aria-live="off">Forecast for {{ at | localtime('%a, %b %-d · %-I:%M %p %Z') }}</output>
+    <span class="forecast-offset" data-forecast-offset>{{ 'Now' if h == 0 else '+' ~ h ~ 'h' }}</span>
+  </div>
+  <label class="sr-only" for="forecast-hour">Forecast hour</label>
+  {% if daylight_events %}
+  <ul class="forecast-daylight" aria-label="Sunrise and sunset{{ ' at ' ~ daylight_reference if daylight_reference else '' }}">
+    {% for event in daylight_events %}
+    <li class="forecast-daylight-marker forecast-daylight-{{ event.kind }}" style="--daylight-position:{{ event.position }}%" title="{{ event.title }}" data-daylight-kind="{{ event.kind }}" data-daylight-time="{{ event.time }}" data-daylight-position="{{ event.position }}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17h18M3 21h18M7 17a5 5 0 0 1 10 0M12 2v7{% if event.kind == 'sunrise' %}m-3-3 3-3 3 3{% else %}m-3-3 3 3 3-3{% endif %}M3 10l2 2m14 0 2-2"/></svg>
+      <span class="sr-only">{{ event.label }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <input class="forecast-range" data-forecast-range id="forecast-hour" name="h" type="range" min="0" max="48" step="1" value="{{ h }}" aria-describedby="forecast-hour-help" aria-valuetext="{{ 'Now' if h == 0 else '+' ~ h ~ ' hours' }}: {{ at | localtime('%a, %b %-d · %-I:%M %p %Z') }}">
+  <span class="sr-only" id="forecast-hour-help">Choose an hourly forecast from now through 48 hours ahead.</span>
+  <div class="forecast-ticks" aria-hidden="true"><span>Now</span><span>+12h</span><span>+24h</span><span>+36h</span><span>+48h</span></div>
+  <button class="forecast-apply" type="submit">View forecast</button>
+</form>
+<span class="sr-only" role="status" aria-live="polite" aria-atomic="true" data-forecast-announcement></span>
 </div>
 {% endmacro %}

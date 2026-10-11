@@ -95,7 +95,7 @@ class WindRenderTests(Base):
             actual = [
                 (classes, style, value) for kind, classes, style, value in cells if kind == row
             ]
-            self.assertEqual(len(actual), 48)
+            self.assertEqual(len(actual), 49)
             for (classes, style, value), (displayed, band) in zip(actual, expected):
                 with self.subTest(row=row, value=displayed):
                     self.assertEqual(value, displayed)

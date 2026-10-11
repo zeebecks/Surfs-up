@@ -480,6 +480,29 @@
   padding-bottom:14px
 }
 
+.spot-detail-shell .hour-choice {
+  display:block;
+  width:100%;
+  min-height:74px;
+  padding:0;
+  border:0;
+  border-radius:5px;
+  background:none;
+  color:inherit;
+  font:inherit;
+  line-height:1.5;
+  cursor:pointer
+}
+
+.spot-detail-shell .hour-choice:hover {
+  color:var(--accent)
+}
+
+.spot-detail-shell .hour-choice:focus-visible {
+  outline:2px solid var(--accent);
+  outline-offset:4px
+}
+
 .spot-detail-shell .hourly-table th:first-child {
   background:#192e36;
   min-width:130px;

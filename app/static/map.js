@@ -33,14 +33,31 @@
     const link = document.createElement('a'); link.href = url; link.textContent = label;
     root.append(heading, paragraph, link); return root;
   }
-  const h = new URLSearchParams(location.search).get('h') || '0';
-  for (const spot of spots) {
+  let h = new URLSearchParams(location.search).get('h') || '0';
+  const spotMarkers = new Map();
+  function updateSpot(spot, localTime = '') {
     const marker = document.createElement('span'); marker.textContent = spot.score == null ? '—' : String(spot.score);
     const icon = L.divIcon({className: 'map-marker' + (spot.score == null ? ' unrated' : ''), html: marker, iconSize: [30, 30], iconAnchor: [15, 15]});
-    const details = spot.wind == null ? 'Wind forecast unavailable.' : `${Math.round(spot.wind)} kt from ${cardinal(spot.direction)} · wind setup ${spot.score ?? 'unavailable'}${spot.score == null ? '' : '/100'}`;
-    L.marker([spot.lat, spot.lng], {icon, title: `${spot.name} · ${details}`}).bindPopup(popup(spot.name, details, `/spots/${encodeURIComponent(spot.id)}?h=${encodeURIComponent(h)}`, 'View spot & forecast ↗')).addTo(spotLayer);
+    const forecast = spot.wind == null ? 'Wind forecast unavailable.' : `${Math.round(spot.wind)} kt from ${cardinal(spot.direction)} · wind setup ${spot.score ?? 'unavailable'}${spot.score == null ? '' : '/100'}`;
+    const details = localTime ? `${forecast} · ${localTime}` : forecast;
+    const content = popup(spot.name, details, `/spots/${encodeURIComponent(spot.id)}?h=${encodeURIComponent(h)}`, 'View spot & forecast ↗');
+    const existing = spotMarkers.get(spot.id);
+    if (existing) {
+      existing.options.title = `${spot.name} · ${details}`;
+      existing.setIcon(icon).setPopupContent(content);
+    } else {
+      spotMarkers.set(spot.id, L.marker([spot.lat, spot.lng], {icon, title: `${spot.name} · ${details}`}).bindPopup(content).addTo(spotLayer));
+    }
+  }
+  for (const spot of spots) {
+    updateSpot(spot);
     points.push([spot.lat, spot.lng]);
   }
+  document.addEventListener('forecast:change', event => {
+    if (!Array.isArray(event.detail?.snapshot?.map_spots)) return;
+    h = String(event.detail.hour);
+    for (const spot of event.detail.snapshot.map_spots) updateSpot(spot, event.detail.snapshot.local_label || '');
+  });
   for (const station of stations) {
     const marker = document.createElement('span'); marker.textContent = '◇';
     const icon = L.divIcon({className: 'buoy-marker', html: marker, iconSize: [23, 23], iconAnchor: [12, 12]});

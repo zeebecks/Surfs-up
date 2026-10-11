@@ -32,7 +32,7 @@ See [.env.example](.env.example) for all settings. Without `NOTES_ADMIN_PASSWORD
 
 - Compare Kewaunee, Two Rivers North Pier, Manitowoc South Pier, Sheboygan Elbow, Sheboygan Blue Harbor, and Port Washington.
 - Check wind speed/direction, gusts where available, and modeled wave height/period/direction.
-- Select Now, +3h, +6h, +12h, or +24h; open a spot for a 48-hour hourly table.
+- Explore forecasts with the hourly slider from Now through +48h; spot pages keep the conditions, surf estimate, and hourly table in sync. Forecasts are loaded from the existing cache, and dragging does not make provider requests.
 - Save favorites on your device; sort north-to-south, by wind setup, or by surf estimate.
 - Explore spot markers, switch to an independent Windy map, or expand the map to the offshore buoys.
 - Follow northern/southern basin and Rawley Point wave measurements, plus wind observations from the northern buoy, Sheboygan, and Port Washington, with per-measurement timestamps and recent wind trends.

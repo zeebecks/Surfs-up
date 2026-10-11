@@ -1,0 +1,42 @@
+{% from 'icons.html' import wind_arrow, icon %}
+{% set fc = item.forecast %}{% set rating = item.rating %}
+      {% set wind_color = (fc.wind_kts | round | int if fc.wind_kts is not none else none) | wind_style %}
+      <article class="spot-card" data-spot-id="{{ item.spot.id }}" data-default-order="{{ default_order }}" data-wind-score="{{ rating.wind_score if rating.wind_score is not none else -1 }}" data-surf-score="{{ rating.surf_score if rating.surf_score is not none else -1 }}">
+        <div class="spot-card-top">
+<div>
+<p class="spot-location">
+{{ item.spot.lat | round(3) }}° N / {{ (item.spot.lng | abs) | round(3) }}° W</p>
+<h3>
+<a href="/spots/{{ item.spot.id }}?h={{ h }}">{{ item.spot.name }}</a>
+</h3>
+</div>
+<button class="favorite-button" data-favorite="{{ item.spot.id }}" data-favorite-name="{{ item.spot.name }}" aria-label="Add {{ item.spot.name }} to favorites" title="Save to favorites in this browser" aria-pressed="false">☆</button>
+</div>
+        <div class="spot-metrics">
+<div class="primary-wind" style="--wind-color:{{ wind_color.color }};--wind-tint:{{ wind_color.tint }}">{{ wind_arrow(fc.wind_dir_deg) }}<div>
+<span class="wind-number">{{ fc.wind_kts | round | int if fc.wind_kts is not none else '—' }}<small>kt</small>
+</span>
+<span class="metric-detail">{{ fc.wind_dir_deg | cardinal }} <span class="muted">· forecast wind</span>
+</span>
+</div>
+</div>
+<div class="wave-metric">
+<span class="metric-label">{{ icon('wave') }} Modeled waves</span>
+<strong>{{ '%.1f' | format(fc.wave_height_m * 3.28084) if fc.wave_height_m is not none else '—' }} <small>ft</small>
+</strong>
+<span class="metric-detail">{{ '%.0f s' | format(fc.wave_period_s) if fc.wave_period_s is not none else 'Period unavailable' }}{% if fc.wave_status == 'stale' %} · stale{% endif %}</span>
+</div>
+<div class="rating-metric {{ rating.bucket }}">
+<span class="metric-label">{{ icon('setup') }} {{ 'Surf estimate' if rating.surf_score is not none else 'Wind setup' }}</span>
+<strong>{{ rating.surf_score if rating.surf_score is not none else rating.wind_score if rating.wind_score is not none else '—' }}<small>/100</small>
+</strong>
+<span class="metric-detail">{{ rating.bucket | capitalize if rating.bucket != 'unknown' else 'Not rated' }}</span>
+</div>
+</div>
+        <div class="spot-card-bottom">
+<span class="data-caption {{ fc.status }}">{{ 'Sample forecast' if demo else (fc.source ~ ' · ' ~ (fc.fetched_at | age)) if fc.source else 'Forecast unavailable' }}{% if fc.status == 'stale' %} · stale{% endif %}</span>
+<a class="spot-forecast-link" href="/spots/{{ item.spot.id }}?h={{ h }}">{% if item.camera %}{{ icon('play') }} Cam & forecast{% else %}View forecast{% endif %} {{ icon('arrow') }}
+</a>
+</div>
+      </article>
+

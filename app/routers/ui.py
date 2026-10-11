@@ -1,3 +1,4 @@
+import gzip
 import hmac
 import os
 import secrets
@@ -104,11 +105,11 @@ def hours(request):
         result = int(request.query_params.get("h", "0"))
     except ValueError:
         return 0
-    return result if result in {0, 3, 6, 12, 24} else 0
+    return result if 0 <= result <= 48 else 0
 
 
-def present(spot, at, checkins=0):
-    fc = weather.forecast(spot.id, at)
+def present(spot, at, checkins=0, forecast=None):
+    fc = weather.forecast(spot.id, at) if forecast is None else forecast
     rating = rate(spot, fc)
     return {
         "spot": spot,
@@ -122,11 +123,85 @@ def present(spot, at, checkins=0):
     }
 
 
+def forecast_labels(at, hour):
+    return {
+        "hour": hour,
+        "at": stamp(at),
+        "caption": "Forecast for " + localtime(stamp(at), "%a, %b %-d · %-I:%M %p %Z"),
+        "local_label": localtime(stamp(at), "%a, %b %-d · %-I:%M %p %Z"),
+    }
+
+
+def daylight_events(spot, start):
+    """Place cached daylight events by elapsed time, including local clock changes."""
+    data = weather.get(f"conditions:{spot.id}") or {}
+    days = data.get("days", {})
+    if not isinstance(days, dict):
+        return []
+    duration = timedelta(hours=48)
+    end = start + duration
+    events = {}
+    for day in days.values():
+        if not isinstance(day, dict):
+            continue
+        for kind in ("sunrise", "sunset"):
+            value = day.get(kind)
+            if not isinstance(value, str):
+                continue
+            try:
+                at = parse_time(value)
+            except (ValueError, OverflowError):
+                continue
+            if not start <= at <= end:
+                continue
+            timestamp = stamp(at)
+            label = kind.capitalize() + " · " + localtime(timestamp, "%a, %b %-d · %-I:%M %p %Z")
+            events[(kind, timestamp)] = {
+                "kind": kind,
+                "time": timestamp,
+                "position": (at - start).total_seconds() / duration.total_seconds() * 100,
+                "label": label,
+                "title": label + " · " + spot.name,
+            }
+    return sorted(events.values(), key=lambda event: event["time"])
+
+
+def map_spots(items):
+    return [
+        {
+            "id": item["spot"].id,
+            "name": item["spot"].name,
+            "lat": item["spot"].lat,
+            "lng": item["spot"].lng,
+            "score": item["rating"]["wind_score"],
+            "wind": item["forecast"]["wind_kts"],
+            "direction": item["forecast"]["wind_dir_deg"],
+        }
+        for item in items
+    ]
+
+
+def accepts_gzip(request):
+    encodings = {}
+    for entry in request.headers.get("accept-encoding", "").split(","):
+        coding, *parameters = entry.strip().lower().split(";")
+        quality = 1.0
+        for parameter in parameters:
+            key, _, value = parameter.strip().partition("=")
+            if key == "q":
+                try:
+                    quality = float(value)
+                except ValueError:
+                    quality = 0
+        encodings[coding.strip()] = quality if 0 <= quality <= 1 else 0
+    return encodings.get("gzip", encodings.get("*", 0)) > 0
+
+
 def render(request, template, **context):
     station_data = context.get("stations", [])
     if template != "buoys.html":
         station_data = [{**station, "history": []} for station in station_data]
-    return templates.TemplateResponse(
+    response = templates.TemplateResponse(
         request=request,
         name=template,
         context={
@@ -140,18 +215,56 @@ def render(request, template, **context):
             **context,
         },
     )
+    # Preloaded hourly views contain repeated markup. Compress the completed
+    # page rather than middleware that could buffer the live camera streams.
+    if len(response.body) >= 100_000:
+        response.headers["Vary"] = "Accept-Encoding"
+        if accepts_gzip(request):
+            response.body = gzip.compress(response.body, compresslevel=4, mtime=0)
+            response.headers["Content-Encoding"] = "gzip"
+            response.headers["Content-Length"] = str(len(response.body))
+    return response
 
 
 @router.get("/", response_class=HTMLResponse)
 def home(request: Request):
     h = hours(request)
-    at = utcnow().replace(minute=0, second=0, microsecond=0) + timedelta(hours=h)
+    start = utcnow().replace(minute=0, second=0, microsecond=0)
+    at = start + timedelta(hours=h)
     checkins = counts()
-    items = [present(s, at, checkins.get(s.id, 0)) for s in get_all_spots()]
+    spots = get_all_spots()
+    card_template = templates.env.get_template("home_spot_card.html")
+    forecast_timeline = []
+    selected_items = []
+    for hour in range(49):
+        hour_at = start + timedelta(hours=hour)
+        items = [present(s, hour_at, checkins.get(s.id, 0)) for s in spots]
+        if hour == h:
+            selected_items = items
+        forecast_timeline.append(
+            {
+                **forecast_labels(hour_at, hour),
+                "items": [
+                    {
+                        "id": item["spot"].id,
+                        "wind_score": item["rating"]["wind_score"],
+                        "surf_score": item["rating"]["surf_score"],
+                        "html": card_template.render(
+                            item=item, h=hour, demo=weather.demo, default_order=index
+                        ),
+                    }
+                    for index, item in enumerate(items, 1)
+                ],
+                "map_spots": map_spots(items),
+            }
+        )
     return render(
         request,
         "index.html",
-        items=items,
+        items=selected_items,
+        forecast_timeline=forecast_timeline,
+        daylight_events=daylight_events(spots[0], start) if spots else [],
+        daylight_reference=spots[0].name if spots else "",
         stations=weather.stations(),
         h=h,
         at=stamp(at),
@@ -171,8 +284,30 @@ def detail(request: Request, spot_id: str):
             **weather.forecast(spot_id, start + timedelta(hours=i)),
             "conditions": conditions_at(weather, spot_id, start + timedelta(hours=i)),
         }
-        for i in range(48)
+        for i in range(49)
     ]
+    checkin_count = counts().get(spot_id, 0)
+    conditions_template = templates.env.get_template("forecast_conditions.html")
+    rating_template = templates.env.get_template("forecast_rating.html")
+    forecast_timeline = []
+    for hour, row in enumerate(hourly):
+        hour_at = start + timedelta(hours=hour)
+        item = present(spot, hour_at, checkin_count, forecast=row)
+        context = {
+            "item": item,
+            "fc": row,
+            "rating": item["rating"],
+            "conditions": row["conditions"],
+            "at": row["time"],
+            "demo": weather.demo,
+        }
+        forecast_timeline.append(
+            {
+                **forecast_labels(hour_at, hour),
+                "conditions_html": conditions_template.render(**context),
+                "rating_html": rating_template.render(**context),
+            }
+        )
     associated = {station["id"] for station in STATIONS if station["scope"] == "basin"}
     if spot_id.startswith("sheboygan"):
         associated.add("SGNW3")
@@ -181,9 +316,12 @@ def detail(request: Request, spot_id: str):
     return render(
         request,
         "spot.html",
-        item=present(spot, at, counts().get(spot_id, 0)),
+        item=present(spot, at, checkin_count, forecast=hourly[h]),
         conditions=conditions_at(weather, spot_id, at),
         hourly=hourly,
+        forecast_timeline=forecast_timeline,
+        daylight_events=daylight_events(spot, start),
+        daylight_reference=spot.name,
         wind_legend=WIND_LEGEND,
         stations=[s for s in weather.stations() if s["id"] in associated],
         h=h,

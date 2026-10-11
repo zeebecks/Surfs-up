@@ -1,0 +1,14 @@
+{% from 'spot_icons.html' import icon %}
+<div class="lower-card-heading"><span class="section-emblem">{{ icon('setup') }}</span><p class="eyebrow">EXPERIMENTAL MODEL</p></div>
+<div class="rating-heading">
+<h2>{{ 'Surf estimate' if rating.surf_score is not none else 'Wind setup' }}</h2>
+<span class="rating-big {{ rating.bucket }}">{{ rating.surf_score if rating.surf_score is not none else rating.wind_score if rating.wind_score is not none else '—' }}<small>/100</small>
+</span>
+</div>
+<p>{{ rating.reason }}</p>
+<span class="confidence-label">{{ rating.confidence }}</span>
+<dl class="factor-list">{% for factor in rating.factors %}<div>
+<dt>{{ factor.name }}</dt>
+<dd>{{ factor.value }}</dd>
+</div>{% endfor %}</dl>
+<a class="text-link" href="/about#scoring">What goes into the rating ↗</a>
