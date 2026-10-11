@@ -310,8 +310,16 @@ class WeatherStore:
                         previous = self.get(key)
                         now = utcnow()
                         retry_after = 60 if previous and previous.get("error") else REFRESH_SECONDS
-                        if previous and now - parse_time(previous["attempted_at"]) < timedelta(
-                            seconds=retry_after
+                        compatible = (
+                            not key.startswith("conditions:")
+                            or previous
+                            and (previous.get("daylight_history") or previous.get("error"))
+                        )
+                        if (
+                            previous
+                            and compatible
+                            and now - parse_time(previous["attempted_at"])
+                            < timedelta(seconds=retry_after)
                         ):
                             return
                         try:
@@ -341,6 +349,10 @@ class WeatherStore:
                         [
                             cached(f"wind:{spot.id}", lambda c, s=spot: self.fetch_wind(c, s)),
                             cached(f"waves:{spot.id}", lambda c, s=spot: self.fetch_waves(c, s)),
+                            cached(
+                                f"conditions:{spot.id}",
+                                lambda c, s=spot: self.fetch_conditions(c, s),
+                            ),
                         ]
                     )
                 for station in STATIONS:
@@ -352,6 +364,11 @@ class WeatherStore:
                 finally:
                     self.refreshing = False
                     self.ready = True
+
+    async def fetch_conditions(self, client, spot):
+        from .conditions import fetch_conditions
+
+        return await fetch_conditions(client, spot)
 
     async def fetch_wind(self, client, spot):
         try:
@@ -512,6 +529,8 @@ class WeatherStore:
 
     def load_demo(self, spots):
         """Explicit in-memory fixtures; never persist demo readings into the live cache."""
+        from zoneinfo import ZoneInfo
+
         now = utcnow().replace(minute=0, second=0, microsecond=0)
         self.demo = True
         for i, spot in enumerate(spots):
@@ -540,6 +559,29 @@ class WeatherStore:
                 self.records[f"{kind}:{spot.id}"] = dict(
                     rows=data, source="Demo fixture", fetched_at=stamp(now), attempted_at=stamp(now)
                 )
+            local = now.astimezone(ZoneInfo("America/Chicago"))
+            days = {}
+            for offset in range(4):
+                day = local + timedelta(days=offset)
+                days[day.date().isoformat()] = {
+                    "sunrise": stamp(day.replace(hour=6, minute=45)),
+                    "sunset": stamp(day.replace(hour=18, minute=15)),
+                }
+            self.records[f"conditions:{spot.id}"] = {
+                "rows": [
+                    {
+                        "time": row["time"],
+                        "end": row["end"],
+                        "temperature_f": 62 + i,
+                        "description": "Partly cloudy",
+                        "icon": "partly-cloudy",
+                    }
+                    for row in rows
+                ],
+                "days": days,
+                "source": "Demo fixture",
+                "fetched_at": stamp(now),
+            }
         for i, station in enumerate(STATIONS):
             history = [
                 dict(

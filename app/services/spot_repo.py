@@ -8,6 +8,14 @@ from ..models import Spot
 from .util import get_session
 
 SPOTS_CSV = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "spots.csv")
+DEFAULT_SPOT_ORDER = (
+    "north-pier-two-rivers",
+    "sheboygan-elbow",
+    "sheboygan-blue-harbor",
+    "port-washington",
+    "manitowoc-south-pier",
+    "kewaunee",
+)
 
 
 def seed_spots_if_empty():
@@ -38,6 +46,16 @@ def seed_spots_if_empty():
                         "quality_offset": float(row.get("quality_offset") or 0),
                     },
                 )
+        # Apply the display-name correction to existing databases without
+        # changing the stable spot ID, saved favorites, or edited notes.
+        db.execute(
+            text("UPDATE spots SET name=:name WHERE id=:id AND name=:old_name"),
+            {
+                "id": "manitowoc-south-pier",
+                "name": "Manitowoc - Yacht Club",
+                "old_name": "Manitowoc — South Pier",
+            },
+        )
         db.commit()
 
 
@@ -63,4 +81,5 @@ def get_all_spots():
                     quality_offset=r["quality_offset"] or 0,
                 )
             )
-        return spots
+        order = {spot_id: index for index, spot_id in enumerate(DEFAULT_SPOT_ORDER)}
+        return sorted(spots, key=lambda spot: (order.get(spot.id, len(order)), spot.name))

@@ -47,27 +47,52 @@
       {src: '/static/banner-2.png', alt: 'A surfer riding a wave as the sun rises over Lake Michigan', position: '50% 48%'},
       {src: '/static/banner-3.jpg', alt: 'Two surfers carrying boards along a Lake Michigan pier', position: '50% 60%'},
     ];
-    const image = gallery.querySelector('.gallery-image');
+    let image = gallery.querySelector('.gallery-image');
     const count = gallery.querySelector('.gallery-count');
     const message = gallery.querySelector('.gallery-message');
     let current = Math.max(0, photos.findIndex(photo => photo.src === image.getAttribute('src')));
     let requested = current;
     let requestId = 0;
+    let finishTransition = null;
 
-    function showPhoto(index) {
+    function showPhoto(index, direction) {
+      if (finishTransition) finishTransition();
       requested = (index + photos.length) % photos.length;
       const target = requested;
       const id = ++requestId;
       const photo = photos[target];
       gallery.setAttribute('aria-busy', 'true');
-      message.textContent = `Loading photo ${target + 1}…`;
-      message.hidden = false;
+      message.hidden = true;
       const next = new Image();
       next.onload = () => {
         if (id !== requestId) return;
-        image.src = photo.src;
-        image.alt = photo.alt;
-        image.style.objectPosition = photo.position;
+        next.className = 'gallery-image';
+        next.alt = photo.alt;
+        next.style.objectPosition = photo.position;
+        const previous = image;
+        previous.setAttribute('aria-hidden', 'true');
+        gallery.insertBefore(next, previous);
+        image = next;
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && next.animate) {
+          const options = {duration: 400, easing: 'cubic-bezier(0.22, 1, 0.36, 1)'};
+          const outgoing = previous.animate([
+            {transform: 'translateX(0)'},
+            {transform: `translateX(${-direction * 100}%)`},
+          ], options);
+          const incoming = next.animate([
+            {transform: `translateX(${direction * 100}%)`},
+            {transform: 'translateX(0)'},
+          ], options);
+          finishTransition = () => {
+            previous.remove();
+            outgoing.cancel();
+            incoming.cancel();
+            finishTransition = null;
+          };
+          incoming.onfinish = finishTransition;
+        } else {
+          previous.remove();
+        }
         current = target;
         count.textContent = `${current + 1} / ${photos.length}`;
         gallery.setAttribute('aria-busy', 'false');
@@ -78,26 +103,31 @@
         requested = current;
         gallery.setAttribute('aria-busy', 'false');
         message.textContent = 'Couldn’t load that photo. Try an arrow again.';
+        message.hidden = false;
       };
       next.src = photo.src;
     }
 
     gallery.querySelector('.gallery-controls').hidden = false;
     gallery.querySelectorAll('[data-gallery-step]').forEach(button => {
-      button.addEventListener('click', () => showPhoto(requested + Number(button.dataset.galleryStep)));
+      button.addEventListener('click', () => {
+        const direction = Number(button.dataset.galleryStep);
+        showPhoto(requested + direction, direction);
+      });
     });
     gallery.addEventListener('keydown', event => {
       if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
       event.preventDefault();
-      showPhoto(requested + (event.key === 'ArrowLeft' ? -1 : 1));
+      const direction = event.key === 'ArrowLeft' ? -1 : 1;
+      showPhoto(requested + direction, direction);
     });
   });
 
   document.getElementById('spot-sort')?.addEventListener('change', event => {
     const key = event.target.value;
     const cards = [...document.querySelectorAll('.spot-card')];
-    cards.sort((a, b) => key === 'coast' ? Number(a.dataset.coast) - Number(b.dataset.coast)
-      : Number(b.dataset[key + 'Score']) - Number(a.dataset[key + 'Score']) || Number(a.dataset.coast) - Number(b.dataset.coast));
+    cards.sort((a, b) => key === 'default' ? Number(a.dataset.defaultOrder) - Number(b.dataset.defaultOrder)
+      : Number(b.dataset[key + 'Score']) - Number(a.dataset[key + 'Score']) || Number(a.dataset.defaultOrder) - Number(b.dataset.defaultOrder));
     cards.forEach(card => card.parentElement.appendChild(card));
   });
 

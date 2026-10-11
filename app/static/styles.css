@@ -86,7 +86,7 @@ strong,b {
 }
 
 small {
-  font-size:.7em
+  font-size:max(0.8125rem,.7em)
 }
 
 button {
@@ -172,7 +172,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .brand small {
   display:block;
-  font:500 0.625rem/1 var(--body);
+  font:500 0.8125rem/1 var(--body);
   letter-spacing:2.4px;
   margin-top:9px
 }
@@ -216,7 +216,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .eyebrow {
-  font-size:0.625rem;
+  font-size:0.8125rem;
   font-weight:650;
   letter-spacing:1.7px;
   color:var(--accent);
@@ -256,7 +256,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   display:flex;
   flex-wrap:wrap;
   gap:24px;
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   align-items:center;
   color:var(--muted);
   margin-top:30px
@@ -286,6 +286,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .gallery-image {
+  position:absolute;
+  inset:0;
   display:block;
   width:100%;
   height:100%;
@@ -294,6 +296,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .gallery-controls {
+  z-index:1;
   position:absolute;
   inset:0;
   pointer-events:none
@@ -354,7 +357,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   padding:7px 11px;
   border-radius:5px;
   background:#101c23e8;
-  font-size:0.75rem
+  font-size:0.875rem
 }
 
 .section-heading {
@@ -370,7 +373,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .text-link {
-  font-size:0.75rem;
+  font-size:0.875rem;
   color:var(--accent);
   white-space:nowrap
 }
@@ -410,7 +413,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   align-items:center;
   gap:8px;
   margin-bottom:12px;
-  font-size:0.625rem;
+  font-size:0.8125rem;
   letter-spacing:.7px;
   color:var(--muted);
   text-transform:uppercase
@@ -425,7 +428,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   display:inline-flex;
   align-items:center;
   gap:6px;
-  font-size:0.625rem;
+  font-size:0.8125rem;
   letter-spacing:.6px;
   white-space:nowrap
 }
@@ -475,7 +478,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .metric-label {
   display:block;
-  font-size:0.625rem;
+  font-size:0.8125rem;
   letter-spacing:.25px;
   color:var(--muted);
   margin-bottom:4px
@@ -497,7 +500,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .reading-age {
   display:block;
-  font-size:0.625rem;
+  font-size:0.8125rem;
   color:var(--muted);
   margin-top:5px;
   line-height:1.4
@@ -540,13 +543,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   border-top:1px solid var(--border);
   margin-top:18px;
   padding-top:12px;
-  font-size:0.625rem;
+  font-size:0.8125rem;
   color:var(--muted)
 }
 
 .section-note {
   color:var(--muted);
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   line-height:1.7;
   margin-top:13px
 }
@@ -591,7 +594,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .segmented a {
   display:block;
   padding:6px 13px;
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   border-radius:5px;
   color:var(--muted)
 }
@@ -604,7 +607,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .time-caption {
   color:var(--muted);
-  font-size:0.625rem
+  font-size:0.8125rem
 }
 
 .shore-layout {
@@ -636,7 +639,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   border:0;
   padding:4px 0;
   color:var(--muted);
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   background:transparent
 }
 
@@ -645,7 +648,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .filter-button span {
-  font-size:0.625rem;
+  font-size:0.8125rem;
   display:inline-block;
   margin-left:4px;
   color:var(--muted)
@@ -655,12 +658,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   display:flex;
   gap:7px;
   align-items:center;
-  font-size:0.625rem;
+  font-size:0.8125rem;
   color:var(--muted)
 }
 
 .sort-label select {
-  font-size:0.625rem;
+  font-size:0.8125rem;
   padding:5px;
   background:transparent;
   border:0;
@@ -693,7 +696,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .spot-location {
-  font-size:0.625rem;
+  font-size:0.8125rem;
   letter-spacing:.75px;
   color:var(--muted);
   margin-bottom:8px
@@ -756,14 +759,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .wind-number small {
-  font:400 0.75rem var(--body);
+  font:400 0.875rem var(--body);
   color:var(--muted);
   margin-left:4px;
   letter-spacing:0
 }
 
 .metric-detail {
-  font-size:0.625rem;
+  font-size:0.8125rem;
   display:block;
   margin-top:6px;
   line-height:1.4
@@ -786,13 +789,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .wave-metric small,.rating-metric small {
-  font:400 0.6875rem var(--body);
+  font:400 0.8125rem var(--body);
   color:var(--muted);
   letter-spacing:0
 }
 
 .rating-metric .metric-label {
-  font-size:0.625rem
+  font-size:0.8125rem
 }
 
 .poor {
@@ -818,7 +821,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   gap:10px;
   border-top:1px solid var(--border);
   padding:11px 0;
-  font-size:0.625rem
+  font-size:0.8125rem
 }
 
 .spot-card-bottom a {
@@ -831,7 +834,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .data-caption {
-  font-size:0.625rem;
+  font-size:0.8125rem;
   color:var(--muted);
   line-height:1.5
 }
@@ -866,7 +869,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .map-panel-heading .eyebrow {
-  font-size:0.625rem;
+  font-size:0.8125rem;
   margin-bottom:5px
 }
 
@@ -875,24 +878,57 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .map-switch {
-  display:flex;
-  gap:16px;
+  display:grid;
+  grid-template-columns:1.25fr 1fr;
+  gap:10px;
   border-bottom:1px solid var(--border);
-  padding:0 22px
+  padding:5px 22px 20px
 }
 
 .map-switch button {
-  border:0;
-  border-bottom:2px solid transparent;
-  background:none;
-  color:var(--muted);
-  font-size:0.6875rem;
-  padding:10px 0
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:52px;
+  border:1px solid #55747d;
+  border-radius:10px;
+  background:linear-gradient(135deg,#253e49,#1b303a);
+  color:var(--text);
+  font-size:0.8125rem;
+  font-weight:650;
+  padding:12px 10px;
+  box-shadow:0 3px 8px #0002;
+  transition:background .18s ease,border-color .18s ease,box-shadow .18s ease
+}
+
+.map-switch button svg {
+  width:21px;
+  height:21px;
+  flex-shrink:0;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round
+}
+
+.map-switch button[data-map-tab="windy"]:not(.active) {
+  color:#bcebf2;
+  border-color:#699aa5
+}
+
+.map-switch button:hover {
+  border-color:var(--cyan);
+  background:#2b4854;
+  box-shadow:0 0 0 2px #89cdd81a,0 4px 12px #0003
 }
 
 .map-switch button.active {
-  border-bottom-color:var(--accent);
-  color:var(--text)
+  border-color:var(--accent);
+  background:var(--accent);
+  color:var(--panel-deep);
+  box-shadow:0 3px 12px #99dfcc20
 }
 
 .lake-map {
@@ -911,7 +947,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .map-fallback {
   padding:35px;
   color:var(--muted);
-  font-size:0.75rem
+  font-size:0.875rem
 }
 
 .map-legend {
@@ -919,7 +955,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   flex-wrap:wrap;
   gap:18px;
   padding:16px 22px 0;
-  font-size:0.625rem;
+  font-size:0.8125rem;
   color:var(--muted)
 }
 
@@ -945,7 +981,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .map-note {
   padding:11px 22px;
-  font-size:0.625rem;
+  font-size:0.8125rem;
   color:var(--muted);
   line-height:1.7
 }
@@ -957,7 +993,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   justify-content:space-between;
   margin:0 22px;
   padding:15px 0;
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   border-top:1px solid var(--border);
   color:var(--accent)
 }
@@ -977,7 +1013,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   justify-content:center;
   border:2px solid #123c38;
   border-radius:50%;
-  font-size:0.625rem;
+  font-size:0.8125rem;
   font-weight:700;
   box-shadow:0 2px 7px #0008
 }
@@ -1007,7 +1043,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .map-popup p {
-  font-size:0.75rem;
+  font-size:0.875rem;
   margin:4px 0
 }
 
@@ -1019,15 +1055,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 
 .leaflet-container {
   font-family:var(--body);
-  font-size:0.75rem
+  font-size:0.875rem
 }
 
 .leaflet-control-layers {
-  font-size:0.75rem
+  font-size:0.875rem
 }
 
 .leaflet-control-attribution {
-  font-size:0.625rem!important
+  font-size:0.8125rem!important
 }
 
 .site-footer {
@@ -1037,7 +1073,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   padding:32px 0 25px;
   border-top:1px solid var(--border);
   color:var(--muted);
-  font-size:0.75rem
+  font-size:0.875rem
 }
 
 .footer-top {
@@ -1069,7 +1105,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .footer-brand small {
   display:block;
   margin-top:9px;
-  font:400 0.75rem/1.4 var(--body);
+  font:400 0.875rem/1.4 var(--body);
   letter-spacing:.2px;
   color:var(--muted)
 }
@@ -1119,7 +1155,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   border-radius:8px;
   padding:12px 16px;
   margin-top:20px;
-  font-size:0.75rem
+  font-size:0.875rem
 }
 
 .notice button {
@@ -1135,7 +1171,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   text-align:center;
   background:#45395d;
   color:#e6d7ff;
-  font-size:0.75rem
+  font-size:0.875rem
 }
 
 .page-heading {
@@ -1216,7 +1252,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   display:block;
   width:100%;
   height:75px;
-  font-size:0.625rem
+  font-size:0.8125rem
 }
 
 .reading-history {
@@ -1224,7 +1260,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .reading-history summary {
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   color:var(--accent)
 }
 
@@ -1237,7 +1273,7 @@ details {
 }
 
 .source-warning {
-  font-size:0.625rem;
+  font-size:0.8125rem;
   margin-top:10px
 }
 
@@ -1246,7 +1282,7 @@ details {
 }
 
 .subtle-label {
-  font-size:0.625rem;
+  font-size:0.8125rem;
   color:var(--muted)
 }
 
@@ -1260,7 +1296,7 @@ details {
 table {
   border-collapse:collapse;
   width:100%;
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   text-align:left
 }
 
@@ -1279,7 +1315,7 @@ th {
   display:inline-block;
   margin-top:30px;
   color:var(--muted);
-  font-size:0.75rem
+  font-size:0.875rem
 }
 
 .detail-heading {
@@ -1316,6 +1352,18 @@ th {
   padding:27px
 }
 
+.conditions-windfinder {
+  display:inline-block;
+  margin-top:10px;
+  color:var(--accent);
+  font-size:0.8125rem
+}
+
+.conditions-windfinder:hover {
+  text-decoration:underline;
+  text-underline-offset:3px
+}
+
 .detail-wind {
   display:flex;
   flex-wrap:wrap;
@@ -1350,7 +1398,7 @@ th {
 .detail-wind div>span {
   display:block;
   color:var(--muted);
-  font-size:0.6875rem
+  font-size:0.8125rem
 }
 
 .detail-metrics {
@@ -1367,7 +1415,7 @@ th {
 }
 
 .detail-metrics small {
-  font:400 0.6875rem var(--body);
+  font:400 0.8125rem var(--body);
   color:var(--muted)
 }
 
@@ -1392,7 +1440,7 @@ th {
 }
 
 .camera-placeholder p {
-  font-size:0.75rem;
+  font-size:0.875rem;
   color:var(--muted);
   max-width:320px
 }
@@ -1407,7 +1455,7 @@ th {
   flex-direction:column;
   gap:12px;
   align-items:center;
-  font-size:0.75rem;
+  font-size:0.875rem;
   border:0;
   color:var(--text);
   background:none
@@ -1430,7 +1478,7 @@ th {
   display:flex;
   justify-content:space-between;
   padding:14px 20px;
-  font-size:0.625rem;
+  font-size:0.8125rem;
   color:var(--muted);
   gap:12px
 }
@@ -1459,7 +1507,7 @@ th {
   padding:10px 20px;
   color:var(--accent);
   width:100%;
-  font-size:0.6875rem
+  font-size:0.8125rem
 }
 
 .camera-symbol {
@@ -1479,7 +1527,7 @@ th {
 }
 
 .hourly-table {
-  font-size:0.75rem;
+  font-size:0.875rem;
   text-align:center
 }
 
@@ -1495,7 +1543,7 @@ th {
   min-width:117px;
   background:#172831;
   text-align:left;
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   padding-left:16px;
   border-right:1px solid var(--border)
 }
@@ -1507,7 +1555,7 @@ th {
 .hourly-table thead span {
   display:block;
   color:var(--muted);
-  font-size:0.625rem;
+  font-size:0.8125rem;
   margin-bottom:4px
 }
 
@@ -1530,13 +1578,13 @@ th {
 
 .table-direction {
   display:block;
-  font-size:0.625rem;
+  font-size:0.8125rem;
   color:var(--muted);
   margin-top:4px
 }
 
 .hourly-table .table-status {
-  font-size:0.625rem;
+  font-size:0.8125rem;
   color:var(--muted)
 }
 
@@ -1559,7 +1607,7 @@ th {
 }
 
 .rating-big small {
-  font:400 0.75rem var(--body);
+  font:400 0.875rem var(--body);
   color:var(--muted);
   letter-spacing:0
 }
@@ -1576,12 +1624,12 @@ th {
   border:1px solid #416067;
   border-radius:4px;
   color:var(--cyan);
-  font-size:0.625rem;
+  font-size:0.8125rem;
   margin-top:15px
 }
 
 .factor-list {
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   margin:20px 0
 }
 
@@ -1592,7 +1640,7 @@ th {
 
 .factor-list dt {
   color:var(--muted);
-  font-size:0.625rem
+  font-size:0.8125rem
 }
 
 .factor-list dd {
@@ -1609,7 +1657,7 @@ th {
   gap:10px 20px;
   margin-top:20px;
   color:var(--accent);
-  font-size:0.6875rem
+  font-size:0.8125rem
 }
 
 #field-notes {
@@ -1624,12 +1672,12 @@ th {
 }
 
 #field-notes p {
-  font-size:0.75rem;
+  font-size:0.875rem;
   margin-top:8px
 }
 
 #field-notes .data-caption {
-  font-size:0.625rem
+  font-size:0.8125rem
 }
 
 .user-note {
@@ -1638,7 +1686,7 @@ th {
 }
 
 #field-notes summary {
-  font-size:0.75rem;
+  font-size:0.875rem;
   color:var(--accent)
 }
 
@@ -1649,7 +1697,7 @@ th {
 }
 
 .stack-form label {
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   color:var(--muted);
   margin-top:6px
 }
@@ -1676,7 +1724,7 @@ textarea {
   border-radius:6px;
   padding:12px 16px;
   font-weight:650;
-  font-size:0.75rem;
+  font-size:0.875rem;
   margin-top:12px
 }
 
@@ -1688,7 +1736,7 @@ textarea {
   border:1px solid #638279;
   border-radius:6px;
   padding:12px 18px;
-  font-size:0.75rem;
+  font-size:0.875rem;
   color:var(--accent);
   white-space:nowrap
 }
@@ -1708,7 +1756,7 @@ textarea {
 }
 
 .crew-callout p {
-  font-size:0.75rem;
+  font-size:0.875rem;
   color:var(--muted);
   margin-top:8px
 }
@@ -1757,7 +1805,7 @@ textarea {
 .sources-panel>a span {
   display:block;
   color:var(--muted);
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   margin-top:5px;
   line-height:1.7
 }
@@ -1799,7 +1847,7 @@ textarea {
 }
 
 .explain-grid p {
-  font-size:0.75rem;
+  font-size:0.875rem;
   line-height:1.9;
   color:var(--muted)
 }
@@ -1840,7 +1888,7 @@ textarea {
 .empty-panel p {
   margin-top:12px;
   color:var(--muted);
-  font-size:0.75rem
+  font-size:0.875rem
 }
 
 .form-row {
@@ -1896,12 +1944,12 @@ textarea {
 }
 
 .crew-info>a {
-  font-size:0.75rem;
+  font-size:0.875rem;
   color:var(--accent)
 }
 
 .crew-info p {
-  font-size:0.6875rem;
+  font-size:0.8125rem;
   margin-top:8px;
   color:var(--muted)
 }
@@ -1911,7 +1959,7 @@ textarea {
 }
 
 .text-button {
-  font-size:0.625rem;
+  font-size:0.8125rem;
   color:var(--amber);
   border:0;
   background:none;
@@ -1920,7 +1968,7 @@ textarea {
 
 .form-error {
   color:#f2ac9a;
-  font-size:0.75rem
+  font-size:0.875rem
 }
 
 .empty-state {
@@ -2015,7 +2063,7 @@ textarea {
   }
 
   .card-eyebrow {
-    font-size:0.625rem;
+    font-size:0.8125rem;
     letter-spacing:.2px
   }
 
@@ -2066,11 +2114,11 @@ textarea {
   }
 
   .hero-description {
-    font-size:0.75rem
+    font-size:0.875rem
   }
 
   .hero-copy .eyebrow {
-    font-size:0.625rem
+    font-size:0.8125rem
   }
 
   .shore-layout {
@@ -2092,10 +2140,6 @@ textarea {
 
   .map-panel-heading h3 {
     font-size:1.1875rem
-  }
-
-  .map-panel-heading .eyebrow {
-    display:none
   }
 
   .map-legend {
@@ -2223,7 +2267,7 @@ textarea {
   }
 
   .brand small {
-    font-size:0.625rem;
+    font-size:0.8125rem;
     letter-spacing:2px;
     margin-top:7px
   }
@@ -2236,7 +2280,7 @@ textarea {
   }
 
   .site-header nav a {
-    font-size:0.75rem
+    font-size:0.875rem
   }
 
   .hero {
@@ -2260,7 +2304,7 @@ textarea {
     margin-top:20px;
     flex-wrap:wrap;
     gap:19px;
-    font-size:0.625rem
+    font-size:0.8125rem
   }
 
   .hero-meta a {
@@ -2284,7 +2328,7 @@ textarea {
   }
 
   .section-heading>.text-link {
-    font-size:0.625rem;
+    font-size:0.8125rem;
     margin-top:25px;
     white-space:normal;
     text-align:right;
@@ -2296,7 +2340,7 @@ textarea {
   }
 
   .eyebrow {
-    font-size:0.625rem;
+    font-size:0.8125rem;
     letter-spacing:1.4px
   }
 
@@ -2310,7 +2354,7 @@ textarea {
   }
 
   .card-eyebrow {
-    font-size:0.625rem;
+    font-size:0.8125rem;
     flex-wrap:wrap
   }
 
@@ -2341,11 +2385,11 @@ textarea {
   }
 
   .station-context {
-    font-size:0.625rem
+    font-size:0.8125rem
   }
 
   .section-note {
-    font-size:0.625rem
+    font-size:0.8125rem
   }
 
   .shore-heading {
@@ -2384,7 +2428,7 @@ textarea {
   }
 
   .map-note {
-    font-size:0.625rem
+    font-size:0.8125rem
   }
 
   .spot-card {
@@ -2396,7 +2440,7 @@ textarea {
   }
 
   .spot-location {
-    font-size:0.625rem
+    font-size:0.8125rem
   }
 
   .spot-metrics {
@@ -2423,7 +2467,7 @@ textarea {
   }
 
   .metric-detail {
-    font-size:0.625rem
+    font-size:0.8125rem
   }
 
   .metric-detail .muted {
@@ -2435,19 +2479,19 @@ textarea {
   }
 
   .metric-label {
-    font-size:0.625rem
+    font-size:0.8125rem
   }
 
   .rating-metric .metric-label {
-    font-size:0.625rem
+    font-size:0.8125rem
   }
 
   .spot-card-bottom {
-    font-size:0.625rem
+    font-size:0.8125rem
   }
 
   .data-caption {
-    font-size:0.625rem
+    font-size:0.8125rem
   }
 
   .spot-card-bottom a span:last-child {
@@ -2511,7 +2555,7 @@ textarea {
   }
 
   .section-heading .subtle-label {
-    font-size:0.625rem;
+    font-size:0.8125rem;
     max-width:110px;
     text-align:right
   }
@@ -2605,7 +2649,7 @@ textarea {
   }
 
   .notice {
-    font-size:0.6875rem
+    font-size:0.8125rem
   }
 
   .notice button {
@@ -2635,10 +2679,110 @@ textarea {
   background:#162a32;
   color:#eef1e9;
   padding:8px 11px;
-  font:0.6875rem var(--body);
+  font:0.8125rem var(--body);
   box-shadow:0 2px 8px #0003
 }
 
 .leaflet-tile-pane {
   filter:saturate(.55) brightness(.82)
+}
+
+.conditions-time {
+  display:flex;
+  flex-wrap:wrap;
+  gap:3px 10px;
+  margin-top:10px;
+  font-size:0.8125rem;
+  color:var(--muted)
+}
+
+.conditions-time time {
+  color:var(--text)
+}
+
+.conditions-overview {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:0 18px;
+  margin:22px 0
+}
+
+.conditions-overview .detail-wind {
+  margin:0;
+  gap:12px
+}
+
+.air-weather {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 0
+}
+
+.weather-icon {
+  width:48px;
+  height:48px;
+  flex-shrink:0;
+  fill:none;
+  stroke:var(--cyan);
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round
+}
+
+.weather-icon-sun,.weather-icon-partly-cloudy,.weather-icon-moon {
+  stroke:var(--amber)
+}
+
+.air-weather strong {
+  display:block;
+  font:500 2rem/1.2 var(--heading);
+  letter-spacing:-1px
+}
+
+.air-weather small {
+  font:400 1rem var(--body);
+  color:var(--muted);
+  margin-left:4px
+}
+
+.weather-description {
+  display:block;
+  color:var(--muted);
+  font-size:0.8125rem;
+  max-width:18ch
+}
+
+.daylight-times {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  padding:16px 0;
+  margin-bottom:16px;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border)
+}
+
+.daylight-times>div {
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+
+.daylight-times svg {
+  width:28px;
+  height:28px;
+  flex-shrink:0;
+  fill:none;
+  stroke:var(--amber);
+  stroke-width:1.5;
+  stroke-linecap:round;
+  stroke-linejoin:round
+}
+
+.daylight-times time {
+  font-size:0.9375rem;
+  font-variant-numeric:tabular-nums
 }

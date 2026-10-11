@@ -50,7 +50,7 @@
 </button>
 </div>
 <label class="sort-label">Sort <select id="spot-sort">
-<option value="coast">North → south</option>
+<option value="default">Default order</option>
 <option value="wind">Wind setup</option>
 <option value="surf">Surf estimate</option>
 </select>
@@ -58,11 +58,11 @@
 </div>
     <div class="spot-list">
       {% for item in items %}{% set fc = item.forecast %}{% set rating = item.rating %}
-      <article class="spot-card" data-spot-id="{{ item.spot.id }}" data-coast="{{ loop.index }}" data-wind-score="{{ rating.wind_score if rating.wind_score is not none else -1 }}" data-surf-score="{{ rating.surf_score if rating.surf_score is not none else -1 }}">
+      <article class="spot-card" data-spot-id="{{ item.spot.id }}" data-default-order="{{ loop.index }}" data-wind-score="{{ rating.wind_score if rating.wind_score is not none else -1 }}" data-surf-score="{{ rating.surf_score if rating.surf_score is not none else -1 }}">
         <div class="spot-card-top">
 <div>
 <p class="spot-location">
-<span class="spot-number">{{ '%02d' | format(loop.index) }}</span> {{ item.spot.lat | round(3) }}° N / {{ (item.spot.lng | abs) | round(3) }}° W</p>
+{{ item.spot.lat | round(3) }}° N / {{ (item.spot.lng | abs) | round(3) }}° W</p>
 <h3>
 <a href="/spots/{{ item.spot.id }}?h={{ h }}">{{ item.spot.name }}</a>
 </h3>
@@ -106,13 +106,19 @@
   <aside class="map-panel" aria-label="Explore the lake">
 <div class="map-panel-heading">
 <div>
-<p class="eyebrow">KNOW YOUR COAST</p>
-<h3>The lake view</h3>
+<p class="eyebrow">SCAN THE COAST</p>
+<h3>Find your next session</h3>
 </div>
 </div>
 <div class="map-switch" role="group" aria-label="Map type">
-<button class="active" data-map-tab="spots" aria-pressed="true">Spots & buoys</button>
-<button data-map-tab="windy" aria-pressed="false">Windy</button>
+<button type="button" class="active" data-map-tab="spots" aria-pressed="true" aria-controls="lake-map">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+<span>Spots & buoys</span>
+</button>
+<button type="button" data-map-tab="windy" aria-pressed="false" aria-controls="windy-map">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h6a3 3 0 1 1-3 3"/></svg>
+<span>Windy</span>
+</button>
 </div>
 <div id="lake-map" class="lake-map">
 <p class="map-fallback">Loading the map. Every spot is also listed alongside it.</p>

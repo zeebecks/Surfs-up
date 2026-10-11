@@ -13,6 +13,7 @@ from sqlalchemy import text
 from starlette.background import BackgroundTask
 
 from ..services.catalog import CAMERAS, GUIDES, STREAMS, WINDFINDER
+from ..services.conditions import conditions_at
 from ..services.scoring import rate
 from ..services.spot_repo import get_all_spots
 from ..services.util import get_session
@@ -144,10 +145,7 @@ def home(request: Request):
     h = hours(request)
     at = utcnow().replace(minute=0, second=0, microsecond=0) + timedelta(hours=h)
     checkins = counts()
-    items = [
-        present(s, at, checkins.get(s.id, 0))
-        for s in sorted(get_all_spots(), key=lambda s: s.lat, reverse=True)
-    ]
+    items = [present(s, at, checkins.get(s.id, 0)) for s in get_all_spots()]
     return render(
         request,
         "index.html",
@@ -181,6 +179,7 @@ def detail(request: Request, spot_id: str):
         request,
         "spot.html",
         item=present(spot, at, counts().get(spot_id, 0)),
+        conditions=conditions_at(weather, spot_id, at),
         hourly=hourly,
         stations=[s for s in weather.stations() if s["id"] in associated],
         h=h,

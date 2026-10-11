@@ -14,11 +14,19 @@
 <div class="detail-grid">
   <section class="conditions-panel">
 <p class="eyebrow">{{ 'SAMPLE FORECAST' if demo else 'FORECAST CONDITIONS' }}</p>
+<p class="conditions-time"><span>Local forecast time</span> <time datetime="{{ at }}">{{ at | localtime }}</time></p>
+<div class="conditions-overview">
 <div class="detail-wind">{{ wind_arrow(fc.wind_dir_deg) }}<strong>{{ fc.wind_kts | round | int if fc.wind_kts is not none else '—' }}<small>kt</small>
 </strong>
 <div>
 <b>{{ fc.wind_dir_deg | cardinal }}</b>
 <span>wind from</span>
+</div>
+</div>
+<div class="air-weather">
+{% from 'weather_icons.html' import weather_icon %}
+{{ weather_icon(conditions.icon) }}
+<div><span class="metric-label">Air temperature</span><strong>{{ conditions.temperature_f | round | int if conditions.temperature_f is not none else '—' }}<small>°F</small></strong><span class="weather-description">{{ conditions.description }}</span></div>
 </div>
 </div>
 <div class="detail-metrics">
@@ -38,8 +46,14 @@
 </strong>
 </div>
 </div>
+<div class="daylight-times">
+<div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17h18M3 21h18M7 17a5 5 0 0 1 10 0M12 2v7m-3-3 3-3 3 3M3 10l2 2m14 0 2-2"/></svg><div><span class="metric-label">Sunrise</span><time{% if conditions.sunrise %} datetime="{{ conditions.sunrise }}"{% endif %}>{{ conditions.sunrise | localtime('%-I:%M %p') }}</time></div></div>
+<div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17h18M3 21h18M7 17a5 5 0 0 1 10 0M12 2v7m-3-3 3 3 3-3M3 10l2 2m14 0 2-2"/></svg><div><span class="metric-label">Sunset</span><time{% if conditions.sunset %} datetime="{{ conditions.sunset }}"{% endif %}>{{ conditions.sunset | localtime('%-I:%M %p') }}</time></div></div>
+</div>
 <p class="data-caption {{ fc.status }}">Wind: {{ fc.source or 'unavailable' }}{% if fc.fetched_at %} · retrieved {{ fc.fetched_at | age }}{% endif %}{% if fc.status == 'stale' %} · stale{% endif %}</p>
 <p class="data-caption {{ fc.wave_status }}">Waves: {{ fc.wave_source or 'unavailable' }}{% if fc.wave_fetched_at %} · retrieved {{ fc.wave_fetched_at | age }}{% endif %}{% if fc.wave_status == 'stale' %} · stale{% endif %}</p>
+<p class="data-caption {{ conditions.status }}">Weather & daylight: {{ 'Sample weather' if demo else 'Open-Meteo' }}{% if conditions.fetched_at %} · retrieved {{ conditions.fetched_at | age }}{% endif %}{% if conditions.status == 'stale' %} · stale{% elif conditions.status == 'unavailable' %} · unavailable{% endif %}</p>
+{% if item.windfinder %}<a class="conditions-windfinder" href="{{ item.windfinder }}" target="_blank" rel="noopener noreferrer">Windfinder ↗</a>{% endif %}
 </section>
   <section class="camera-panel" aria-label="Camera for {{ item.spot.name }}">
     {% if item.camera %}<div class="camera-placeholder" data-camera-kind="{{ item.camera.kind }}" data-camera-src="{{ item.camera.embed }}" data-camera-title="{{ item.camera.name }}">

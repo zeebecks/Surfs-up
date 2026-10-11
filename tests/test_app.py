@@ -286,6 +286,7 @@ class CacheTests(Base):
             return {"rows": []}
 
         store.fetch_wind = fetch
+        store.fetch_conditions = fetch
         store.fetch_waves = fetch
         store.fetch_buoy = fetch
         asyncio.run(store.refresh(self.spots))
@@ -330,6 +331,7 @@ class CacheTests(Base):
     def test_refresh_reuses_recent_cache(self):
         store = WeatherStore()
         store.fetch_wind = AsyncMock(return_value={"rows": fixture_rows(), "source": "NWS"})
+        store.fetch_conditions = AsyncMock(return_value={"rows": [], "daylight_history": True})
         store.fetch_waves = AsyncMock(return_value={"rows": []})
         store.fetch_buoy = AsyncMock(return_value={"measurements": {}, "history": []})
 
@@ -353,6 +355,7 @@ class CacheTests(Base):
             {"rows": fixture_rows(), "source": "NWS", "fetched_at": old, "attempted_at": old},
         )
         store.fetch_wind = AsyncMock(side_effect=httpx.ConnectError("offline"))
+        store.fetch_conditions = AsyncMock(side_effect=httpx.ConnectError("offline"))
         store.fetch_waves = AsyncMock(side_effect=httpx.ConnectError("offline"))
         store.fetch_buoy = AsyncMock(side_effect=httpx.ConnectError("offline"))
         asyncio.run(store.refresh([self.spot]))
@@ -409,6 +412,31 @@ class RouteTests(Base):
     def setUp(self):
         super().setUp()
         self.client = TestClient(app)
+
+    def test_default_spot_order_and_manitowoc_rename(self):
+        with engine.begin() as db:
+            db.execute(
+                text(
+                    "UPDATE spots SET name='Manitowoc — South Pier' WHERE id='manitowoc-south-pier'"
+                )
+            )
+        seed_spots_if_empty()
+        expected = [
+            "north-pier-two-rivers",
+            "sheboygan-elbow",
+            "sheboygan-blue-harbor",
+            "port-washington",
+            "manitowoc-south-pier",
+            "kewaunee",
+        ]
+        spots = get_all_spots()
+        self.assertEqual([spot.id for spot in spots], expected)
+        self.assertEqual(spots[4].name, "Manitowoc - Yacht Club")
+        page = self.client.get("/").text
+        positions = [page.index(f'data-spot-id="{spot_id}"') for spot_id in expected]
+        self.assertEqual(positions, sorted(positions))
+        self.assertNotIn('class="spot-number"', page)
+        self.assertIn('value="default">Default order', page)
 
     def test_restart_seed_preserves_edited_notes(self):
         with engine.begin() as db:
